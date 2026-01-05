@@ -1,0 +1,80 @@
+	/*
+  	Flaticon icon font: Flaticon
+  	Creation date: 15/02/2017 11:42
+  	*/
+
+@font-face {
+  font-family: "Flaticon";
+  src: url("../fonts/Flaticon.eot");
+  src: url("../fonts/Flaticond41dd41d.eot?#iefix") format("embedded-opentype"),
+       url("../fonts/Flaticon.woff") format("woff"),
+       url("../fonts/Flaticon.ttf") format("truetype"),
+       url("../fonts/Flaticon.svg#Flaticon") format("svg");
+  font-weight: normal;
+  font-style: normal;
+}
+
+@media screen and (-webkit-min-device-pixel-ratio:0) {
+  @font-face {
+    font-family: "Flaticon";
+    src: url("../fonts/Flaticon.svg#Flaticon") format("svg");
+  }
+}
+
+[class^="flaticon-"]:before, [class*=" flaticon-"]:before,
+[class^="flaticon-"]:after, [class*=" flaticon-"]:after {   
+  font-family: Flaticon;
+        font-size: inherit;
+font-style: normal;
+}
+
+.flaticon-app:before { content: "\f100"; }
+.flaticon-bread:before { content: "\f101"; }
+.flaticon-cake:before { content: "\f102"; }
+.flaticon-catering:before { content: "\f103"; }
+.flaticon-cheese:before { content: "\f104"; }
+.flaticon-chef:before { content: "\f105"; }
+.flaticon-chef-1:before { content: "\f106"; }
+.flaticon-chicken:before { content: "\f107"; }
+.flaticon-chilli:before { content: "\f108"; }
+.flaticon-coffee:before { content: "\f109"; }
+.flaticon-coke:before { content: "\f10a"; }
+.flaticon-croquette:before { content: "\f10b"; }
+.flaticon-cutlery:before { content: "\f10c"; }
+.flaticon-fast-food:before { content: "\f10d"; }
+.flaticon-fish:before { content: "\f10e"; }
+.flaticon-fondue:before { content: "\f10f"; }
+.flaticon-food:before { content: "\f110"; }
+.flaticon-food-1:before { content: "\f111"; }
+.flaticon-food-2:before { content: "\f112"; }
+.flaticon-ice-cream:before { content: "\f113"; }
+.flaticon-meat:before { content: "\f114"; }
+.flaticon-oyster:before { content: "\f115"; }
+.flaticon-people:before { content: "\f116"; }
+.flaticon-pizza:before { content: "\f117"; }
+.flaticon-pudding:before { content: "\f118"; }
+.flaticon-restaurant:before { content: "\f119"; }
+.flaticon-restaurant-1:before { content: "\f11a"; }
+.flaticon-restaurant-2:before { content: "\f11b"; }
+.flaticon-restaurant-3:before { content: "\f11c"; }
+.flaticon-restaurant-4:before { content: "\f11d"; }
+.flaticon-restaurant-5:before { content: "\f11e"; }
+.flaticon-rice:before { content: "\f11f"; }
+.flaticon-salad:before { content: "\f120"; }
+.flaticon-salt:before { content: "\f121"; }
+.flaticon-sandwich:before { content: "\f122"; }
+.flaticon-sauces:before { content: "\f123"; }
+.flaticon-soup:before { content: "\f124"; }
+.flaticon-spaghetti:before { content: "\f125"; }
+.flaticon-spatula:before { content: "\f126"; }
+.flaticon-star:before { content: "\f127"; }
+.flaticon-sushi:before { content: "\f128"; }
+.flaticon-table:before { content: "\f129"; }
+.flaticon-taco:before { content: "\f12a"; }
+.flaticon-takeaway:before { content: "\f12b"; }
+.flaticon-tea:before { content: "\f12c"; }
+.flaticon-tool:before { content: "\f12d"; }
+.flaticon-tray:before { content: "\f12e"; }
+.flaticon-tray-1:before { content: "\f12f"; }
+.flaticon-waitress:before { content: "\f130"; }
+.flaticon-wine:before { content: "\f131"; }

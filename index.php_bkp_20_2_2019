@@ -1,0 +1,397 @@
+﻿<!doctype html>
+<html lang="en">
+
+	<?php
+// PHP code to obtain country, city, 
+// continent, etc using IP Address
+	require "include.php";
+   
+?>
+
+
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sachdeva Group of Industries Leading Ship Recycling Companies in Alang Gujarat, India</title>
+   
+    <!-- Place favicon.ico in the root directory -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/owl.carousel.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/lity.css">
+    <link rel="stylesheet" href="css/slicknav.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Aldrich" rel="stylesheet">	
+    <link href="https://fonts.googleapis.com/css?family=Signika+Negative" rel="stylesheet">
+	<!--[if lt IE 9]>
+    <script src="js/modernizr-3.5.0.min.js"></script>
+    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+</head>
+
+<body>
+    <!-- ====== scroll to top ====== -->
+    <a id="toTopBtn" title="Go to top" href="javascript:void(0)">
+        <i class="fa fa-chevron-up"></i>
+    </a>
+
+   
+    <div class="wrapper">
+        <header class="header">
+            <div class="container">
+                <div class="menubar">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nav class="navbar navbar-static-top">
+                                <!-- Brand and toggle get grouped for better mobile display -->
+                                <div class="navbar-header">
+                                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" aria-expanded="false">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <a class="navbar-brand" href="index.html">
+                                        <img src="images/logo.png" class="img-responsive" alt="logo"> 
+                                    </a>
+                                </div>
+
+                                <!-- Collect the nav links, forms, and other content for toggling -->
+                                <div class="collapse navbar-collapse ">
+                                    
+                                    <ul class="nav navbar-nav navbar-right" id="main-menu">
+                                        <li><a href="index.html">Home</a></li>
+										<li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                About Us
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a href="group_profile.html">Group Profile</a>
+                                                </li>
+                                                 <li>
+                                                    <a href="vision_mission.html">Vision &amp Mission</a>
+                                                </li>
+                                                <li>
+                                                    <a href="our_credentials.html">Credentials</a>
+                                                </li> 
+												<li>
+                                                    <a href="testimonials.html">Testimonials</a>
+                                                </li>
+                                            </ul>
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                Our Companies
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a href="sspsb.html">Sachdeva Steel Products (Ship Breakers) </a>
+                                                </li>
+                                                <li>
+                                                    <a href="jjsb.html">Jai Jagdish Ship Breakers</a>
+                                                </li>
+                                                </ul><li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                Green Recycling
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                
+                                                <li>
+                                                    <a href="environment_management.html">Environment Management</a>
+                                                </li>
+												<li>
+                                                    <a href="health_safety.html">Heatly &amp Safety</a>
+                                                </li>
+												<li>
+                                                    <a href="waste_management.html">Waste Management</a>
+                                                </li>
+                                            </ul>
+<li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                News &amp Media
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li>
+                                                    <a href="news.html">News </a>
+                                                </li>
+                                                <li>
+                                                    <a href="gallery.html">Gallery</a>
+                                                </li>
+                                            </ul>                  
+										<li><a href="contact_us.html">Contact</a></li>
+                                    </ul>
+
+                                </div>
+                                <!-- /.navbar-collapse -->
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="mobile-menu" data-logo="images/logo.png">
+
+
+            </div>
+        </header>
+        <section class="sliders">
+            <div class="testy-slider owl-carousel" data-items="1" data-loop="true" data-smart-speed="400" data-dots="true" data-nav="true"
+                 data-r-x-small="1" data-r-x-small-nav="true" data-r-x-small-dots="true" data-r-x-medium="1" data-r-x-medium-nav="false"
+                 data-r-x-medium-dots="true" data-r-small="1" data-r-small-nav="true" data-r-small-dots="true" data-r-medium="1"
+                 data-r-medium-nav="true" data-r-medium-dots="false" data-r-large="1" data-r-large-nav="true" data-r-large-dots="false">
+
+                <div class="item">
+                    <img src="images/banner1.jpg" alt="">
+                   </div>
+                <div class="item">
+                    <img src="images/banner2.jpg" alt="">
+                </div>
+                <div class="item">
+                    <img src="images/banner3.jpg" alt="">
+                </div>
+                <div class="item">
+                    <img src="images/banner4.jpg" alt="">
+                </div>
+               
+                
+                
+            </div>
+        </section>
+        <!-- about section  -->
+        <section class="about-section section-padding">
+            <div class="container">
+                <div class="row">                    
+                    <div class="col-md-6">                        
+                                <h2 class="main-title text-left">
+                                    <span class="bg-reverse" style="color:#000;">About Us</span>
+                                </h2>
+                            
+                        <div class="abt-content">
+                            <p style="text-align:justify;">
+                                 Our Company Sachdeva Steel Products (Ship Breaking Unit) LLP and Jai Jagdish Ship Breakers Pvt. Ltd. is involved in the business since ship breaking activity started at Alang in 1983.<br /><br />
+
+Ship breaking business was first carried out by Our Group under the name of Madhav Industrial Corporation till 1997.
+In 1997, we started the business under the name Sachdeva Steel Products (Ship breakers) and till date 36 ships have been Recycled.
+To further expand the business we established another unit in the year 1998 under the name of Jai Jagdish Ship Breakers Pvt. Ltd. and till date 35 ships have been Recycled.
+                            </p>
+                           
+                        </div>
+                    </div>
+                    <div class="col-md-6 hidden-sm hidden-xs">
+                        <div>
+                            <img src="images/about_us.jpg" class="img-responsive">
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </section>
+        <!-- about section  ends -->
+        
+        <section class="newsletter-section section-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-12">
+                        <h4 class="newsletter-title ">
+                            ISO 30000:2009, ISO 9001:2015, 14001:2015 &amp;  45001:2018 Certificed Companies &amp HKC Complaince Yard by Class NK</h4>
+                  </div>
+                   
+              </div>
+            </div>
+        </section>
+        
+        <!-- blog section -->
+        <section class="blog-section section-padding">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <h2 class="main-title text-left">
+                            <span class="bg-reverse" style="color:#000;">Our Commitment</span>
+                        </h2>
+                    </div>
+                </div>
+                <div class="row center-grid">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="blog">
+                            <div class="featured-pic">
+                                <a href="environment_management.html">
+                                    <img src="images/environment.jpg" class="img-responsive">
+                                </a>
+                            </div>
+
+                            <div class="content">
+                                
+                                <h4 class="blog-title txt-hover">
+                                    <a href="environment_management.html">Environment Management</a>                                </h4>
+                                
+                                <a href="environment_management.html" class="btn-secondry">Read more</a>                            </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="blog">
+                            <div class="featured-pic">
+                                <a href="health_safety.html">
+                                    <img src="images/health_safety.jpg" class="img-responsive">
+                                </a>
+                            </div>
+
+                            <div class="content">
+                                
+                                <h4 class="blog-title txt-hover">
+                                    <a href="health_safety.html">Health &amp Safety</a>                                </h4>
+                                
+                                <a href="health_safety.html" class="btn-secondry">Read more</a>                            </div>
+                      </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="blog">
+                            <div class="featured-pic">
+                                <a href="waste_management.html">
+                                    <img src="images/waste_management.jpg" class="img-responsive">
+                                </a>
+                            </div>
+
+                            <div class="content">
+                                
+                                <h4 class="blog-title txt-hover">
+                                    <a href="waste_management.html">Waste Management</a>                                </h4>
+                                <a href="waste_management.html" class="btn-secondry">Read more</a>                            </div>
+                      </div>
+                    </div>
+                </div>
+                      
+				
+				
+				
+                
+            </div>
+        </section>
+        <!-- blog section ends -->
+       
+        <!-- footer  -->
+        <footer class="footer">
+        <div class="section-bg-footer">
+            <div class="container">
+                <div class="row">
+                    <div class="col-md-4 col-sm-6">
+                        <div class="footer-widget">
+                            <div class="row">
+                                <div class="col-xs-11 col-sm-10 col-md-9">
+                                    <h3 class="main-title footer-title text-left">
+                                        <span>
+                                            Contact Us
+                                        </span>
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <div class="content">
+                                <p>
+                                    <i class="fa fa-map-marker"> </i>
+                                    <span>ADDRESS :</span>"Sachdeva House" , Opp Swaminarayan Mandir ,Lokhand Bazar , Bhavnagar,
+Gujarat , India 
+                                </p>
+                                <p>
+                                    <i class="fa fa-phone"> </i>
+                                    <span>CALL US :</span>+91 278 2429573
+                                </p>
+                                <p>
+                                    <i class="fa fa-envelope-o"> </i>
+                                    <span>EMAIL US :</span>info@sachdevagroup.in
+                                </p>
+                                <h5>Follow us on :</h5>
+                                <ul class="mini-social">
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-facebook"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-google-plus"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-instagram"></i>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a href="#">
+                                            <i class="fa fa-twitter"></i>
+                                        </a>
+                                    </li>
+                                    
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-4 col-sm-6">
+                        <div class="footer-widget">
+                            <div class="row">
+                                <div class="col-xs-11 col-sm-10 col-md-9">
+                                    <h3 class="main-title footer-title text-left">
+                                        <span>
+                                           Quick Links
+                                        </span>
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <ul class="posts clearfix" style="margin-left:25px;">
+                               <a href="index.html"><p>Home</p></a>
+                               <a href="group_profile.html"><p>Group Profile</p></a>
+                               <a href="sspsb.html"><p>Sachdeva Steel Products</p></a>
+                               <a href="jjsb.html"><p>Jai Jagdish Ship Breakers</p></a>
+                               <a href="our_credentials.html"><p>Our Credentials</p></a>
+                               <a href="contact_us.html"><p>Contact</p></a>
+                            </ul>
+                        </div>
+
+
+                    </div>
+                    <div class="col-md-4 col-sm-12">
+                        <div class="footer-widget">
+                            <div class="row">
+                                <div class="col-xs-11 col-sm-10 col-md-9">
+                                    <h3 class="main-title footer-title text-left">
+                                        <span>
+                                            Our Presence
+                                        </span>
+                                    </h3>
+                                </div>
+                            </div>
+
+                            <div class="content">
+   <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d59433.45202182445!2d72.15204138662449!3d21.40601296345263!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be1ef1754ecc115%3A0x4e05dda2308e9b78!2sAlang%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1599382468743!5m2!1sen!2sin" width="400" height="300" frameborder="0" style="border:0;" allowfullscreen="" aria-hidden="false" tabindex="0"></iframe>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            </div>
+        </footer>
+        <!-- footer ends -->
+
+        <div class="copyright">
+
+            <p style="color:#FFF">
+                © Copyright 2020 | SACHDEVA GROUP. All Right Reserved Design By
+                <a href="http://www.gravitee.in/" target="_blank">GRAVITEE</a>
+            </p>
+        </div>
+    </div>
+    <script src="js/jquery.1.12.4.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/main.js"></script>
+</body>
+</html>
