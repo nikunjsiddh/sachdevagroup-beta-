@@ -4535,7 +4535,7 @@ video {
 }
 
 .section-bg-img {
-  background-image: url(../images/theme-bg-img.jpg);
+  background-image: url(../images/theme-bg-img.png);
   background-attachment: fixed;
   background-size: cover;
   background-repeat: no-repeat;
