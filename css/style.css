@@ -5908,4 +5908,18 @@ li {
   z-index: 10;
 }
 
+.testimonials-inner p,
+.testimonials-inner span {
+  color: #000 !important;
+}
+
+.tab-sticky {
+  position: sticky;
+  top: 100px;
+}
+.postion-unset{
+  position: unset !important;
+  overflow: unset !important;
+}
+
 /* 05-01-2026 Css add End*/
