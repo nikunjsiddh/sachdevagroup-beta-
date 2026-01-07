@@ -5915,7 +5915,7 @@ li {
 
 .tab-sticky {
   position: sticky;
-  top: 100px;
+  top: 0px;
 }
 
 .postion-unset {
@@ -5923,10 +5923,10 @@ li {
   overflow: unset !important;
 }
 
-.about-logo img {
+/* .about-logo img {
   width: auto;
   height: 200px;
   margin: 0 auto;
-}
+} */
 
 /* 05-01-2026 Css add End*/
