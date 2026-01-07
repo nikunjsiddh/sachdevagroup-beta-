@@ -1559,6 +1559,7 @@ ul.food-list li::before {
   -webkit-transition: all 0.3s linear;
   transition: all 0.3s linear;
   transition: transform 0.3s;
+  width: 100%;
 }
 
 .contact-wrapper:hover {
@@ -1577,12 +1578,21 @@ ul.food-list li::before {
 }
 
 .contact-block-inner:last-child {
-  width: 65%;
-  flex: 0 0 65%;
+  width: 100%;
+  flex: 0 0 100%;
+}
+
+.contact-block-inner {
+  border: 1px solid #ccc;
 }
 
 .contact-wrapper a {
   color: #666666;
+}
+
+.theme-padding {
+  padding-left: 100px;
+  padding-right: 100px;
 }
 
 /*==================
@@ -1993,7 +2003,9 @@ ul.food-list li::before {
 .title-flex svg {
   background-color: #19456b;
   border-radius: 50%;
-  padding: 12px;
+  padding: 8px;
+  height: 30px;
+  width: 30px;
 }
 
 .vission-mission-block {
@@ -5837,6 +5849,43 @@ li {
   color: #fff !important;
 }
 
+.fw-100 {
+  font-weight: 100;
+}
+
+.fw-200 {
+  font-weight: 200;
+}
+
+.fw-300 {
+  font-weight: 300;
+}
+
+.fw-400 {
+  font-weight: 400;
+}
+
+
+.fw-500 {
+  font-weight: 500;
+}
+
+.fw-600 {
+  font-weight: 600;
+}
+
+.fw-700 {
+  font-weight: 700;
+}
+
+.fw-800 {
+  font-weight: 800;
+}
+
+.fw-900 {
+  font-weight: 900;
+}
+
 .commitement-icon-img svg {
   position: absolute;
   top: 50%;
@@ -5928,5 +5977,77 @@ li {
   height: 200px;
   margin: 0 auto;
 } */
+
+.col-md-7 {
+  display: table;
+  height: 100%;
+}
+
+.company-desc {
+  display: table-cell;
+  vertical-align: middle;
+}
+
+.ourcompany-row {
+  height: 400px;
+}
+
+.company-desc h1 {
+  line-height: 1.4;
+}
+
+.excellence-num {
+  width: 120px;
+  height: 120px;
+  background: #19456b;
+  border-radius: 30px;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  padding: 20px;
+  position: absolute;
+  bottom: 20px;
+  right: 20px;
+  gap: 5px;
+}
+
+.yard-detail {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.yard-detail p {
+  font-weight: 600;
+}
+
+.yard-wrapper {
+  margin-bottom: 30px;
+}
+
+.bg-element img {
+  width: auto;
+  height: 300px;
+  transform: rotate(290deg);
+}
+
+.bg-element {
+  position: absolute;
+  right: 0px;
+  top: -40px;
+}
+
+.contact-main {
+  display: flex;
+  align-items: center;
+
+  gap: 20px;
+}
 
 /* 05-01-2026 Css add End*/
