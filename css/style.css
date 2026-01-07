@@ -5917,9 +5917,16 @@ li {
   position: sticky;
   top: 100px;
 }
-.postion-unset{
+
+.postion-unset {
   position: unset !important;
   overflow: unset !important;
+}
+
+.about-logo img {
+  width: auto;
+  height: 200px;
+  margin: 0 auto;
 }
 
 /* 05-01-2026 Css add End*/
