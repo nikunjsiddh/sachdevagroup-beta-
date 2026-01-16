@@ -6051,3 +6051,56 @@ li {
 }
 
 /* 05-01-2026 Css add End*/
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 24px;
+}
+
+.card-block {
+  padding: 20px;
+  border-radius: 20px;
+  margin-bottom: 30px;
+  z-index: 1;
+  background-color: #fff;
+  box-shadow: 0 4px 20px hsl(120 10% 20% / 0.1);
+  border: 1px solid #00000030;
+  -moz-transition: all 0.3s linear;
+  -ms-transition: all 0.3s linear;
+  -o-transition: all 0.3s linear;
+  -webkit-transition: all 0.3s linear;
+  transition: all 0.3s linear;
+}
+
+.card-img img {
+  width: auto;
+  height: 170px;
+  margin: 0 auto 10px;
+}
+
+.card-block:hover {
+  color: #fff !important;
+  transform: translateY(-8px) scale(1.02);
+  box-shadow: rgba(0, 0, 142, 0.3) 0px 25px 50px;
+  background: -o-linear-gradient(315deg, #00008e 0, #017280 100%);
+  background: linear-gradient(135deg, #00008e 0, #017280 100%);
+  -moz-transition: all 0.3s linear;
+  -ms-transition: all 0.3s linear;
+  -o-transition: all 0.3s linear;
+  -webkit-transition: all 0.3s linear;
+  transition: all 0.3s linear;
+}
+
+.card-block:hover h3,
+.card-block:hover p {
+  color: #fff;
+}
+
+.w-unset {
+  width: unset !important;
+}
+.blog-section {
+    position: relative;
+    overflow-x: hidden;
+}
