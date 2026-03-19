@@ -2,36 +2,74 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="css/inline.css">
-</head>
+    <script>
+        function preloadFunc() {
+            try {
+                var request = new XMLHttpRequest();
 
-<meta charset="utf-8">
-<meta http-equiv="x-ua-compatible" content="ie=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Sachdeva Group of Industries Leading Ship Recycling Companies in Alang Gujarat, India</title>
-<meta name="description" content="">
+                request.open('GET', 'https://api.ipdata.co/?api-key=d850dc030d3ba6fc357068e124bedc643b200fab919d84276cbb1026');
 
-<!-- Place favicon.ico in the root directory -->
-<link rel="stylesheet" href="css/bootstrap.min.css">
-<link rel="stylesheet" href="css/animate.min.css">
-<link rel="stylesheet" href="css/owl.carousel.css">
-<link rel="stylesheet" href="css/font-awesome.min.css">
-<link rel="stylesheet" href="css/magnific-popup.css">
-<link rel="stylesheet" href="css/flaticon.css">
-<link rel="stylesheet" href="css/lity.css">
-<link rel="stylesheet" href="css/slicknav.min.css">
-<link rel="stylesheet" href="css/style.css">
-<link rel="stylesheet" href="css/yBox.min.css">
-<link href="https://fonts.googleapis.com/css?family=Aldrich" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css?family=Signika+Negative" rel="stylesheet">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
-    rel="stylesheet">
-<!--[if lt IE 9]>
+                request.setRequestHeader('Accept', 'application/json');
+
+                request.onreadystatechange = function () {
+                    if (this.readyState === 4) {
+
+                        if (typeof this.responseText !== "undefined" && this.responseText !== "") {
+                            var IPData = JSON.parse(this.responseText)
+
+                            if (IPData.country_name == "India" && IPData.country_code == "IN") {
+
+                            } else {
+                                location.href = "https://www.sachdevagroup.in/index.php"
+
+                            }
+                        } else {
+                            location.href = "https://www.sachdevagroup.in/index.php"
+
+                        }
+
+                    }
+                };
+
+                request.send();
+
+            } catch (e) {
+                console.log(e)
+            }
+        }
+        window.onpaint = preloadFunc();
+
+    </script>
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Sachdeva Group of Industries Leading Ship Recycling Companies in Alang Gujarat, India</title>
+    <meta name="description" content="">
+
+    <!-- Place favicon.ico in the root directory -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/owl.carousel.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/lity.css">
+    <link rel="stylesheet" href="css/slicknav.min.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Aldrich" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Signika+Negative" rel="stylesheet">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300..900;1,300..900&display=swap"
+        rel="stylesheet">
+    <!--[if lt IE 9]>
     <script src="js/modernizr-3.5.0.min.js"></script>
     <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
     <![endif]-->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
 </head>
 
 <body>
@@ -107,214 +145,164 @@
                 </div>
 
             </div>
-            <div class="mobile-menu" data-logo="images/logo.png">
+            <div class="mobile-menu" data-logo="images/logo-white.png">
 
 
             </div>
         </header>
-        <section class="page-title4">
-
-        </section>
-        <div class="lightbox" id="lightbox">
-            <div class="lightbox-content">
-                <button class="lightbox-close" onclick="closeLightbox()">×</button>
-                <button class="lightbox-nav lightbox-prev" onclick="changeImage(-1)">❮</button>
-                <img id="lightboxImage" src="" alt="">
-                <button class="lightbox-nav lightbox-next" onclick="changeImage(1)">❯</button>
-                <div class="lightbox-caption" id="lightboxCaption"></div>
+        <section class="page-title3 max-height theme-before">
+            <div class="banner-title dark">
+                <h1>Waste &amp; Management</h1>
             </div>
-        </div>
-
-
-
-
+        </section>
 
         <!-- page section  -->
-        <!-- <section class="blog-section blog-detail-page section-padding">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12 js-scroll fade-in-top scrolled">
-                        <h1 style="margin-bottom:10px;">News &amp Media</h1>
-                        <br>
-                        <div class="row">
-                            <div class="col-md-4 theme-image-gallary">
-                                <div class="theme-block">
-                                    <div class="theme-block-img theme-img-animation">
-                                        <img src="images/ship_recycling.jpg" class="img-responsive" />
-                                        <a class="theme-block-icon yBox" href="images/ship_recycling.jpg"
-                                            data-ybox-group="Gallery">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-plus">
-                                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 theme-image-gallary">
-                                <div class="theme-block">
-                                    <div class="theme-block-img theme-img-animation">
-                                        <img src="images/ship_recycling.jpg" class="img-responsive" />
-                                        <a class="theme-block-icon yBox" href="images/ship_recycling.jpg"
-                                            data-ybox-group="Gallery">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-plus">
-                                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 theme-image-gallary">
-                                <div class="theme-block">
-                                    <div class="theme-block-img theme-img-animation">
-                                        <img src="images/ship_recycling.jpg" class="img-responsive" />
-                                        <a class="theme-block-icon yBox" href="images/ship_recycling.jpg"
-                                            data-ybox-group="Gallery">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-plus">
-                                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 theme-image-gallary">
-                                <div class="theme-block">
-                                    <div class="theme-block-img theme-img-animation">
-                                        <img src="images/ship_recycling.jpg" class="img-responsive" />
-                                        <a class="theme-block-icon yBox" href="images/ship_recycling.jpg"
-                                            data-ybox-group="Gallery">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-plus">
-                                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 theme-image-gallary">
-                                <div class="theme-block">
-                                    <div class="theme-block-img theme-img-animation">
-                                        <img src="images/ship_recycling.jpg" class="img-responsive" />
-                                        <a class="theme-block-icon yBox" href="images/ship_recycling.jpg"
-                                            data-ybox-group="Gallery">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-plus">
-                                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 theme-image-gallary">
-                                <div class="theme-block">
-                                    <div class="theme-block-img theme-img-animation">
-                                        <img src="images/ship_recycling.jpg" class="img-responsive" />
-                                        <a class="theme-block-icon yBox" href="images/ship_recycling.jpg"
-                                            data-ybox-group="Gallery">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-plus">
-                                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 theme-image-gallary">
-                                <div class="theme-block">
-                                    <div class="theme-block-img theme-img-animation">
-                                        <img src="images/ship_recycling.jpg" class="img-responsive" />
-                                        <a class="theme-block-icon yBox" href="images/ship_recycling.jpg"
-                                            data-ybox-group="Gallery">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-plus">
-                                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col-md-4 theme-image-gallary">
-                                <div class="theme-block">
-                                    <div class="theme-block-img theme-img-animation">
-                                        <img src="images/ship_recycling.jpg" class="img-responsive" />
-                                        <a class="theme-block-icon yBox" href="images/ship_recycling.jpg"
-                                            data-ybox-group="Gallery">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
-                                                viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                                                stroke-linecap="round" stroke-linejoin="round"
-                                                class="feather feather-plus">
-                                                <line x1="12" y1="5" x2="12" y2="19"></line>
-                                                <line x1="5" y1="12" x2="19" y2="12"></line>
-                                            </svg>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
+        <div class="container">
+            <div class="intro-section">
+                <h2>Environmentally Safe Ship Recycling and Vessel Dismantling</h2>
+                <p>
+                    Dismantling end-of-life ships in an environmentally sound and safe manner is of great concern as
+                    well as being a major challenge nowadays. When dismantling the vessel, on-board hazardous materials
+                    such as asbestos, polychlorinated biphenyls (PCBs), glass fibre, solid foam and waste oil can incur
+                    severe negative implications on the environment and human health.
+                </p>
+            </div>
+
+            <div class="intro-section">
+                <h2>Hazardous Materials Management</h2>
+                <p style="margin-bottom: 30px;">
+                    Our ship recycling facilities are equipped to handle various types of hazardous materials found in
+                    end-of-life vessels:
+                </p>
+                <div class="hazmat-grid">
+                    <div class="hazmat-card">
+                        <div class="icon">⚠️</div>
+                        <h3>Asbestos</h3>
+                    </div>
+                    <div class="hazmat-card">
+                        <div class="icon">🧪</div>
+                        <h3>PCBs</h3>
+                        <p style="font-size: 0.9em; color: #777; margin-top: 5px;">Polychlorinated Biphenyls</p>
+                    </div>
+                    <div class="hazmat-card">
+                        <div class="icon">🔬</div>
+                        <h3>Glass Fiber</h3>
+                    </div>
+                    <div class="hazmat-card">
+                        <div class="icon">🧱</div>
+                        <h3>Solid Foam</h3>
+                    </div>
+                    <div class="hazmat-card">
+                        <div class="icon">🛢️</div>
+                        <h3>Waste Oil</h3>
+                    </div>
+                </div>
+            </div>
+
+            <div class="procedure-section">
+                <h2>Following Procedure followed by Sachdeva Group</h2>
+                <div class="procedure-steps">
+                    <div class="step">
+                        <div class="step-number">1</div>
+                        <div class="step-content">
+                            <p>Before purchasing vessel Ship owner handover IHM to the SRF</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">2</div>
+                        <div class="step-content">
+                            <p> Identified HAZ MATS are clearly labelled & marked as early as possible prior to
+                                dismantling of vessel.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">3</div>
+                        <div class="step-content">
+                            <p>Handling of hazardous material according to the Ship recycling facility Plan.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">4</div>
+                        <div class="step-content">
+                            <p>Removal Of hazardous material by trained person under the supervision of HSE Team.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">5</div>
+                        <div class="step-content">
+                            <p>Hazardous material stored in dedicated temporary storage area in the yard.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">6</div>
+                        <div class="step-content">
+                            <p>HSE Team Contact Authorised Sub-Contractor to collect hazardous material from the yard &
+                                issue manifest according to the quantity & type.</p>
+                        </div>
+                    </div>
+
+                    <div class="step">
+                        <div class="step-number">7</div>
+                        <div class="step-content">
+                            <p>HSE Team visit the sub-contractor's site and check out the activities carried out by
+                                them.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">8</div>
+                        <div class="step-content">
+                            <p>Unsafe management and disposal of ship wastes can readily lead to adverse the health &
+                                environment.</p>
+                        </div>
+                    </div>
+                    <div class="step">
+                        <div class="step-number">9</div>
+                        <div class="step-content">
+                            <p>For sustainable green ship recycling Sachdeva Group first priority is safe handling
+                                hazardous material without tampering Human Health and Environment.</p>
                         </div>
                     </div>
                 </div>
             </div>
-        </section> -->
-        <!-- page section ends  -->
 
-        <section class="section">
-            <h2>Latest News</h2>
-
-            <div class="news-grid">
-                <div class="news-card">
-                    <img src="images/ship_recycling.jpg" alt="Concert Stage">
-                    <div class="news-content">
-                        <div class="news-date">March 15, 2026</div>
-                        <div class="news-title">Summer Festival Lineup Announced</div>
-                        <p class="news-excerpt">We're thrilled to announce our incredible summer festival lineup
-                            featuring top artists and unforgettable performances.</p>
+            <div class="commitment-section">
+                <h2>Our Commitment to Sustainable Green Ship Recycling</h2>
+                <p>
+                    Unsafe management and disposal of ship wastes can readily lead to adverse effects on health &amp;
+                    environment. For sustainable green ship recycling, Sachdeva Group's first priority is safe handling
+                    of
+                    hazardous material without tampering Human Health and Environment.
+                </p>
+                <div class="commitment-highlights">
+                    <div class="highlight">
+                        <div class="icon">🌱</div>
+                        <h3>Environmental Protection</h3>
                     </div>
-                </div>
-
-                <div class="news-card">
-                    <img src="images.unsplash.com/photo_1540039155733_5bb30b53aa14" alt="Theater Show">
-                    <div class="news-content">
-                        <div class="news-date">March 10, 2026</div>
-                        <div class="news-title">Record-Breaking Broadway Run</div>
-                        <p class="news-excerpt">Our latest Broadway production breaks attendance records with sold-out
-                            shows and standing ovations.</p>
+                    <div class="highlight">
+                        <div class="icon">👷</div>
+                        <h3>Worker Safety</h3>
                     </div>
-                </div>
-
-                <div class="news-card">
-                    <img src="images.unsplash.com/photo_1501281668745_f7f57925c3b4" alt="Behind the Scenes">
-                    <div class="news-content">
-                        <div class="news-date">March 5, 2026</div>
-                        <div class="news-title">Behind the Scenes: Making Magic</div>
-                        <p class="news-excerpt">Take a peek behind the curtain and discover how our talented crew brings
-                            spectacular shows to life.</p>
+                    <div class="highlight">
+                        <div class="icon">✅</div>
+                        <h3>Regulatory Compliance</h3>
+                    </div>
+                    <div class="highlight">
+                        <div class="icon">♻️</div>
+                        <h3>Sustainable Practices</h3>
                     </div>
                 </div>
             </div>
-        </section>
+
+            <div class="footer-note">
+                <p>"Our mission is to recycle ships responsibly while protecting our planet and our people."</p>
+            </div>
+        </div>
+        <!-- page section ends  -->
 
         <!-- footer  -->
         <footer class="footer">
@@ -476,9 +464,7 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/plugins.js"></script>
     <script src="js/main.js"></script>
-    <script src="js/ybox.js"></script>
     <script src="js/scroll.js"></script>
-    <script src="js/inline_scripts.js"></script>
 </body>
 
 </html>
