@@ -1,0 +1,72 @@
+{
+ "file": "testimonials.html",
+ "bannerTitle": "",
+ "bannerClass": "page-title1",
+ "contentSummary": "This is a bare-bones client testimonials page carrying four short verbatim quotes from maritime organisations that have audited or visited the Alang yard — NYK Ship Management, ClassNK, JNA Japan, and an individual, Keiji Tomoda. The quotes praise yard infrastructure, the team's appetite for learning, safety and environment-friendly operation, and specifically call out the floating platform as a good idea; two of them explicitly frame it as ongoing improvement (\"Hope to see next upgrading\"). Everything else on the page is chrome: a 400px empty image banner, a two-item \"Our Companies\" sidebar list, a contact-details sidebar widget, and a full-width ISO certification strip. The entire…",
+ "blocks": [
+  {
+   "heading": "(none — empty banner)",
+   "kind": "other",
+   "summary": "Bare <section class=\"page-title1 theme-before\"> with literally zero child content. CSS gives it min-height 400px, padding-top 220px and a fixed-attachment background of images/about/about-head-bg1.png, plus a ::before theme scrim. There is no H1, no breadcrumb, no eyebrow — it renders as a 400px decorative image band that says nothing. The page's actual H1 sits below it, inside the left body column.",
+   "itemCount": 0,
+   "images": [
+    "images/about/about-head-bg1.png"
+   ]
+  },
+  {
+   "heading": "Testiimonials (sic)",
+   "kind": "testimonial-list",
+   "summary": "The entire content payload of the page. An H1 with an inline margin-bottom style and a visible typo, followed by ONE <p class=\"write\"> (opened, never closed) holding all four testimonials separated only by <br> tags. Quote 1 — NYK SHIP MANAGEMENT: 'Generally found good infrastructure for ship recycling Which is good initiative for facility management'. Quote 2 — CLASS NK: 'Team's attitude to obtain knowledge is very…",
+   "itemCount": 4,
+   "images": []
+  },
+  {
+   "heading": "Our Companies",
+   "kind": "list",
+   "summary": "Sidebar widget-box. <ul class=\"tags\"> inside a proper .widget-content, styled as tag pills. Two links: 'Sachdeva Steel Products (Ship Breakers)' → sspsb.html and 'Jai Jagdish Ship Breakers' → jjsb.html. Duplicates the same two links already present in the header's 'Our Companies' dropdown.",
+   "itemCount": 2,
+   "images": []
+  },
+  {
+   "heading": "Contact Us",
+   "kind": "prose",
+   "summary": "Sidebar widget-box with three icon-prefixed detail lines using Font Awesome glyphs: ADDRESS — 'Sachdeva House', Opp Swaminarayan Mandir, Lokhand Bazar, Bhavnagar, Gujarat, India (fa-map-marker); CALL US — +91 278 2429573 (fa-phone); EMAIL US — info@sachdevagroup.in (fa-envelope-o). None of the three are linked (no tel:, no mailto:, no maps link). Wrapper is <div class=\"content\" style=\"margin-left:20px;\"> — wrong…",
+   "itemCount": 3,
+   "images": []
+  },
+  {
+   "heading": "ISO 30000:2009, ISO 9001:2015, 14001:2015 & 45001:2018 Certified Companies",
+   "kind": "cert-grid",
+   "summary": "Full-width band, <section class=\"newsletter-section section-padding\">, containing a single H4 in a col-md-12 and nothing else. Despite the class name there is no newsletter, no form, no input, no button — the class is a leftover from the purchased template. Currently the four certification standards are one flat run-on line of text with no logos, no badges, no certificate numbers, no issuing-body names and no links…",
+   "itemCount": 1,
+   "images": []
+  },
+  {
+   "heading": "(none — copyright bar)",
+   "kind": "other",
+   "summary": "<div class=\"copyright\"> holding one paragraph with an inline color:#FFF style: '© Copyright 2020 | SACHDEVA GROUP. All Right Reserved Design By GRAVITEE', where GRAVITEE links out to http://www.gravitee.in/ in a new tab. Included here because this page has NO <footer> element at all — this bar is the entire footer region, so it is page content rather than shared chrome on this file.",
+   "itemCount": 1,
+   "images": []
+  }
+ ],
+ "assets": [
+  "images/about/about-head-bg1.png",
+  "images/logo.png"
+ ],
+ "quirks": [
+  "VISIBLE TYPO in the H1: 'Testiimonials' with a doubled 'i' (line 186). This is the page's main heading.",
+  "EMPTY BANNER: <section class=\"page-title1 theme-before\"> at lines 176-178 contains nothing but whitespace. It still renders a 400px fixed-attachment image band (images/about/about-head-bg1.png) with…",
+  "BROKEN MARKUP: <p class=\"write\"> opens at line 187 and is NEVER closed. The </div> at line 202 closes .col-md-8 while the paragraph is still open, so the browser auto-closes it. Invalid HTML.",
+  "All four testimonials are crammed into that single paragraph, separated only by <br> and <br><br>. No <blockquote>, no <cite>, no per-testimonial wrapper element. There is no way to style, animate,…",
+  "INLINE STYLE on the H1: style=\"margin-bottom:10px;\" (line 186).",
+  "INLINE STYLE on the sidebar contact wrapper: style=\"margin-left:20px;\" (line 238).",
+  "INLINE STYLE on the copyright paragraph: style=\"color:#FFF\" (line 280).",
+  "CLASS INCONSISTENCY: the Contact Us widget uses <div class=\"content\"> (line 238) while the Our Companies widget correctly uses <div class=\"widget-content\"> (line 215). style.css only defines…",
+  "UNESCAPED AMPERSAND in visible body copy: 'well managed good yard & Nice idea like Floating Platform' (line 197) — raw & should be &amp;.",
+  "INCONSISTENT ATTRIBUTION PUNCTUATION across the four quotes: '-(NYK SHIP MANAGEMENT)' and '-(CLASS NK)' carry a leading hyphen with no space, while '(JNA, JAPAN)' and ' (KEIJI TOMODA JAPAN)' have no…",
+  "DEAD NAV LINK: group_profile.html (line 106, About Us dropdown) does not exist anywhere in the repo — confirmed 404. Every page carrying this shared nav has the same broken link.",
+  "THE NEW DESIGN SYSTEM IS NOT LOADED HERE: testimonials.html links neither css/marine.css nor js/marine.js. index.html loads both (line 78 and line 891). Both files exist on disk, so this page…",
+  "BRAND FONT NEVER LOADS ON THIS PAGE. Oswald is only pulled in by css/style.css line 62, which reads @import url('<link href=\"https://fonts.googleapis.com/css2?family=Oswald...\" rel=\"stylesheet\">'); —…",
+  "TWO UNUSED WEBFONTS loaded on every request: Aldrich (line 59) and Signika Negative (line 60). Neither appears anywhere in the brand spec or in the page's styling."
+ ]
+}

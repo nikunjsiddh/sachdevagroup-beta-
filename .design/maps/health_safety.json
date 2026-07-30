@@ -1,0 +1,57 @@
+{
+ "file": "health_safety.html",
+ "bannerTitle": "Health & Safety",
+ "bannerClass": "page-title3",
+ "contentSummary": "health_safety.html is a single-idea text page: a shared banner reading \"Health & Safety\" followed by one centred headline and an eleven-item accordion listing the group's safety commitments — safety as a core value, alignment with the Hong Kong International Convention and ISO 45001, task-level risk assessments, mandatory PPE, internal and external training, a documented emergency response plan, protocols for hazardous-material removal, periodic health check-ups and wellness programmes, transparent near-miss and incident reporting, audit-driven continuous improvement, and a shared safety culture. Every claim is qualitative — there is not a single number, date, certificate reference, named…",
+ "blocks": [
+  {
+   "heading": "Health & Safety",
+   "kind": "other",
+   "summary": "Full-bleed banner hero: <section class=\"page-title3 max-height theme-before\"> containing only <div class=\"banner-title dark\"><h1>Health & Safety</h1></div>. No subtitle, no eyebrow, no breadcrumb, no CTA, no <img> in markup. The visual comes entirely from CSS: .page-title3 sets background: #fff url(../images/about/about-head-bg3.jpg) no-repeat center top with background-attachment: fixed, min-height 400px,…",
+   "itemCount": 0,
+   "images": [
+    "images/about/about-head-bg3.jpg"
+   ]
+  },
+  {
+   "heading": "Waste Management — Responsible Practices for a Sustainable Future",
+   "kind": "prose",
+   "summary": "The single centred page headline, <h2 class=\"mb-30 center js-scroll fade-in-top\"> with a <br> between the two lines. CRITICAL: the copy is wrong for this page — it is a verbatim copy-paste of the headline from environment_management.html (line 292) and talks about waste management, not health & safety. It is also closed with </h1> instead of </h2>. There is no intro paragraph, no lead-in, no framing sentence — the…",
+   "itemCount": 0,
+   "images": []
+  },
+  {
+   "heading": "(commented out) Eleven safety-commitment cards",
+   "kind": "other",
+   "summary": "Lines 161–236 are a fully commented-out <div class=\"inner-page-block-flex js-scroll fade-in-bottom\"> containing 11 <div class=\"inner-page-block-flex-inner\"> > <div class=\"inner-page-block\"> cards, each with a bold bulleted label (\"• Safety as a Core Value:\") and a body paragraph. The content is identical, word for word, to the 11 live accordion items below it. style.css still styles .inner-page-block-flex (flex, gap…",
+   "itemCount": 11,
+   "images": []
+  },
+  {
+   "heading": "(untitled — the accordion sits directly under the page H2, with no section heading of its own)",
+   "kind": "accordion",
+   "summary": "<div class=\"inner-page-accordion js-scroll fade-in-bottom\"> holding 11 <div class=\"accordion-item\">, each a <button class=\"accordion-header\"> plus a <div class=\"accordion-content\"><p>. All are closed on load, so the page renders as eleven bare grey text lines with a + glyph. The eleven pillars, in order: (1) Safety as a Core Value — health and safety of employees, contractors and visitors prioritised across all…",
+   "itemCount": 11,
+   "images": []
+  }
+ ],
+ "assets": [
+  "images/about/about-head-bg3.jpg"
+ ],
+ "quirks": [
+  "WRONG PAGE COPY (most serious): the page's only headline reads 'Waste Management / Responsible Practices for a Sustainable Future' (line 159–160). It is a verbatim copy-paste from…",
+  "Malformed heading tag: <h2 class=\"mb-30 center js-scroll fade-in-top\"> is closed with </h1> (lines 159–160). The identical bug exists in environment_management.html, confirming the copy-paste origin.",
+  "Lines 161–236: ~76 lines of commented-out markup — a complete <div class=\"inner-page-block-flex\"> three-up card grid duplicating all 11 accordion items word for word. Dead weight shipped to every…",
+  "Dead animation classes: the H2 and the accordion carry js-scroll fade-in-top / fade-in-bottom, but js/scroll.js only toggles a .scrolled class, and none of .scrolled, .fade-in-top or .fade-in-bottom…",
+  "Dead wrapper classes: .inner-page-block-wrapper and .inner-page-accordion have zero CSS rules anywhere in the repo. They are structural no-ops.",
+  "This page never loads css/marine.css or js/marine.js. js/marine-pages.js also exists in the repo but is referenced by no HTML file at all — only index.html links the marine assets. The page is still…",
+  "The accordion controller is an inline <script> in the body (lines 486–510) rather than a shared file, so it is duplicated across sibling inner pages. It calls…",
+  "Accordion accessibility is absent: <button class=\"accordion-header\"> has no type=\"button\" (defaults to submit), no aria-expanded, no aria-controls; the .accordion-content panels have no id and no…",
+  "Accordion open/close is driven by JS writing inline style.maxHeight = scrollHeight + 'px', fighting the CSS max-height: 0 transition. Panels break on viewport resize or font reflow while open.",
+  "All 11 items are collapsed on load, so the page's entire body renders as one wrong headline plus eleven grey text lines. There is effectively nothing on screen.",
+  "Zero <img> elements in the body. images/health.jpg and images/health_safety.jpg exist in the repo and are never used on the Health & Safety page.",
+  "<head> contains an IP-geolocation gate (lines 5–42) that hard-redirects every non-India visitor to https://www.sachdevagroup.in/index.php, with a live ipdata.co API key hardcoded in plain view of the…",
+  "<title> is the generic homepage title ('Sachdeva Group of Industries Leading Ship Recycling Companies in Alang Gujarat, India') — not page-specific. <meta name=\"description\"> is present but empty.",
+  "Banner is a bare <h1> with no subtitle, eyebrow, breadcrumb or CTA, and its background image (images/about/about-head-bg3.jpg via .page-title3) is shared with every other inner page."
+ ]
+}

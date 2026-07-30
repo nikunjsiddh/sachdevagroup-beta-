@@ -1,0 +1,1557 @@
+@charset "utf-8";
+/* ==========================================================================
+   MARINE PAGES — inner-page design system for the Sachdeva Group site
+   Depends on css/marine.css for the palette + reveal engine.
+   Namespace: .mrnp-*   ·   Load order: style.css → marine.css → marine-pages.css
+   Sector: heavy-industrial B2B maritime (ship recycling). Tone: engineered,
+   compliant, precise — depth and motion, never decoration for its own sake.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. PAGE HERO — layered 3D depth banner
+   ========================================================================== */
+
+.mrnp-hero {
+    position: relative;
+    min-height: 560px;
+    display: flex;
+    align-items: center;
+    overflow: hidden;
+    background: var(--navy-ink);
+    perspective: 1400px;
+}
+
+.mrnp-hero__bg {
+    position: absolute;
+    inset: -8% -4%;
+    z-index: 0;
+    background-size: cover;
+    background-position: center;
+    transform: scale(1.06);
+    will-change: transform;
+    animation: mrnKenBurns 30s ease-in-out infinite alternate;
+}
+
+.mrnp-hero__scrim {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        radial-gradient(110% 100% at 10% 15%, rgba(0, 0, 142, .82) 0%, rgba(0, 0, 142, 0) 62%),
+        radial-gradient(90% 90% at 92% 88%, rgba(1, 114, 128, .74) 0%, rgba(1, 114, 128, 0) 66%),
+        linear-gradient(180deg, rgba(3, 6, 28, .90) 0%, rgba(3, 6, 28, .42) 45%, rgba(3, 6, 28, .88) 100%);
+}
+
+/* faint engineered grid — reads as blueprint, suits the sector */
+.mrnp-hero__grid {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(178, 236, 255, .07) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(178, 236, 255, .07) 1px, transparent 1px);
+    background-size: 64px 64px;
+    mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 20%, transparent 75%);
+    -webkit-mask-image: radial-gradient(ellipse 80% 70% at 50% 50%, #000 20%, transparent 75%);
+    animation: mrnpGridDrift 24s linear infinite;
+}
+
+@keyframes mrnpGridDrift {
+    to {
+        background-position: 64px 64px, 64px 64px;
+    }
+}
+
+/* floating depth shapes */
+.mrnp-hero__orb {
+    position: absolute;
+    z-index: 2;
+    border-radius: 50%;
+    filter: blur(60px);
+    pointer-events: none;
+}
+
+.mrnp-hero__orb--a {
+    width: 340px;
+    height: 340px;
+    background: rgba(255, 173, 24, .30);
+    left: -90px;
+    top: -70px;
+    animation: mrnOrb 18s ease-in-out infinite alternate;
+}
+
+.mrnp-hero__orb--b {
+    width: 300px;
+    height: 300px;
+    background: rgba(1, 114, 128, .45);
+    right: -70px;
+    bottom: -80px;
+    animation: mrnOrb 22s ease-in-out infinite alternate-reverse;
+}
+
+.mrnp-hero__inner {
+    position: relative;
+    z-index: 5;
+    width: 100%;
+    padding: 190px 0 120px;
+    transform-style: preserve-3d;
+}
+
+.mrnp-crumb {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-bottom: 22px;
+    font-size: 12px;
+    letter-spacing: 2.6px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .62);
+    opacity: 0;
+    animation: mrnFadeUp .9s var(--ease-out) .2s forwards;
+}
+
+.mrnp-crumb a {
+    color: rgba(255, 255, 255, .62);
+    text-decoration: none;
+    transition: color .3s;
+}
+
+.mrnp-crumb a:hover {
+    color: var(--gold-light);
+    text-decoration: none;
+}
+
+.mrnp-crumb span.sep {
+    color: var(--gold);
+    font-size: 10px;
+}
+
+.mrnp-crumb strong {
+    color: var(--gold-light);
+    font-weight: 500;
+}
+
+.mrnp-hero__title {
+    font-family: "Oswald", sans-serif;
+    font-size: clamp(38px, 5.4vw, 76px);
+    line-height: 1.05;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: #fff;
+    margin: 0 0 20px;
+    letter-spacing: -0.5px;
+    max-width: 18ch;
+}
+
+.mrnp-hero__title .mrn-word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+}
+
+.mrnp-hero__title .mrn-word > span {
+    display: inline-block;
+    transform: translateY(105%);
+    animation: mrnWordUp 1.05s var(--ease-out) forwards;
+    animation-delay: var(--d, .25s);
+}
+
+.mrnp-hero__title em {
+    font-style: normal;
+    background: var(--grad-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+.mrnp-hero__sub {
+    font-size: clamp(15px, 1.4vw, 18px);
+    line-height: 1.85;
+    font-weight: 300;
+    color: rgba(255, 255, 255, .78);
+    max-width: 62ch;
+    margin: 0;
+    opacity: 0;
+    animation: mrnFadeUp 1s var(--ease-out) .75s forwards;
+}
+
+.mrnp-hero__rule {
+    width: 96px;
+    height: 3px;
+    margin: 26px 0 0;
+    background: var(--grad-gold);
+    border-radius: 3px;
+    transform-origin: left;
+    transform: scaleX(0);
+    animation: mrnUnderline 1s var(--ease-out) .95s forwards;
+}
+
+/* wave foot on the hero */
+.mrnp-hero__wave {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: -1px;
+    z-index: 4;
+    line-height: 0;
+    pointer-events: none;
+}
+
+.mrnp-hero__wave svg {
+    width: 100%;
+    height: 80px;
+    display: block;
+}
+
+/* ==========================================================================
+   2. PAGE SHELL + PROSE
+   ========================================================================== */
+
+.mrnp-section {
+    position: relative;
+    padding: 100px 0;
+    overflow: hidden;
+}
+
+.mrnp-section--tight {
+    padding: 70px 0;
+}
+
+.mrnp-prose {
+    font-size: 16px;
+    line-height: 1.95;
+    font-weight: 300;
+    color: var(--grey);
+}
+
+.mrnp-prose > p {
+    margin: 0 0 20px;
+}
+
+.mrnp-prose > p:first-of-type {
+    font-size: 18.5px;
+    line-height: 1.85;
+    color: var(--navy);
+    font-weight: 400;
+}
+
+.mrnp-prose h3,
+.mrnp-prose h4 {
+    color: var(--navy);
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    margin: 34px 0 14px;
+}
+
+.mrn-dark .mrnp-prose,
+.mrnp-section.mrn-dark .mrnp-prose {
+    color: rgba(255, 255, 255, .76);
+}
+
+.mrn-dark .mrnp-prose > p:first-of-type {
+    color: #fff;
+}
+
+/* drop-cap flourish for the lead block */
+.mrnp-prose--lead > p:first-of-type::first-letter {
+    float: left;
+    font-family: "Oswald", sans-serif;
+    font-size: 62px;
+    line-height: .82;
+    font-weight: 600;
+    padding: 6px 14px 0 0;
+    background: var(--grad-brand);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+/* ==========================================================================
+   3. 3D TILT CARD GRID (icon cards)
+   ========================================================================== */
+
+.mrnp-grid {
+    display: grid;
+    gap: 26px;
+    margin-top: 46px;
+}
+
+.mrnp-grid--2 {
+    grid-template-columns: repeat(2, 1fr);
+}
+
+.mrnp-grid--3 {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+.mrnp-grid--4 {
+    grid-template-columns: repeat(4, 1fr);
+}
+
+.mrnp-icard {
+    position: relative;
+    padding: 38px 30px 34px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 142, .09);
+    box-shadow: 0 22px 48px -34px rgba(0, 0, 142, .55);
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: transform .45s var(--ease-out), box-shadow .45s, border-color .45s;
+    will-change: transform;
+}
+
+.mrnp-icard::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: var(--grad-brand);
+    opacity: 0;
+    transition: opacity .45s;
+}
+
+.mrnp-icard::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 3px;
+    width: 100%;
+    background: var(--grad-gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .5s var(--ease-out);
+}
+
+.mrnp-icard:hover {
+    box-shadow: 0 42px 70px -34px rgba(0, 0, 142, .75);
+    border-color: rgba(255, 173, 24, .4);
+}
+
+.mrnp-icard:hover::before {
+    opacity: 1;
+}
+
+.mrnp-icard:hover::after {
+    transform: scaleX(1);
+}
+
+/* children lift off the card face in real 3D */
+.mrnp-icard > * {
+    position: relative;
+    z-index: 2;
+    transition: transform .45s var(--ease-out), color .4s;
+}
+
+.mrnp-icard:hover > * {
+    transform: translateZ(34px);
+}
+
+.mrnp-icard__icon {
+    width: 66px;
+    height: 66px;
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 22px;
+    background: linear-gradient(135deg, rgba(0, 0, 142, .10), rgba(1, 114, 128, .14));
+    color: var(--navy);
+    transition: background .45s, color .45s, transform .55s var(--ease-bounce);
+}
+
+.mrnp-icard__icon svg,
+.mrnp-icard__icon img {
+    width: 34px;
+    height: 34px;
+    object-fit: contain;
+}
+
+.mrnp-icard:hover .mrnp-icard__icon {
+    background: var(--grad-gold);
+    color: var(--navy-deep);
+    transform: translateZ(52px) rotate(-7deg) scale(1.06);
+}
+
+.mrnp-icard h4 {
+    font-size: 20px;
+    text-transform: uppercase;
+    letter-spacing: .4px;
+    margin: 0 0 12px;
+    color: var(--navy);
+}
+
+.mrnp-icard p {
+    font-size: 14.5px;
+    line-height: 1.8;
+    color: var(--grey);
+    margin: 0;
+}
+
+.mrnp-icard:hover h4,
+.mrnp-icard:hover p {
+    color: #fff;
+}
+
+.mrnp-icard:hover p {
+    color: rgba(255, 255, 255, .82);
+}
+
+/* ghost index numeral */
+.mrnp-icard__no {
+    position: absolute;
+    right: 18px;
+    bottom: 6px;
+    z-index: 1;
+    font-family: "Oswald", sans-serif;
+    font-size: 78px;
+    font-weight: 600;
+    line-height: 1;
+    -webkit-text-fill-color: transparent;
+    -webkit-text-stroke: 1.2px rgba(0, 0, 142, .10);
+    transition: -webkit-text-stroke-color .45s;
+    pointer-events: none;
+}
+
+.mrnp-icard:hover .mrnp-icard__no {
+    -webkit-text-stroke-color: rgba(255, 173, 24, .45);
+}
+
+/* ==========================================================================
+   4. 3D FLIP CARD
+   ========================================================================== */
+
+.mrnp-flip {
+    perspective: 1400px;
+    min-height: 300px;
+}
+
+.mrnp-flip__inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    min-height: 300px;
+    transform-style: preserve-3d;
+    transition: transform .9s var(--ease-out);
+}
+
+.mrnp-flip:hover .mrnp-flip__inner,
+.mrnp-flip.is-flipped .mrnp-flip__inner {
+    transform: rotateY(180deg);
+}
+
+.mrnp-flip__face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: 20px;
+    padding: 34px 30px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.mrnp-flip__face--front {
+    background: #fff;
+    border: 1px solid rgba(0, 0, 142, .1);
+    box-shadow: 0 22px 48px -34px rgba(0, 0, 142, .55);
+}
+
+.mrnp-flip__face--back {
+    transform: rotateY(180deg);
+    background: var(--grad-brand);
+    color: #fff;
+}
+
+.mrnp-flip__face--back h4 {
+    color: #fff;
+}
+
+.mrnp-flip__face--back p {
+    color: rgba(255, 255, 255, .84);
+}
+
+/* ==========================================================================
+   5. IMAGE / TEXT SPLIT
+   ========================================================================== */
+
+.mrnp-split {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 62px;
+    align-items: center;
+}
+
+.mrnp-split--wide-left {
+    grid-template-columns: 1.15fr 1fr;
+}
+
+.mrnp-split--wide-right {
+    grid-template-columns: 1fr 1.15fr;
+}
+
+.mrnp-split__media {
+    position: relative;
+    perspective: 1200px;
+}
+
+.mrnp-split__frame {
+    position: relative;
+    border-radius: 24px;
+    overflow: hidden;
+    transform-style: preserve-3d;
+    transition: transform .4s var(--ease-out);
+    box-shadow: 0 40px 80px -44px rgba(0, 0, 142, .6);
+}
+
+.mrnp-split__frame img {
+    width: 100%;
+    display: block;
+    transition: transform 1.3s var(--ease-out);
+}
+
+.mrnp-split__media:hover .mrnp-split__frame img {
+    transform: scale(1.07);
+}
+
+.mrnp-split__frame::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(145deg, rgba(0, 0, 142, .28), transparent 55%, rgba(1, 114, 128, .32));
+}
+
+.mrnp-split__tag {
+    position: absolute;
+    left: 22px;
+    bottom: 22px;
+    z-index: 4;
+    padding: 12px 22px;
+    border-radius: 40px;
+    background: rgba(3, 6, 28, .62);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, .2);
+    color: #fff;
+    font-size: 12px;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+}
+
+/* stacked accent plate behind the frame */
+.mrnp-split__media::before {
+    content: "";
+    position: absolute;
+    left: -20px;
+    top: -20px;
+    right: 34px;
+    bottom: 34px;
+    border-radius: 24px;
+    border: 2px solid rgba(255, 173, 24, .35);
+    z-index: -1;
+    animation: mrnFloatY 8s ease-in-out infinite;
+}
+
+/* ==========================================================================
+   6. FEATURE LIST (checkmark rows)
+   ========================================================================== */
+
+.mrnp-checks {
+    list-style: none;
+    padding: 0;
+    margin: 28px 0 0;
+    display: grid;
+    gap: 14px;
+}
+
+.mrnp-checks--2 {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px 26px;
+}
+
+.mrnp-checks li {
+    position: relative;
+    padding: 14px 18px 14px 54px;
+    border-radius: 12px;
+    background: rgba(0, 0, 142, .035);
+    border-left: 3px solid rgba(1, 114, 128, .3);
+    font-size: 15px;
+    line-height: 1.65;
+    color: var(--grey);
+    transition: transform .4s var(--ease-out), background .4s, border-color .4s, color .4s;
+}
+
+.mrnp-checks li:hover {
+    transform: translateX(8px);
+    background: rgba(255, 173, 24, .10);
+    border-left-color: var(--gold);
+    color: var(--navy);
+}
+
+.mrnp-checks li::before {
+    content: "";
+    position: absolute;
+    left: 18px;
+    top: 50%;
+    width: 22px;
+    height: 22px;
+    margin-top: -11px;
+    border-radius: 50%;
+    background: var(--grad-brand);
+}
+
+.mrnp-checks li::after {
+    content: "";
+    position: absolute;
+    left: 25px;
+    top: 50%;
+    width: 7px;
+    height: 4px;
+    margin-top: -3px;
+    border-left: 2px solid var(--gold-light);
+    border-bottom: 2px solid var(--gold-light);
+    transform: rotate(-45deg);
+}
+
+.mrn-dark .mrnp-checks li {
+    background: rgba(255, 255, 255, .05);
+    color: rgba(255, 255, 255, .78);
+    border-left-color: rgba(255, 173, 24, .35);
+}
+
+.mrn-dark .mrnp-checks li:hover {
+    color: #fff;
+    background: rgba(255, 173, 24, .12);
+}
+
+/* ==========================================================================
+   7. ACCORDION
+   ========================================================================== */
+
+.mrnp-acc {
+    margin-top: 40px;
+    display: grid;
+    gap: 14px;
+}
+
+.mrnp-acc__item {
+    border-radius: 16px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 142, .1);
+    transition: box-shadow .4s, border-color .4s;
+}
+
+.mrnp-acc__item.is-open {
+    box-shadow: 0 26px 54px -34px rgba(0, 0, 142, .6);
+    border-color: rgba(255, 173, 24, .45);
+}
+
+.mrnp-acc__head {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 18px;
+    padding: 22px 26px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    font-family: "Oswald", sans-serif;
+    font-size: 17px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--navy);
+    transition: color .3s, background .3s;
+}
+
+.mrnp-acc__head:hover {
+    background: rgba(0, 0, 142, .03);
+}
+
+.mrnp-acc__item.is-open .mrnp-acc__head {
+    color: var(--teal);
+}
+
+.mrnp-acc__sign {
+    flex: 0 0 auto;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: linear-gradient(135deg, rgba(0, 0, 142, .1), rgba(1, 114, 128, .14));
+    color: var(--navy);
+    transition: transform .5s var(--ease-out), background .4s, color .4s;
+}
+
+.mrnp-acc__item.is-open .mrnp-acc__sign {
+    transform: rotate(135deg);
+    background: var(--grad-gold);
+    color: var(--navy-deep);
+}
+
+.mrnp-acc__panel {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height .55s var(--ease-out);
+}
+
+.mrnp-acc__panel-inner {
+    padding: 0 26px 26px;
+    font-size: 15px;
+    line-height: 1.85;
+    font-weight: 300;
+    color: var(--grey);
+}
+
+/* ==========================================================================
+   8. GALLERY + LIGHTBOX
+   ========================================================================== */
+
+.mrnp-gal {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-top: 46px;
+}
+
+.mrnp-gal__item {
+    position: relative;
+    display: block;
+    border-radius: 18px;
+    overflow: hidden;
+    cursor: pointer;
+    aspect-ratio: 4 / 3;
+    background: var(--navy-deep);
+    transform-style: preserve-3d;
+    transition: transform .5s var(--ease-out), box-shadow .5s;
+}
+
+.mrnp-gal__item img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.1s var(--ease-out), filter .5s;
+}
+
+.mrnp-gal__item::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(0, 0, 142, 0) 40%, rgba(0, 0, 142, .85));
+    opacity: 0;
+    transition: opacity .45s;
+}
+
+.mrnp-gal__item:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 36px 64px -34px rgba(0, 0, 142, .8);
+}
+
+.mrnp-gal__item:hover img {
+    transform: scale(1.1);
+}
+
+.mrnp-gal__item:hover::after {
+    opacity: 1;
+}
+
+.mrnp-gal__zoom {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    z-index: 3;
+    width: 56px;
+    height: 56px;
+    margin: -28px 0 0 -28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--grad-gold);
+    color: var(--navy-deep);
+    opacity: 0;
+    transform: scale(.6);
+    transition: opacity .45s, transform .55s var(--ease-bounce);
+}
+
+.mrnp-gal__item:hover .mrnp-gal__zoom {
+    opacity: 1;
+    transform: scale(1);
+}
+
+.mrnp-gal__cap {
+    position: absolute;
+    left: 20px;
+    right: 20px;
+    bottom: 16px;
+    z-index: 3;
+    color: #fff;
+    font-size: 12.5px;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    opacity: 0;
+    transform: translateY(14px);
+    transition: opacity .45s, transform .5s var(--ease-out);
+}
+
+.mrnp-gal__item:hover .mrnp-gal__cap {
+    opacity: 1;
+    transform: none;
+}
+
+/* lightbox */
+.mrnp-lb {
+    position: fixed;
+    inset: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 40px;
+    background: rgba(3, 6, 28, .94);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .4s, visibility .4s;
+}
+
+.mrnp-lb.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+.mrnp-lb__img {
+    max-width: 92vw;
+    max-height: 82vh;
+    border-radius: 14px;
+    box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .9);
+    transform: scale(.92);
+    transition: transform .5s var(--ease-out);
+}
+
+.mrnp-lb.is-open .mrnp-lb__img {
+    transform: scale(1);
+}
+
+.mrnp-lb__close,
+.mrnp-lb__nav {
+    position: absolute;
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    border: 1px solid rgba(255, 255, 255, .25);
+    background: rgba(255, 255, 255, .08);
+    color: #fff;
+    font-size: 22px;
+    line-height: 1;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .3s, transform .3s, color .3s;
+}
+
+.mrnp-lb__close:hover,
+.mrnp-lb__nav:hover {
+    background: var(--grad-gold);
+    color: var(--navy-deep);
+    transform: scale(1.08);
+}
+
+.mrnp-lb__close {
+    top: 28px;
+    right: 28px;
+}
+
+.mrnp-lb__nav--prev {
+    left: 28px;
+    top: 50%;
+    margin-top: -26px;
+}
+
+.mrnp-lb__nav--next {
+    right: 28px;
+    top: 50%;
+    margin-top: -26px;
+}
+
+.mrnp-lb__count {
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: rgba(255, 255, 255, .7);
+    font-size: 13px;
+    letter-spacing: 3px;
+}
+
+/* ==========================================================================
+   9. NEWS / ARTICLE CARDS
+   ========================================================================== */
+
+.mrnp-news {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 28px;
+    margin-top: 46px;
+}
+
+.mrnp-post {
+    position: relative;
+    border-radius: 20px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 142, .09);
+    box-shadow: 0 22px 48px -34px rgba(0, 0, 142, .5);
+    display: flex;
+    flex-direction: column;
+    transition: transform .5s var(--ease-out), box-shadow .5s;
+}
+
+.mrnp-post:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 44px 72px -34px rgba(0, 0, 142, .72);
+}
+
+.mrnp-post__pic {
+    position: relative;
+    aspect-ratio: 16 / 10;
+    overflow: hidden;
+}
+
+.mrnp-post__pic img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s var(--ease-out);
+}
+
+.mrnp-post:hover .mrnp-post__pic img {
+    transform: scale(1.09);
+}
+
+.mrnp-post__date {
+    position: absolute;
+    left: 18px;
+    top: 18px;
+    z-index: 3;
+    padding: 8px 16px;
+    border-radius: 30px;
+    background: var(--grad-gold);
+    color: var(--navy-deep);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+}
+
+.mrnp-post__body {
+    padding: 26px 26px 28px;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.mrnp-post__body h4 {
+    font-size: 19px;
+    line-height: 1.4;
+    text-transform: uppercase;
+    margin: 0 0 12px;
+    color: var(--navy);
+    transition: color .35s;
+}
+
+.mrnp-post:hover .mrnp-post__body h4 {
+    color: var(--teal);
+}
+
+.mrnp-post__body p {
+    font-size: 14.5px;
+    line-height: 1.78;
+    color: var(--grey);
+    margin: 0 0 18px;
+    flex: 1;
+}
+
+/* ==========================================================================
+   10. TESTIMONIALS
+   ========================================================================== */
+
+.mrnp-quotes {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 28px;
+    margin-top: 46px;
+}
+
+.mrnp-quote {
+    position: relative;
+    padding: 44px 34px 34px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 142, .09);
+    box-shadow: 0 22px 48px -34px rgba(0, 0, 142, .5);
+    transition: transform .5s var(--ease-out), box-shadow .5s;
+}
+
+.mrnp-quote:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 40px 68px -34px rgba(0, 0, 142, .7);
+}
+
+.mrnp-quote::before {
+    content: "\201C";
+    position: absolute;
+    left: 26px;
+    top: 2px;
+    font-family: Georgia, serif;
+    font-size: 92px;
+    line-height: 1;
+    color: rgba(255, 173, 24, .3);
+}
+
+.mrnp-quote p {
+    position: relative;
+    font-size: 15.5px;
+    line-height: 1.9;
+    font-weight: 300;
+    color: var(--grey);
+    font-style: italic;
+    margin: 0 0 22px;
+}
+
+.mrnp-quote__by {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(0, 0, 142, .08);
+}
+
+.mrnp-quote__av {
+    width: 46px;
+    height: 46px;
+    flex: 0 0 auto;
+    border-radius: 50%;
+    background: var(--grad-brand);
+    color: var(--gold-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: "Oswald", sans-serif;
+    font-size: 17px;
+    font-weight: 600;
+}
+
+.mrnp-quote__by strong {
+    display: block;
+    font-size: 15px;
+    color: var(--navy);
+    font-weight: 500;
+}
+
+.mrnp-quote__by span {
+    font-size: 12.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: var(--teal);
+}
+
+/* ==========================================================================
+   11. CERTIFICATE GRID
+   ========================================================================== */
+
+.mrnp-certs {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+    margin-top: 46px;
+}
+
+.mrnp-certcard {
+    position: relative;
+    border-radius: 18px;
+    overflow: hidden;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 142, .1);
+    box-shadow: 0 20px 44px -32px rgba(0, 0, 142, .55);
+    cursor: pointer;
+    transform-style: preserve-3d;
+    transition: transform .5s var(--ease-out), box-shadow .5s, border-color .4s;
+}
+
+.mrnp-certcard img {
+    width: 100%;
+    aspect-ratio: 3 / 4;
+    object-fit: cover;
+    display: block;
+    transition: transform 1s var(--ease-out);
+}
+
+.mrnp-certcard:hover {
+    transform: translateY(-10px);
+    border-color: rgba(255, 173, 24, .5);
+    box-shadow: 0 40px 66px -30px rgba(0, 0, 142, .7);
+}
+
+.mrnp-certcard:hover img {
+    transform: scale(1.05);
+}
+
+.mrnp-certcard__bar {
+    padding: 16px 18px;
+    text-align: center;
+    font-size: 12.5px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: var(--navy);
+    background: linear-gradient(135deg, rgba(0, 0, 142, .05), rgba(1, 114, 128, .07));
+    transition: background .4s, color .4s;
+}
+
+.mrnp-certcard:hover .mrnp-certcard__bar {
+    background: var(--grad-brand);
+    color: #fff;
+}
+
+/* ==========================================================================
+   12. CONTACT — form + info cards + map
+   ========================================================================== */
+
+.mrnp-contact {
+    display: grid;
+    grid-template-columns: 1fr 1.25fr;
+    gap: 46px;
+    align-items: start;
+}
+
+.mrnp-infocard {
+    position: relative;
+    display: flex;
+    gap: 18px;
+    padding: 26px 26px;
+    border-radius: 18px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 142, .09);
+    box-shadow: 0 20px 44px -34px rgba(0, 0, 142, .5);
+    margin-bottom: 18px;
+    transition: transform .45s var(--ease-out), box-shadow .45s, border-color .4s;
+}
+
+.mrnp-infocard:hover {
+    transform: translateX(8px);
+    border-color: rgba(255, 173, 24, .45);
+    box-shadow: 0 34px 60px -34px rgba(0, 0, 142, .7);
+}
+
+.mrnp-infocard__icon {
+    flex: 0 0 auto;
+    width: 54px;
+    height: 54px;
+    border-radius: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--grad-brand);
+    color: var(--gold-light);
+    transition: transform .5s var(--ease-bounce);
+}
+
+.mrnp-infocard:hover .mrnp-infocard__icon {
+    transform: rotate(-8deg) scale(1.08);
+}
+
+.mrnp-infocard__icon svg {
+    width: 24px;
+    height: 24px;
+}
+
+.mrnp-infocard strong {
+    display: block;
+    font-size: 12px;
+    letter-spacing: 2.6px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin-bottom: 6px;
+    font-weight: 500;
+}
+
+.mrnp-infocard p,
+.mrnp-infocard a {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--grey);
+    margin: 0;
+    text-decoration: none;
+    transition: color .3s;
+}
+
+.mrnp-infocard a:hover {
+    color: var(--navy);
+    text-decoration: none;
+}
+
+/* form */
+.mrnp-form {
+    position: relative;
+    padding: 44px 40px;
+    border-radius: 24px;
+    background: var(--grad-deep);
+    overflow: hidden;
+    box-shadow: 0 40px 80px -40px rgba(0, 0, 142, .8);
+}
+
+.mrnp-form::before {
+    content: "";
+    position: absolute;
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    background: rgba(255, 173, 24, .25);
+    filter: blur(70px);
+    right: -80px;
+    top: -80px;
+    animation: mrnOrb 18s ease-in-out infinite alternate;
+}
+
+.mrnp-form > * {
+    position: relative;
+    z-index: 2;
+}
+
+.mrnp-form h3 {
+    color: #fff;
+    text-transform: uppercase;
+    font-size: 26px;
+    margin: 0 0 8px;
+}
+
+.mrnp-form > p {
+    color: rgba(255, 255, 255, .7);
+    font-size: 14.5px;
+    line-height: 1.8;
+    margin: 0 0 30px;
+}
+
+.mrnp-field {
+    position: relative;
+    margin-bottom: 26px;
+}
+
+.mrnp-field input,
+.mrnp-field textarea {
+    width: 100%;
+    padding: 16px 4px 12px;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid rgba(255, 255, 255, .25);
+    color: #fff;
+    font-family: "Oswald", sans-serif;
+    font-size: 15.5px;
+    font-weight: 300;
+    outline: none;
+    transition: border-color .4s;
+    resize: none;
+}
+
+.mrnp-field textarea {
+    min-height: 110px;
+}
+
+.mrnp-field label {
+    position: absolute;
+    left: 4px;
+    top: 16px;
+    font-size: 15px;
+    font-weight: 300;
+    color: rgba(255, 255, 255, .55);
+    pointer-events: none;
+    transform-origin: left top;
+    transition: transform .35s var(--ease-out), color .35s;
+}
+
+.mrnp-field input:focus + label,
+.mrnp-field textarea:focus + label,
+.mrnp-field input:not(:placeholder-shown) + label,
+.mrnp-field textarea:not(:placeholder-shown) + label {
+    transform: translateY(-18px) scale(.76);
+    color: var(--gold-light);
+}
+
+.mrnp-field__line {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    height: 2px;
+    width: 100%;
+    background: var(--grad-gold);
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .45s var(--ease-out);
+}
+
+.mrnp-field input:focus ~ .mrnp-field__line,
+.mrnp-field textarea:focus ~ .mrnp-field__line {
+    transform: scaleX(1);
+}
+
+/* map */
+.mrnp-map {
+    position: relative;
+    margin-top: 0;
+    border-radius: 24px;
+    overflow: hidden;
+    box-shadow: 0 34px 70px -40px rgba(0, 0, 142, .7);
+    filter: grayscale(.35) contrast(1.05);
+    transition: filter .5s;
+}
+
+.mrnp-map:hover {
+    filter: none;
+}
+
+.mrnp-map iframe {
+    display: block;
+    width: 100%;
+    height: 440px;
+    border: 0;
+}
+
+/* ==========================================================================
+   13. STAT STRIP (reusable on inner pages)
+   ========================================================================== */
+
+.mrnp-strip {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    margin-top: 46px;
+    padding: 34px;
+    border-radius: 22px;
+    background: var(--grad-brand);
+    box-shadow: 0 34px 70px -40px rgba(0, 0, 142, .8);
+}
+
+.mrnp-strip div {
+    text-align: center;
+    padding: 8px;
+    border-right: 1px solid rgba(255, 255, 255, .16);
+}
+
+.mrnp-strip div:last-child {
+    border-right: none;
+}
+
+.mrnp-strip strong {
+    display: block;
+    font-family: "Oswald", sans-serif;
+    font-size: 42px;
+    line-height: 1;
+    font-weight: 600;
+    color: var(--gold-light);
+}
+
+.mrnp-strip span {
+    display: block;
+    margin-top: 8px;
+    font-size: 11.5px;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .76);
+}
+
+/* ==========================================================================
+   14. STICKY PAGE NAV (long pages)
+   ========================================================================== */
+
+.mrnp-pagenav {
+    position: sticky;
+    top: 110px;
+    padding: 26px 24px;
+    border-radius: 20px;
+    background: #fff;
+    border: 1px solid rgba(0, 0, 142, .1);
+    box-shadow: 0 22px 48px -34px rgba(0, 0, 142, .5);
+}
+
+.mrnp-pagenav h5 {
+    font-size: 12px;
+    letter-spacing: 2.8px;
+    text-transform: uppercase;
+    color: var(--teal);
+    margin: 0 0 16px;
+}
+
+.mrnp-pagenav ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.mrnp-pagenav li + li {
+    margin-top: 4px;
+}
+
+.mrnp-pagenav a {
+    display: block;
+    padding: 9px 14px;
+    border-radius: 10px;
+    font-size: 14px;
+    color: var(--grey);
+    text-decoration: none;
+    border-left: 2px solid transparent;
+    transition: all .35s var(--ease-out);
+}
+
+.mrnp-pagenav a:hover,
+.mrnp-pagenav a.is-active {
+    background: rgba(0, 0, 142, .05);
+    border-left-color: var(--gold);
+    color: var(--navy);
+    text-decoration: none;
+    transform: translateX(4px);
+}
+
+/* ==========================================================================
+   15. Responsive
+   ========================================================================== */
+
+@media (max-width: 1100px) {
+
+    .mrnp-grid--4,
+    .mrnp-certs {
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    .mrnp-news,
+    .mrnp-gal {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mrnp-contact {
+        grid-template-columns: 1fr;
+    }
+
+    .mrnp-split {
+        grid-template-columns: 1fr;
+        gap: 46px;
+    }
+
+    .mrnp-split--wide-left,
+    .mrnp-split--wide-right {
+        grid-template-columns: 1fr;
+    }
+
+    .mrnp-pagenav {
+        position: static;
+    }
+}
+
+@media (max-width: 860px) {
+    .mrnp-section {
+        padding: 70px 0;
+    }
+
+    .mrnp-hero {
+        min-height: 440px;
+    }
+
+    .mrnp-hero__inner {
+        padding: 160px 0 90px;
+    }
+
+    .mrnp-grid--2,
+    .mrnp-grid--3,
+    .mrnp-grid--4,
+    .mrnp-certs,
+    .mrnp-quotes,
+    .mrnp-news {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    .mrnp-strip {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 26px 12px;
+    }
+
+    .mrnp-strip div:nth-child(2n) {
+        border-right: none;
+    }
+
+    .mrnp-checks--2 {
+        grid-template-columns: 1fr;
+    }
+
+    .mrnp-split__media::before {
+        display: none;
+    }
+
+    .mrnp-lb__close {
+        top: 14px;
+        right: 14px;
+    }
+
+    .mrnp-lb__nav--prev {
+        left: 10px;
+    }
+
+    .mrnp-lb__nav--next {
+        right: 10px;
+    }
+}
+
+@media (max-width: 620px) {
+
+    .mrnp-grid--2,
+    .mrnp-grid--3,
+    .mrnp-grid--4,
+    .mrnp-certs,
+    .mrnp-quotes,
+    .mrnp-news,
+    .mrnp-gal {
+        grid-template-columns: 1fr;
+    }
+
+    .mrnp-strip {
+        grid-template-columns: 1fr;
+    }
+
+    .mrnp-strip div {
+        border-right: none;
+        border-bottom: 1px solid rgba(255, 255, 255, .16);
+        padding-bottom: 18px;
+    }
+
+    .mrnp-strip div:last-child {
+        border-bottom: none;
+    }
+
+    .mrnp-form {
+        padding: 34px 24px;
+    }
+
+    .mrnp-prose--lead > p:first-of-type::first-letter {
+        font-size: 48px;
+    }
+}
+
+/* 3D effects are motion — honour the user's preference */
+@media (prefers-reduced-motion: reduce) {
+
+    .mrnp-icard,
+    .mrnp-icard > *,
+    .mrnp-flip__inner,
+    .mrnp-split__frame,
+    .mrnp-certcard {
+        transform: none !important;
+    }
+}

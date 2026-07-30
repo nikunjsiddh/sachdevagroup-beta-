@@ -1,0 +1,66 @@
+{
+ "file": "news.html",
+ "bannerTitle": "",
+ "bannerClass": "page-title4",
+ "contentSummary": "news.html is the News / media listing page but it currently carries no real Sachdeva Group content. Its banner section is empty markup, its original \"News &amp Media\" heading plus an 8-tile image gallery sit commented out, and the only live block is a three-card \"Latest News\" grid whose copy, dates, alt text and two image paths are unmodified placeholders from a concert/Broadway/entertainment template (\"Summer Festival Lineup Announced\", \"Record-Breaking Broadway Run\", \"Behind the Scenes: Making Magic\"). Structurally it is a bare heading + 3-card grid: no H1, no intro copy, no filters, no pagination, no article links, no press-kit or media-contact block, and it does not load css/marine.css…",
+ "blocks": [
+  {
+   "heading": "(none — empty banner)",
+   "kind": "other",
+   "summary": "`<section class=\"page-title4\"></section>` at line 115-117 is completely empty markup. `.page-title4` in css/style.css:2589 supplies a fixed-attachment background image (images/about/about-head-bg4.jpg), min-height:400px and padding-top:220px, so it renders as a 400px tall photo band with zero text — no H1, no `.title4` element, no breadcrumb. The same class is reused verbatim by gallery.html. The page's only real…",
+   "itemCount": 0,
+   "images": [
+    "images/about/about-head-bg4.jpg"
+   ]
+  },
+  {
+   "heading": "(none — orphan lightbox scaffold)",
+   "kind": "other",
+   "summary": "`<div class=\"lightbox\" id=\"lightbox\">` (lines 118-126) containing close button, prev/next nav buttons, `<img id=\"lightboxImage\" src=\"\">` and `<div class=\"lightbox-caption\">`. It is dead on this page: js/inline_scripts.js builds its image array from `.gallery-item img` and this page has no `.gallery-item` elements, so `images` is empty and openLightbox() would throw on `img.parentElement` if it ever fired. Nothing on…",
+   "itemCount": 0,
+   "images": []
+  },
+  {
+   "heading": "News &amp Media (commented out)",
+   "kind": "gallery-grid",
+   "summary": "A ~148-line HTML comment (lines 133-280) wrapping the page's ORIGINAL design: `<section class=\"blog-section blog-detail-page section-padding\">` with `<h1 style=\"margin-bottom:10px;\">News &amp Media</h1>` and a Bootstrap `col-md-4` gallery of 8 identical `.theme-block` tiles. Every one of the 8 tiles uses the same image (images/ship_recycling.jpg), the same yBox lightbox link and the same inline feather-plus SVG —…",
+   "itemCount": 8,
+   "images": [
+    "images/ship_recycling.jpg"
+   ]
+  },
+  {
+   "heading": "Latest News",
+   "kind": "news-list",
+   "summary": "The only live content block. `<section class=\"section\">` (no `.container`, so it sits full-bleed against the viewport) holding an `<h2>Latest News</h2>` and a `.news-grid` (CSS grid, auto-fit minmax(300px,1fr), 30px gap) of 3 `.news-card` items. Each card is image-on-top + `.news-content` with `.news-date`, `.news-title`, `.news-excerpt`. CRITICALLY: all three items are unrelated placeholder copy from an…",
+   "itemCount": 3,
+   "images": [
+    "images/ship_recycling.jpg",
+    "images.unsplash.com/photo_1540039155733_5bb30b53aa14",
+    "images.unsplash.com/photo_1501281668745_f7f57925c3b4"
+   ]
+  }
+ ],
+ "assets": [
+  "images/about/about-head-bg4.jpg",
+  "images/ship_recycling.jpg",
+  "images.unsplash.com/photo_1540039155733_5bb30b53aa14",
+  "images.unsplash.com/photo_1501281668745_f7f57925c3b4"
+ ],
+ "quirks": [
+  "EMPTY BANNER: `<section class=\"page-title4\"></section>` (lines 115-117) has zero content — renders as a 400px tall photo band with no title, no breadcrumb, no overlay text.",
+  "NO H1 ON THE PAGE: the only H1 is inside the commented-out block. The live page starts at H2 ('Latest News'), so the document outline is headless.",
+  "BROKEN IMAGE PATHS (x2): `src=\"images.unsplash.com/photo_1540039155733_5bb30b53aa14\"` (line 298) and `src=\"images.unsplash.com/photo_1501281668745_f7f57925c3b4\"` (line 308) have no protocol, so they…",
+  "PLACEHOLDER CONTENT FROM THE WRONG INDUSTRY: all three news items are entertainment-template filler — 'Summer Festival Lineup Announced', 'Record-Breaking Broadway Run', 'Behind the Scenes: Making…",
+  "PLACEHOLDER ALT TEXT: alt=\"Concert Stage\", alt=\"Theater Show\", alt=\"Behind the Scenes\" — wrong subject matter and useless for accessibility/SEO.",
+  "LEFTOVER COMMENTED-OUT MARKUP: ~148 lines (133-280) of a dead `blog-section blog-detail-page` gallery still sits in the file, including the page's original `<h1 style=\"margin-bottom:10px;\">News &amp…",
+  "DUPLICATE MARKUP INSIDE THAT COMMENT: all 8 gallery tiles are byte-identical — same images/ship_recycling.jpg, same yBox href, same inline feather-plus SVG.",
+  "MALFORMED DOCUMENT HEAD: `<head>` opens at line 4, closes at line 6 after only the inline.css link; lines 8-34 (charset, viewport, title, description, every other stylesheet) then sit OUTSIDE the…",
+  "MISSING BRAND FONT: the page loads Aldrich, Signika Negative and Rubik from Google Fonts but NOT Oswald — the brand typeface used by the whole marine design system.",
+  "MARINE SYSTEM NOT LOADED: news.html links neither css/marine.css nor js/marine.js (nor css/marine-pages.css / js/marine-pages.js, which exist in the repo but are referenced by zero HTML files). None…",
+  "OFF-BRAND PALETTE: css/inline.css hardcodes purple/indigo — h2 color #667eea, .news-date color #764ba2, .news-card:hover box-shadow rgba(102,126,234,.4), h1 color #19456b. Nothing uses navy #00008e,…",
+  "GLOBAL ELEMENT SELECTORS IN inline.css: bare `h1`, `h2` and `.section` rules (not scoped to the page) leak onto every page that loads inline.css. Worse, the global `h1` rule sets…",
+  "CSS CLASS COLLISION: `.section` is defined twice — css/style.css:4721 (`position:relative !important; overflow:hidden`) and css/inline.css:19 (white card, 20px radius, 40px padding, 40px bottom…",
+  "NO LAYOUT CONTAINER: `<section class=\"section\">` has no `.container` / `.row` wrapper, unlike every other section on the site, so the news grid is full-bleed with only 40px of padding and does not…"
+ ]
+}

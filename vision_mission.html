@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 
 <head>
@@ -21,11 +21,11 @@
 
                             } else {
 								location.href="https://www.sachdevagroup.in/index.php"
-                                
+
                             }
                         } else {
 							location.href="https://www.sachdevagroup.in/index.php"
-                            
+
                         }
 
                     }
@@ -45,32 +45,43 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sachdeva Group of Industries Leading Ship Recycling Companies in Alang Gujarat, India</title>
 	<meta name="description" content="">
-    
+
     <!-- Place favicon.ico in the root directory -->
+    <!-- Stylesheets -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/footer.css">
     <link rel="stylesheet" href="css/owl.carousel.css">
     <link rel="stylesheet" href="css/font-awesome.min.css">
     <link rel="stylesheet" href="css/magnific-popup.css">
     <link rel="stylesheet" href="css/flaticon.css">
     <link rel="stylesheet" href="css/lity.css">
     <link rel="stylesheet" href="css/slicknav.min.css">
+    <link rel="stylesheet preload" as="style" href="css/slider.css">
+    <link rel="stylesheet" href="css/aos.css">
     <link rel="stylesheet" href="css/style.css">
     <link href="https://fonts.googleapis.com/css?family=Aldrich" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css?family=Signika+Negative" rel="stylesheet">
-    <!--[if lt IE 9]>
-    <script src="js/modernizr-3.5.0.min.js"></script>
-    <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
-    <![endif]-->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+
+    <!-- Marine experience layer (must load last) -->
+    <link rel="stylesheet" href="css/marine.css">
+    <link rel="stylesheet" href="css/marine-pages.css">
 </head>
 
 <body>
+    <!-- ====== reading progress ====== -->
+    <div class="mrn-progress" id="mrnProgress"></div>
+
     <!-- ====== scroll to top ====== -->
     <a id="toTopBtn" title="Go to top" href="javascript:void(0)">
         <i class="fa fa-chevron-up"></i>
     </a>
 
-   
+
     <div class="wrapper">
         <header class="header">
             <div class="container">
@@ -80,84 +91,74 @@
                             <nav class="navbar navbar-static-top">
                                 <!-- Brand and toggle get grouped for better mobile display -->
                                 <div class="navbar-header">
-                                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" aria-expanded="false">
+                                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                                        aria-expanded="false">
                                         <span class="sr-only">Toggle navigation</span>
                                         <span class="icon-bar"></span>
                                         <span class="icon-bar"></span>
                                         <span class="icon-bar"></span>
                                     </button>
                                     <a class="navbar-brand" href="index.html">
-                                        <img src="images/logo.png" class="img-responsive" alt="logo"> 
+                                        <img src="images/logo-white.png" class="desktop-logo img-responsive"
+                                            alt="Sachdeva Group">
                                     </a>
                                 </div>
 
                                 <!-- Collect the nav links, forms, and other content for toggling -->
                                 <div class="collapse navbar-collapse ">
-                                    
+
                                     <ul class="nav navbar-nav navbar-right" id="main-menu">
                                         <li><a href="index.html">Home</a></li>
-										<li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                                aria-haspopup="true" aria-expanded="false">
                                                 About Us
                                                 <span class="caret"></span>
                                             </a>
                                             <ul class="dropdown-menu">
-                                                <li>
-                                                    <a href="group_profile.html">Group Profile</a>
-                                                </li>
-                                                 <li>
-                                                    <a href="vision_mission.html">Vision &amp Mission</a>
-                                                </li>
-                                                <li>
-                                                    <a href="our_credentials.html">Credentials</a>
-                                                </li> 
-												<li>
-                                                    <a href="testimonials.html">Testimonials</a>
-                                                </li>
+                                                <li><a href="about_us.html">Group Profile</a></li>
+                                                <li><a href="vision_mission.html">Vision &amp; Mission</a></li>
+                                                <li><a href="our_credentials.html">Our Credentials</a></li>
+                                                <li><a href="testimonials.html">Testimonials</a></li>
                                             </ul>
+                                        </li>
                                         <li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                                aria-haspopup="true" aria-expanded="false">
                                                 Our Companies
                                                 <span class="caret"></span>
                                             </a>
                                             <ul class="dropdown-menu">
-                                                <li>
-                                                    <a href="sspsb.html">Sachdeva Steel Products (Ship Breakers) </a>
+                                                <li><a href="sspsb.html">Sachdeva Steel Products (Ship Breakers)</a>
                                                 </li>
-                                                <li>
-                                                    <a href="jjsb.html">Jai Jagdish Ship Breakers</a>
-                                                </li>
-                                                </ul><li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                                <li><a href="jjsb.html">Jai Jagdish Ship Breakers</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                                aria-haspopup="true" aria-expanded="false">
                                                 Green Recycling
                                                 <span class="caret"></span>
                                             </a>
                                             <ul class="dropdown-menu">
-                                                
-                                                <li>
-                                                    <a href="environment_management.html">Environment Management</a>
+                                                <li><a href="environment_management.html">Environment Management</a>
                                                 </li>
-												<li>
-                                                    <a href="health_safety.html">Heatly &amp Safety</a>
-                                                </li>
-												<li>
-                                                    <a href="waste_management.html">Waste Management</a>
-                                                </li>
+                                                <li><a href="health_safety.html">Health &amp; Safety</a></li>
+                                                <li><a href="waste_management.html">Waste Management</a></li>
                                             </ul>
-<li class="dropdown">
-                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
-                                                News &amp Media
+                                        </li>
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                News &amp; Media
                                                 <span class="caret"></span>
                                             </a>
                                             <ul class="dropdown-menu">
-                                                <li>
-                                                    <a href="news.html">News </a>
-                                                </li>
-                                                <li>
-                                                    <a href="gallery.html">Gallery</a>
-                                                </li>
-                                            </ul>                  
-										<li><a href="contact_us.html">Contact</a></li>
+                                                <li><a href="news.html">News</a></li>
+                                                <li><a href="gallery.html">Gallery</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="contact_us.html">Contact</a></li>
                                     </ul>
 
                                 </div>
@@ -169,111 +170,357 @@
 
             </div>
             <div class="mobile-menu" data-logo="images/logo.png">
-
-
             </div>
         </header>
-        <section class="page-title1 theme-before">
-            
+
+        <!-- ============================ PAGE HERO ============================ -->
+        <section class="mrnp-hero">
+            <div class="mrnp-hero__bg" style="background-image:url('images/about/about-head-bg1.png')"></div>
+            <div class="mrnp-hero__scrim"></div>
+            <div class="mrnp-hero__grid"></div>
+            <span class="mrnp-hero__orb mrnp-hero__orb--a"></span>
+            <span class="mrnp-hero__orb mrnp-hero__orb--b"></span>
+
+            <div class="mrnp-hero__inner">
+                <div class="mrn-container">
+                    <nav class="mrnp-crumb">
+                        <a href="index.html">Home</a><span class="sep">/</span><strong>Vision &amp; Mission</strong>
+                    </nav>
+                    <h1 class="mrnp-hero__title" data-mrnp-split-words>Vision &amp; Mission</h1>
+                    <p class="mrnp-hero__sub">
+                        ISO 30000:2009, ISO 9001:2015, 14001:2015 &amp; 45001:2018 Certified Companies
+                    </p>
+                    <div class="mrnp-hero__rule"></div>
+                </div>
+            </div>
+
+            <div class="mrnp-hero__wave">
+                <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <path fill="#ffffff"
+                        d="M0,40 C240,80 480,8 720,34 C960,60 1200,12 1440,42 L1440,80 L0,80 Z" />
+                </svg>
+            </div>
         </section>
 
-        <!-- page section  -->
-        <section class="blog-section blog-detail-page section-padding">
-            <div class="container">
-                <div class="row">
-                
-                    <div class="col-md-8">
-                    <h1 style="margin-bottom:10px;">Vision</h1>
-                    <p class="write">To emerge as leaders in the ship recycling business and to spearhead unprecedented heights, providing safety to our people and the environment and delivering superior value to all stakeholders.<br><br>
-						<h4 class="main-title1 text-left">Mission</h4>
-                     <p>Our mission is to set global standards for safety and environment protection and raise the bar for others to follow. In all our activities, we strive to fulfill this mission.</p>
+        <!-- ============================ VISION ============================ -->
+        <section class="mrnp-section mrn-light" id="vision">
+            <div class="mrn-container">
+                <div class="mrnp-split mrnp-split--wide-left">
+                    <div class="mrnp-split__media" data-mrn-tilt="8" data-mrn-reveal="left">
+                        <div class="mrnp-split__frame">
+                            <img src="images/ship_recycling.jpg"
+                                alt="Aerial view of the Sachdeva Group ship recycling yard at Alang">
+                        </div>
                     </div>
-                    <div class="col-md-4">
-                        <aside class="sidebar">
-							
-							<!-- widget box  -->
-                            <div class="widget-box">
-                                <div class="widget-title">
-                                    <h3 class="main-title text-left">
-                                        <span>
-                                            Our Companies
-                                        </span>
-                                    </h3>
-                                </div>
-                                <div class="widget-content">
-                                    <ul class="tags">
-                                         <li>
-                                                    <a href="sspsb.html">Sachdeva Steel Products (Ship Breakers) </a>
-                                                </li>
-                                                <li>
-                                                    <a href="jjsb.html">Jai Jagdish Ship Breakers</a>
-                                                </li>
-                                                </ul></div>
 
-                            </div>
-                            <!-- widget box ends  -->
-                            
-                            
-                            <!-- widget box  -->
-                            <div class="widget-box">
-                                <div class="widget-title">
-                                    <h3 class="main-title text-left">
-                                        <span>
-                                            Contact Us
-                                        </span>
-                                    </h3>
-                                </div>
-                               <div class="content" style="margin-left:20px;">
-                        <br />        
-                                  <p>
-                                    <i class="fa fa-map-marker"> </i>
-                                    <span>ADDRESS :</span>"Sachdeva House" , Opp Swaminarayan Mandir ,Lokhand Bazar , Bhavnagar,
-Gujarat , India 
-                                </p>
-                                <p>
-                                    <i class="fa fa-phone"> </i>
-                                    <span>CALL US :</span>+91 278 2429573
-                                </p>
-                                <p>
-                                    <i class="fa fa-envelope-o"> </i>
-                                    <span>EMAIL US :</span>info@sachdevagroup.in
-                                </p>
-                                
-                                
-                            </div>
-                            </div>
-                            <!-- widget box ends  -->
-                            
-                          
-                        </aside>
+                    <div data-mrn-reveal="right">
+                        <h2 class="mrn-title">Vision</h2>
+                        <div class="mrnp-prose mrnp-prose--lead">
+                            <p>To emerge as leaders in the ship recycling business and to spearhead unprecedented
+                                heights, providing safety to our people and the environment and delivering superior
+                                value to all stakeholders.</p>
+                        </div>
                     </div>
                 </div>
             </div>
         </section>
-        <!-- page section ends  -->
-        <section class="newsletter-section section-padding">
-            <div class="container">
-                <div class="row">
-                    <div class="col-md-12">
-                        <h4 class="newsletter-title ">
-                            ISO 30000:2009, ISO 9001:2015, 14001:2015 &amp;  45001:2018 Certified Companies</h4>
+
+        <!-- ============================ MISSION ============================ -->
+        <section class="mrnp-section mrn-dark" id="mission">
+            <div class="mrn-container">
+                <div class="mrnp-split mrnp-split--wide-right">
+                    <div data-mrn-reveal="left">
+                        <h2 class="mrn-title">Mission</h2>
+                        <div class="mrnp-prose">
+                            <p>Our mission is to set global standards for safety and environment protection and raise
+                                the bar for others to follow.</p>
+                            <p>In all our activities, we strive to fulfill this mission.</p>
+                        </div>
                     </div>
-                    
+
+                    <div class="mrnp-split__media" data-mrn-tilt="8" data-mrn-reveal="right">
+                        <div class="mrnp-split__frame">
+                            <img src="images/Environmental-Concerns.jpg"
+                                alt="End-of-life vessels beached at the waterline of a ship recycling yard">
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
-               
-     <div class="copyright">
 
-            <p style="color:#FFF">
-                © Copyright 2020 | SACHDEVA GROUP. All Right Reserved Design By
-                <a href="http://www.gravitee.in/" target="_blank">GRAVITEE</a>
-            </p>
-        </div>
+        <!-- ============================ OUR COMPANIES ============================ -->
+        <section class="mrnp-section mrn-soft" id="companies">
+            <div class="mrn-container">
+                <div class="mrn-center">
+                    <h2 class="mrn-title" data-mrn-reveal>Our Companies</h2>
+                </div>
+
+                <div class="mrnp-grid mrnp-grid--2" data-mrn-stagger="150" data-mrn-reveal>
+                    <a class="mrnp-icard" href="sspsb.html" data-mrnp-tilt="8">
+                        <div class="mrnp-icard__icon">
+                            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                                <path fill="currentColor"
+                                    d="M20 21c-1.39 0-2.78-.47-4-1.32-2.44 1.71-5.56 1.71-8 0C6.78 20.53 5.39 21 4 21H2v2h2c1.38 0 2.74-.35 4-.99 2.52 1.29 5.48 1.29 8 0 1.26.65 2.62.99 4 .99h2v-2h-2zM3.95 19H4c1.6 0 3.02-.88 4-2 .98 1.12 2.4 2 4 2s3.02-.88 4-2c.98 1.12 2.4 2 4 2h.05l1.89-6.68c.08-.26.06-.54-.06-.78s-.34-.42-.6-.5L20 10.62V6c0-1.1-.9-2-2-2h-3V1H9v3H6c-1.1 0-2 .9-2 2v4.62l-1.29.42c-.26.08-.48.26-.6.5s-.15.52-.06.78L3.95 19zM6 6h12v3.97L12 8 6 9.97V6z" />
+                            </svg>
+                        </div>
+                        <h4>Sachdeva Steel Products (Ship Breakers)</h4>
+                        <span class="mrnp-icard__no">01</span>
+                    </a>
+
+                    <a class="mrnp-icard" href="jjsb.html" data-mrnp-tilt="8">
+                        <div class="mrnp-icard__icon">
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg">
+                                <circle cx="12" cy="4.5" r="2.2" />
+                                <path d="M12 6.7V21" />
+                                <path d="M8.2 10.4h7.6" />
+                                <path d="M3.8 13.4a8.2 8.2 0 0 0 16.4 0" />
+                            </svg>
+                        </div>
+                        <h4>Jai Jagdish Ship Breakers</h4>
+                        <span class="mrnp-icard__no">02</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ CONTACT ============================ -->
+        <section class="mrnp-section mrn-light" id="contact">
+            <div class="mrn-container">
+                <div class="mrn-center">
+                    <h2 class="mrn-title" data-mrn-reveal>Contact Us</h2>
+                </div>
+
+                <div class="mrnp-grid mrnp-grid--3" data-mrn-stagger="120" data-mrn-reveal>
+                    <div class="mrnp-infocard">
+                        <div class="mrnp-infocard__icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <strong>ADDRESS</strong>
+                            <p>"Sachdeva House", Opp Swaminarayan Mandir, Lokhand Bazar, Bhavnagar, Gujarat, India</p>
+                        </div>
+                    </div>
+
+                    <div class="mrnp-infocard">
+                        <div class="mrnp-infocard__icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <strong>CALL US</strong>
+                            <a href="tel:+912782429573">+91 278 2429573</a>
+                        </div>
+                    </div>
+
+                    <div class="mrnp-infocard">
+                        <div class="mrnp-infocard__icon">
+                            <svg viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z">
+                                </path>
+                            </svg>
+                        </div>
+                        <div>
+                            <strong>EMAIL US</strong>
+                            <a href="mailto:info@sachdevagroup.in">info@sachdevagroup.in</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <footer class="footer-enhanced">
+            <!-- Animated Wave Background -->
+            <div class="footer-waves">
+                <svg class="wave-svg" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 120"
+                    preserveAspectRatio="none">
+
+                    <!-- <path class="wave-path wave-1" fill="#5d5c5c"
+                        d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z"
+                        opacity=".25"></path> -->
+
+                    <!-- <path class="wave-path wave-2" fill="#5d5c5c"
+                        d="M0,0V15.81C13,36.92,27.64,56.86,47.69,72.05,99.41,111.27,165,111,224.58,91.58c31.15-10.15,60.09-26.07,89.67-39.8,40.92-19,84.73-46,130.83-49.67,36.26-2.85,70.9,9.42,98.6,31.56,31.77,25.39,62.32,62,103.63,73,40.44,10.79,81.35-6.69,119.13-24.28s75.16-39,116.92-43.05c59.73-5.85,113.28,22.88,168.9,38.84,30.2,8.66,59,6.17,87.09-7.5,22.43-10.89,48-26.93,60.65-49.24V0Z"
+                        opacity=".5"></path> -->
+
+                    <path class="wave-path wave-3" fill="#5d5c5c"
+                        d="M0,0V5.63C149.93,59,314.09,71.32,475.83,42.57c43-7.64,84.23-20.12,127.61-26.46,59-8.63,112.48,12.24,165.56,35.4C827.93,77.22,886,95.24,951.2,90c86.53-7,172.46-45.71,248.8-84.81V0Z">
+                    </path>
+
+                </svg>
+            </div>
+
+            <!-- Animated Background Particles -->
+            <div class="footer-particles">
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+
+            <div class="container">
+                <!-- Main Footer Content -->
+                <div class="footer-main-enhanced">
+                    <div class="footer-grid-enhanced">
+                        <!-- Company Info & Newsletter Column -->
+                        <div class="footer-col-enhanced brand-newsletter-col">
+                            <div class="brand-section">
+                                <div class="footer-logo-container">
+
+                                    <div class="col-md-4 col-sm-4 content">
+                                        <img src="images/logo-white.png" class="desktop-logo footer-logo" alt="logo">
+                                    </div>
+                                </div>
+                                <p class="footer-tagline-enhanced">Our Company Sachdeva Steel Products (Ship Breaking
+                                    Unit) LLP and Jai Jagdish Ship Breakers Pvt. Ltd. is involved in the business since
+                                    ship breaking activity started at Alang in 1983.</p>
+
+                                <div class="cert-badges">
+                                    <span class="cert-badge">ISO Certified</span>
+
+                                </div>
+                            </div>
+
+
+                        </div>
+
+                        <!-- Quick Links Column -->
+                        <div class="footer-col-enhanced links-col">
+                            <h4 class="footer-heading-enhanced"><span class="heading-icon"></span> Quick Links</h4>
+                            <ul class="footer-links-enhanced">
+                                <li><a href="index.html"><span class="link-arrow">→</span> Home</a></li>
+                                <li><a href="about_us.html"><span class="link-arrow">→</span> About Us</a></li>
+                                <li><a href="sspsb.html"><span class="link-arrow">→</span> Sachdeva Steel Products</a>
+                                </li>
+                                <li><a href="jjsb.html"><span class="link-arrow">→</span> Jai Jagdish Ship Breakers</a>
+                                </li>
+                                <li><a href="our_credentials.html"><span class="link-arrow">→</span> Our Credentials</a>
+                                </li>
+                                <li><a href="gallery.html"><span class="link-arrow">→</span> Gallery</a></li>
+                                <li><a href="news.html"><span class="link-arrow">→</span> News &amp; Media</a></li>
+                                <li><a href="contact_us.html"><span class="link-arrow">→</span> Contact Us</a></li>
+                            </ul>
+                        </div>
+
+                        <!-- Contact Information Column -->
+                        <div class="footer-col-enhanced contact-col">
+                            <h4 class="footer-heading-enhanced"><span class="heading-icon"></span> Contact Us</h4>
+                            <ul class="footer-contact-enhanced">
+                                <li class="contact-item-enhanced">
+                                    <div class="contact-icon-enhanced">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path
+                                                d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div class="contact-details">
+                                        <strong>Address</strong>
+                                        <span>"Sachdeva House", Opp Swaminarayan Mandir, Lokhana Bazar, Bhavnagar,
+                                            Gujarat, India</span>
+                                    </div>
+                                </li>
+                                <li class="contact-item-enhanced">
+                                    <div class="contact-icon-enhanced">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path
+                                                d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div class="contact-details">
+                                        <strong>Phone</strong>
+                                        <span>+91 278 2429573</span>
+                                    </div>
+                                </li>
+                                <li class="contact-item-enhanced">
+                                    <div class="contact-icon-enhanced">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path
+                                                d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z">
+                                            </path>
+                                        </svg>
+                                    </div>
+                                    <div class="contact-details">
+                                        <strong>Email</strong>
+                                        <span>info@sachdevagroup.in</span>
+                                    </div>
+                                </li>
+                            </ul>
+
+                            <div class="social-section-enhanced">
+                                <h5 class="social-title">Follow Us</h5>
+                                <div class="social-icons-enhanced">
+                                    <a href="#" class="social-link facebook" aria-label="Facebook" title="Facebook">
+                                        <svg viewBox="0 0 24 24" fill="#ffffff">
+                                            <path
+                                                d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-link twitter" aria-label="Twitter" title="Twitter">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path
+                                                d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-link linkedin" aria-label="LinkedIn" title="LinkedIn">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path
+                                                d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                    <a href="#" class="social-link instagram" aria-label="Instagram" title="Instagram">
+                                        <svg viewBox="0 0 24 24" fill="currentColor">
+                                            <path
+                                                d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z">
+                                            </path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Footer Bottom Bar -->
+                <div class="footer-bottom-enhanced">
+                    <p class="copyright-enhanced">
+                        © Copyright 2026 | Designed & Developed by Two12 Design Studio
+                    </p>
+                </div>
+            </div>
+        </footer>
     </div>
     <script src="js/jquery.1.12.4.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/plugins.js"></script>
+    <script src="js/slider.js"></script>
     <script src="js/main.js"></script>
+    <script src="js/aos.js"></script>
+    <script>
+        AOS.init({ once: true });
+    </script>
+    <script src="js/marine.js"></script>
+    <script src="js/marine-pages.js"></script>
 </body>
+
 </html>

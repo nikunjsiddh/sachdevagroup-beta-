@@ -1,0 +1,50 @@
+{
+ "file": "waste_management.html",
+ "bannerTitle": "Waste & Management",
+ "bannerClass": "page-title3",
+ "contentSummary": "This is the thinnest page in the green-recycling cluster: a fixed-height banner followed by a single navy-to-teal gradient card holding one intro paragraph and one nine-item bulleted list. The paragraph frames end-of-life ship dismantling as a hazard problem, naming asbestos, PCBs, glass fibre, solid foam and waste oil as the on-board materials that threaten environment and human health. The list is the actual substance — a chain-of-custody procedure running from the ship owner handing over the IHM before purchase, through labelling, plan-driven handling, trained removal under HSE supervision, dedicated temporary yard storage, authorised sub-contractor collection against a manifest, and HSE…",
+ "blocks": [
+  {
+   "heading": "Waste & Management",
+   "kind": "other",
+   "summary": "Page banner. <section class=\"page-title3 max-height theme-before\"> containing <div class=\"banner-title dark\"><h1>Waste &amp; Management</h1></div>. Not empty — it carries the H1 and nothing else. Visual treatment comes entirely from style.css: a fixed 650px height (.max-height), a parallax background-attachment:fixed image (images/about/about-head-bg3.jpg), and a 135deg navy(0,0,142,.7) to teal(1,114,128,.7)…",
+   "itemCount": 0,
+   "images": [
+    "images/about/about-head-bg3.jpg"
+   ]
+  },
+  {
+   "heading": "(no heading)",
+   "kind": "prose",
+   "summary": "Single lead paragraph <p class=\"mb-30\"> opening the content card. Says that dismantling end-of-life ships in an environmentally sound and safe manner is a major concern and challenge, and that on-board hazardous materials — asbestos, polychlorinated biphenyls (PCBs), glass fibre, solid foam and waste oil — can incur severe negative implications on the environment and human health. Five named hazard classes are…",
+   "itemCount": 0,
+   "images": []
+  },
+  {
+   "heading": "Following Procedure followed by Sachdeva Group:-",
+   "kind": "list",
+   "summary": "<h3 class=\"mb-30\"> plus <ul class=\"pl-0 mb-30\"> with 9 <li> items, each prefixed by a hardcoded • text character (global CSS sets ul{list-style:none}, so the bullets are content, not style). The nine steps form a linear hazardous-waste chain of custody: (1) before purchase the ship owner hands the IHM over to the SRF; (2) identified HAZ MATS are clearly labelled and marked as early as possible prior to dismantling;…",
+   "itemCount": 9,
+   "images": []
+  }
+ ],
+ "assets": [
+  "images/about/about-head-bg3.jpg"
+ ],
+ "quirks": [
+  "Banner H1 reads \"Waste &amp; Management\". Every nav link on every sibling page, and the repo's own asset names, call it \"Waste Management\" — the ampersand is a copy error, probably pasted from the…",
+  "Empty banner-adjacent styling contract: style.css defines .page-title3 .title3 { font-size:60px; color:#fff } but the markup uses <div class=\"banner-title dark\"><h1> and never applies .title3 — the…",
+  "Banner reuses an About-section asset: .page-title3 pulls images/about/about-head-bg3.jpg. A green-recycling/hazmat page is dressed in an About header image. (images/waste.jpg and…",
+  "background-attachment: fixed on .page-title3 combined with .max-height { height: 650px } — the fixed parallax is ignored/janky on iOS Safari and most mobile browsers, so the banner degrades to a…",
+  "z-index collision in the banner: .theme-before::before (the gradient scrim) and .banner-title are BOTH z-index: 11. The title only paints above the scrim because it comes later in DOM order — one…",
+  "Body wrapper carries leftover blog-template classes: <section class=\"blog-section blog-detail-page section-padding\"> on a page that is not a blog post and has no post meta, author, date or sidebar.",
+  "Dead scroll animation: .inner-page-block-wrapper has classes \"js-scroll fade-in-top\". js/scroll.js finds .js-scroll and toggles a .scrolled class, but NEITHER .fade-in-top NOR .scrolled is defined in…",
+  "Undefined class: .inner-page-block-wrapper has no rule anywhere in css/. It is a bare div.",
+  "scroll.js binds only to the scroll event and never runs on load, so anything already in viewport would never animate even if the CSS existed.",
+  "CSS specificity bug: .waste-management-block sets transform: unset to stop the card from lifting, but .inner-page-block:hover (specificity 0,2,0) beats .waste-management-block (0,1,0) — the card…",
+  "List bullets are hardcoded \"•\" text characters typed inside each <li>, while global CSS sets ul { list-style: none }. Screen readers announce the bullet glyph as content, and the marker cannot be…",
+  "Raw unescaped ampersands throughout the visible list copy: \"clearly labelled & marked\", \"from the yard & issue manifest\", \"quantity & type\", \"the health & environment\" — should be &amp;.",
+  "Broken grammar in visible copy: \"Unsafe management and disposal of ship wastes can readily lead to adverse the health & environment.\" (\"lead to adverse the health\" is not a sentence).",
+  "Missing possessive in visible copy: \"For sustainable green ship recycling Sachdeva Group first priority is safe handling hazardous material...\" — should be \"Sachdeva Group's first priority is safe…"
+ ]
+}
