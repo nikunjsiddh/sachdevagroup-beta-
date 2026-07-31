@@ -1,0 +1,8 @@
+<IfModule mod_headers.c>
+    # Always revalidate CSS/JS with the server instead of relying on browser
+    # heuristic caching (no Cache-Control was being sent at all, so edits
+    # during active development could look "invisible" until a hard refresh).
+    <FilesMatch "\.(css|js)$">
+        Header set Cache-Control "no-cache, must-revalidate"
+    </FilesMatch>
+</IfModule>
