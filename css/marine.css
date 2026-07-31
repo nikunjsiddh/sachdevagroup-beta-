@@ -35,6 +35,7 @@
 
 html {
     scroll-behavior: smooth;
+    scroll-padding-top: 96px;
 }
 
 body {
@@ -1734,12 +1735,28 @@ body {
 }
 
 .header {
+    top: 0;
+    background: linear-gradient(135deg, rgba(0, 0, 142, .94) 0%, rgba(1, 114, 128, .88) 100%);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    box-shadow: 0 10px 30px -18px rgba(0, 0, 0, .6);
+    border-bottom: 1px solid rgba(255, 173, 24, .2);
+    padding: 4px 0;
     transition: background .45s var(--ease-out), padding .45s var(--ease-out), box-shadow .45s;
+}
+
+/* keep the logo + nav row compact at all times, not just once scrolled */
+.header .navbar-brand > img {
+    max-width: 120px;
+}
+
+.header .menubar ul.nav {
+    margin: 15px auto;
 }
 
 /* glass treatment layered on top of main.js' own .sticky_menu toggle */
 .header.sticky_menu {
-    background: linear-gradient(135deg, rgba(0, 0, 142, .92) 0%, rgba(1, 114, 128, .88) 100%) !important;
+    background: linear-gradient(135deg, rgba(0, 0, 142, .97) 0%, rgba(1, 114, 128, .93) 100%) !important;
     backdrop-filter: blur(14px);
     -webkit-backdrop-filter: blur(14px);
     box-shadow: 0 14px 40px -20px rgba(0, 0, 0, .85) !important;
@@ -1756,6 +1773,40 @@ body {
     height: 1px;
     background: linear-gradient(90deg, transparent, var(--gold), transparent);
     opacity: .7;
+}
+
+/* ---- Nav pills: hover / active state + standout Contact button ---- */
+#main-menu > li > a {
+    border-radius: 999px;
+    transition: background .3s var(--ease-out), color .3s, box-shadow .3s, transform .3s var(--ease-out);
+}
+
+#main-menu > li:not(:last-child) > a:hover,
+#main-menu > li:not(:last-child) > a:focus,
+#main-menu > li:not(:last-child).mrn-nav-active > a {
+    background: rgba(255, 255, 255, .14);
+    color: var(--gold-light);
+}
+
+#main-menu .dropdown-menu > li.mrn-nav-active > a {
+    background-color: var(--gold-light);
+    color: #fff;
+    padding-left: 20px;
+}
+
+#main-menu > li:last-child > a {
+    background: linear-gradient(135deg, var(--teal-light) 0%, var(--aqua) 140%);
+    color: var(--navy-deep) !important;
+    font-weight: 600;
+    box-shadow: 0 10px 26px -12px rgba(10, 159, 176, .85);
+}
+
+#main-menu > li:last-child > a:hover,
+#main-menu > li:last-child > a:focus {
+    background: linear-gradient(135deg, var(--aqua) 0%, var(--teal-light) 140%);
+    color: var(--navy-deep) !important;
+    transform: translateY(-2px);
+    box-shadow: 0 14px 30px -12px rgba(10, 159, 176, .95);
 }
 
 #toTopBtn {

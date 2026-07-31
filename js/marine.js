@@ -332,6 +332,27 @@
     }
 
     /* ------------------------------------------------------------------
+       11. Highlight the current page in the shared nav
+    ------------------------------------------------------------------ */
+    function initNavActive() {
+        var links = document.querySelectorAll('#main-menu > li > a[href], #main-menu .dropdown-menu > li > a[href]');
+        if (!links.length) return;
+
+        var current = location.pathname.split('/').pop() || 'index.html';
+
+        Array.prototype.forEach.call(links, function (a) {
+            var href = a.getAttribute('href').split('/').pop();
+            if (!href || href !== current) return;
+
+            var li = a.parentElement;
+            if (li) li.classList.add('mrn-nav-active');
+
+            var parentDropdown = li && li.closest ? li.closest('li.dropdown') : null;
+            if (parentDropdown) parentDropdown.classList.add('mrn-nav-active');
+        });
+    }
+
+    /* ------------------------------------------------------------------
        Boot
     ------------------------------------------------------------------ */
     function boot() {
@@ -345,6 +366,7 @@
         initParallax();
         initTimeline();
         initMagnetic();
+        initNavActive();
     }
 
     if (document.readyState === 'loading') {

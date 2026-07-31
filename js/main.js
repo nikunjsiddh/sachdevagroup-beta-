@@ -57,14 +57,17 @@
     ======================================*/
     var navbar = $(".header");
     var scrolled = false;
+    /* threshold kept below the header's own (unscrolled) height so it
+       switches to fixed before it would otherwise scroll out of view */
+    var stickyThreshold = 80;
     $mainwindow.on("scroll", function () {
-      if (200 < $mainwindow.scrollTop() && !scrolled) {
+      if (stickyThreshold < $mainwindow.scrollTop() && !scrolled) {
         navbar.addClass("sticky_menu animated fadeInDown").animate({
           "margin-top": "0px",
         });
         scrolled = true;
       }
-      if (200 > $mainwindow.scrollTop() && scrolled) {
+      if (stickyThreshold > $mainwindow.scrollTop() && scrolled) {
         navbar
           .removeClass("sticky_menu animated fadeInDown")
           .css("margin-top", "0px");
