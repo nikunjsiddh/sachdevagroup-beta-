@@ -1,0 +1,648 @@
+/* ==========================================================================
+   Sachdeva Group — Yard-address band + modern footer
+   Scope     : index.html only (loaded after marine-pages.css)
+   Namespace : .sgf-*  — nothing here collides with the legacy
+               .footer-enhanced rules in css/footer.css that inner pages use.
+   ========================================================================== */
+
+:root {
+    --sgf-ink: #071a2e;
+    /* footer body background      */
+    --sgf-card-1: #0a2036;
+    /* yard card gradient — start  */
+    --sgf-card-2: #103254;
+    /* yard card gradient — middle */
+    --sgf-card-3: #2a7fc9;
+    /* yard card gradient — end    */
+    --sgf-cyan: #22b3e6;
+    --sgf-cyan-bright: #35c6f4;
+    --sgf-cyan-deep: #1195cf;
+    --sgf-cyan-tint: rgba(34, 179, 230, .13);
+    --sgf-gold: #ffad18;
+    --sgf-body: #a7bbcf;
+    --sgf-body-dim: #8ba1b6;
+    --sgf-line: rgba(255, 255, 255, .09);
+    --sgf-ease: cubic-bezier(.16, 1, .3, 1);
+}
+
+/* ==========================================================================
+   1. Yard address band
+   ========================================================================== */
+
+.sgf-yard {
+    position: relative;
+    background: #ffffff;
+    padding: 100px 0 130px;
+    z-index: 2;
+}
+
+.sgf-yard__inner {
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.sgf-yard__card {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 44px;
+    padding: 56px 58px;
+    border-radius: 26px;
+    overflow: hidden;
+    isolation: isolate;
+    background: linear-gradient(112deg, var(--sgf-card-1) 0%, var(--sgf-card-2) 40%, var(--sgf-card-3) 100%);
+    box-shadow: 0 34px 74px -36px rgba(9, 32, 55, .78);
+}
+
+/* decorative swell inside the card */
+.sgf-yard__swell {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+    pointer-events: none;
+}
+
+.sgf-yard__swell path {
+    fill: none;
+    stroke: rgba(255, 255, 255, .16);
+    stroke-width: 1.5;
+}
+
+.sgf-yard__glow {
+    position: absolute;
+    top: -60%;
+    right: -6%;
+    width: 460px;
+    height: 460px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(53, 198, 244, .34) 0%, rgba(53, 198, 244, 0) 68%);
+    z-index: -1;
+    pointer-events: none;
+}
+
+.sgf-yard__text {
+    min-width: 0;
+}
+
+.sgf-yard__badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 9px;
+    padding: 9px 20px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .10);
+    border: 1px solid rgba(255, 255, 255, .20);
+    font-family: "Oswald", sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.sgf-yard__dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--sgf-cyan-bright);
+    animation: sgfPulse 2.4s var(--sgf-ease) infinite;
+}
+
+@keyframes sgfPulse {
+    0% {
+        box-shadow: 0 0 0 0 rgba(53, 198, 244, .55);
+    }
+
+    70% {
+        box-shadow: 0 0 0 9px rgba(53, 198, 244, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(53, 198, 244, 0);
+    }
+}
+
+.sgf-yard__title {
+    margin: 22px 0 13px;
+    font-family: "Oswald", sans-serif;
+    font-weight: 700;
+    font-size: 42px;
+    line-height: 1.14;
+    letter-spacing: .3px;
+    color: #ffffff;
+}
+
+.sgf-yard__meta {
+    margin: 0;
+    font-size: 15.5px;
+    line-height: 1.6;
+    color: rgba(255, 255, 255, .84);
+}
+
+.sgf-yard__meta a {
+    color: rgba(255, 255, 255, .84);
+    text-decoration: none;
+    border-bottom: 1px solid rgba(255, 255, 255, .28);
+    transition: color .3s var(--sgf-ease), border-color .3s var(--sgf-ease);
+}
+
+.sgf-yard__meta a:hover,
+.sgf-yard__meta a:focus {
+    color: #ffffff;
+    border-bottom-color: var(--sgf-cyan-bright);
+    text-decoration: none;
+}
+
+.sgf-yard__sep {
+    padding: 0 9px;
+    color: rgba(255, 255, 255, .45);
+}
+
+.sgf-yard__btn {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 19px 34px;
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--sgf-cyan-bright) 0%, var(--sgf-cyan-deep) 100%);
+    color: #04263f;
+    font-size: 16px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+    box-shadow: 0 18px 36px -16px rgba(34, 179, 230, .95);
+    transition: transform .45s var(--sgf-ease), box-shadow .45s var(--sgf-ease);
+}
+
+.sgf-yard__btn:hover,
+.sgf-yard__btn:focus {
+    color: #04263f;
+    text-decoration: none;
+    transform: translateY(-3px);
+    box-shadow: 0 26px 46px -16px rgba(34, 179, 230, 1);
+}
+
+.sgf-yard__btn i {
+    font-style: normal;
+    transition: transform .35s var(--sgf-ease);
+}
+
+.sgf-yard__btn:hover i {
+    transform: translateX(5px);
+}
+
+/* ==========================================================================
+   2. Footer shell + wave
+   ========================================================================== */
+
+.sgf-footer {
+    position: relative;
+    background: var(--sgf-ink);
+    color: var(--sgf-body);
+    overflow: hidden;
+}
+
+.sgf-footer__wave {
+    position: absolute;
+    top: -1px;
+    left: 0;
+    width: 100%;
+    line-height: 0;
+    pointer-events: none;
+    z-index: 1;
+}
+
+.sgf-footer__wave svg {
+    display: block;
+    width: 100%;
+    height: 92px;
+}
+
+.sgf-footer__wave path {
+    fill: #ffffff;
+}
+
+.sgf-footer__inner {
+    position: relative;
+    z-index: 2;
+    width: 100%;
+    max-width: 1240px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+
+.sgf-footer__grid {
+    display: grid;
+    grid-template-columns: 1.65fr 1fr 1.25fr 1.35fr;
+    gap: 54px;
+    padding: 140px 0 62px;
+}
+
+/* ==========================================================================
+   3. Brand column
+   ========================================================================== */
+
+.sgf-logo {
+    display: block;
+    width: 128px;
+    height: auto;
+    margin-bottom: 26px;
+}
+
+.sgf-about {
+    margin: 0 0 26px;
+    max-width: 330px;
+    font-size: 15px;
+    line-height: 1.78;
+    color: var(--sgf-body);
+}
+
+.sgf-badges {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 9px;
+    margin-bottom: 28px;
+}
+
+.sgf-badge {
+    padding: 6px 15px;
+    border-radius: 999px;
+    border: 1px solid rgba(34, 179, 230, .32);
+    background: var(--sgf-cyan-tint);
+    color: #cfe9f7;
+    font-family: "Oswald", sans-serif;
+    font-size: 12px;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.sgf-social {
+    display: flex;
+    gap: 10px;
+}
+
+.sgf-social a {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, .06);
+    border: 1px solid var(--sgf-line);
+    color: #cfe0ef;
+    transition: background .35s var(--sgf-ease), color .35s var(--sgf-ease),
+        border-color .35s var(--sgf-ease), transform .35s var(--sgf-ease);
+}
+
+.sgf-social a:hover,
+.sgf-social a:focus {
+    background: var(--sgf-cyan);
+    border-color: var(--sgf-cyan);
+    color: #04263f;
+    transform: translateY(-4px);
+}
+
+.sgf-social svg {
+    width: 17px;
+    height: 17px;
+    fill: currentColor;
+}
+
+/* ==========================================================================
+   4. Link columns
+   ========================================================================== */
+
+.sgf-col__title {
+    display: flex;
+    align-items: center;
+    gap: 11px;
+    margin: 0 0 26px;
+    font-family: "Oswald", sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.sgf-tick {
+    width: 9px;
+    height: 9px;
+    flex: 0 0 auto;
+    border-radius: 2px;
+    background: var(--sgf-cyan);
+    box-shadow: 0 0 0 4px rgba(34, 179, 230, .15);
+}
+
+.sgf-links {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sgf-links li {
+    margin-bottom: 13px;
+}
+
+.sgf-links a {
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 9px;
+    font-size: 15px;
+    line-height: 1.5;
+    color: var(--sgf-body);
+    text-decoration: none;
+    transition: color .3s var(--sgf-ease), transform .3s var(--sgf-ease);
+}
+
+.sgf-links a:hover,
+.sgf-links a:focus {
+    color: #ffffff;
+    text-decoration: none;
+    transform: translateX(5px);
+}
+
+.sgf-chev {
+    color: var(--sgf-cyan);
+    font-size: 16px;
+    line-height: 1.4;
+    transition: color .3s var(--sgf-ease);
+}
+
+.sgf-links a:hover .sgf-chev {
+    color: var(--sgf-cyan-bright);
+}
+
+/* ==========================================================================
+   5. Get in touch column
+   ========================================================================== */
+
+.sgf-contact {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.sgf-contact li {
+    display: flex;
+    gap: 14px;
+    margin-bottom: 22px;
+}
+
+.sgf-contact__icon {
+    flex: 0 0 auto;
+    width: 38px;
+    height: 38px;
+    border-radius: 11px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--sgf-cyan-tint);
+    border: 1px solid rgba(34, 179, 230, .28);
+    color: var(--sgf-cyan);
+    transition: background .35s var(--sgf-ease), color .35s var(--sgf-ease);
+}
+
+.sgf-contact li:hover .sgf-contact__icon {
+    background: var(--sgf-cyan);
+    color: #04263f;
+}
+
+.sgf-contact__icon svg {
+    width: 17px;
+    height: 17px;
+    fill: currentColor;
+}
+
+.sgf-contact__label {
+    display: block;
+    margin-bottom: 6px;
+    font-family: "Oswald", sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.8px;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.sgf-contact__value {
+    display: block;
+    font-size: 15px;
+    line-height: 1.62;
+    color: var(--sgf-body);
+    text-decoration: none;
+    transition: color .3s var(--sgf-ease);
+}
+
+a.sgf-contact__value:hover,
+a.sgf-contact__value:focus {
+    color: var(--sgf-cyan-bright);
+    text-decoration: none;
+}
+
+/* ==========================================================================
+   6. Bottom bar
+   ========================================================================== */
+
+.sgf-footer__bottom {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 14px;
+    padding: 24px 0 30px;
+    border-top: 1px solid var(--sgf-line);
+    font-size: 14px;
+    color: var(--sgf-body-dim);
+}
+
+/* css/style.css declares `p { font-size:16px; color:#4a4a4b; margin-bottom:15px }`.
+   A directly matched declaration always beats an inherited one, so the bottom-bar
+   paragraphs cannot inherit from .sgf-footer__bottom — restate them here. */
+.sgf-footer__bottom p {
+    margin: 0;
+    font-size: 14px;
+    color: var(--sgf-body-dim);
+}
+
+.sgf-footer__bottom a {
+    color: #a7bbcf;
+    text-decoration: none;
+    transition: color .3s var(--sgf-ease);
+}
+
+.sgf-footer__bottom a:hover,
+.sgf-footer__bottom a:focus {
+    color: var(--sgf-cyan-bright);
+    text-decoration: none;
+}
+
+/* ==========================================================================
+   7. Back-to-top button (matches the new accent pair)
+   ========================================================================== */
+
+#toTopBtn {
+    width: 46px;
+    height: 46px;
+    line-height: 42px;
+    background: linear-gradient(135deg, var(--sgf-cyan-bright) 0%, var(--sgf-cyan-deep) 100%) !important;
+    color: #ffffff !important;
+    border: 2px solid var(--sgf-gold) !important;
+    box-shadow: 0 14px 30px -12px rgba(34, 179, 230, .95) !important;
+}
+
+#toTopBtn:hover {
+    background: linear-gradient(135deg, var(--sgf-cyan-deep) 0%, var(--sgf-cyan-bright) 100%) !important;
+}
+
+/* ==========================================================================
+   8. Keyboard focus ring
+   css/style.css declares `a:focus, a:hover { outline: 0 }` for every anchor,
+   so a colour swap is all that is left of the focus state — well under the 3:1
+   change WCAG 2.4.11 asks for. Restore a real ring here (this file loads last).
+   No border-radius is set: the outline already follows each element's own
+   radius, so the pill CTA and the circular social buttons keep their shape.
+   ========================================================================== */
+
+.sgf-yard a:focus-visible,
+.sgf-footer a:focus-visible,
+#toTopBtn:focus-visible {
+    outline: 2px solid var(--sgf-cyan-bright);
+    outline-offset: 3px;
+}
+
+/* The CTA is itself cyan — a cyan ring would sit cyan-on-cyan. White clears
+   4:1 against every stop of the card gradient the offset ring lands on. */
+.sgf-yard__btn:focus-visible {
+    outline-color: #ffffff;
+}
+
+/* ==========================================================================
+   9. Responsive
+   ========================================================================== */
+
+/* 4 columns no longer fit the 1240px container — pair them up two by two so
+   the grid stays completely filled instead of leaving a hole on the last row. */
+@media (max-width: 1200px) {
+    .sgf-footer__grid {
+        grid-template-columns: 1.15fr 1fr;
+        gap: 48px 54px;
+        padding: 130px 0 58px;
+    }
+}
+
+@media (max-width: 991px) {
+    .sgf-yard {
+        padding: 80px 0 110px;
+    }
+
+    .sgf-yard__card {
+        padding: 44px 40px;
+        gap: 32px;
+    }
+
+    .sgf-yard__title {
+        font-size: 34px;
+    }
+
+    .sgf-footer__grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 44px;
+        padding: 120px 0 54px;
+    }
+
+    .sgf-col--brand,
+    .sgf-col--contact {
+        grid-column: 1 / -1;
+    }
+
+    .sgf-about {
+        max-width: 560px;
+    }
+}
+
+@media (max-width: 767px) {
+    .sgf-yard {
+        padding: 60px 0 90px;
+    }
+
+    .sgf-yard__inner,
+    .sgf-footer__inner {
+        padding: 0 18px;
+    }
+
+    .sgf-yard__card {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 36px 26px;
+        gap: 28px;
+        border-radius: 20px;
+    }
+
+    .sgf-yard__glow {
+        top: -30%;
+        right: -30%;
+        width: 300px;
+        height: 300px;
+    }
+
+    .sgf-yard__title {
+        margin: 18px 0 11px;
+        font-size: 27px;
+    }
+
+    .sgf-yard__meta {
+        font-size: 14.5px;
+    }
+
+    .sgf-yard__sep {
+        padding: 0 6px;
+    }
+
+    .sgf-yard__btn {
+        width: 100%;
+        justify-content: center;
+        padding: 17px 28px;
+    }
+
+    .sgf-footer__wave svg {
+        height: 52px;
+    }
+
+    .sgf-footer__grid {
+        grid-template-columns: 1fr;
+        gap: 38px;
+        padding: 84px 0 44px;
+    }
+
+    .sgf-col--brand,
+    .sgf-col--contact {
+        grid-column: auto;
+    }
+
+    .sgf-footer__bottom {
+        justify-content: center;
+        text-align: center;
+        padding: 22px 0 28px;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sgf-yard__dot {
+        animation: none;
+    }
+
+    .sgf-yard__btn,
+    .sgf-links a,
+    .sgf-social a {
+        transition: none;
+    }
+}
