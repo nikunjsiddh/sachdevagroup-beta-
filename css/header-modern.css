@@ -1,0 +1,344 @@
+/* ==========================================================================
+   Sachdeva Group — dark-navy header bar
+   Scope     : index.html only (loaded after marine.css / marine-pages.css)
+   Namespace : every rule is gated on .sgh-header, the class added to
+               <header class="header sgh-header">, so the other 12 pages keep
+               the existing navy/teal gradient bar untouched.
+   Palette   : shares the footer's ink + cyan so the page reads as one system.
+   ========================================================================== */
+
+:root {
+    --sgh-ink: #071a2e;
+    /* header bar                     */
+    --sgh-panel: #0a2340;
+    /* dropdown panel                 */
+    --sgh-cyan: #22b3e6;
+    --sgh-cyan-bright: #35c6f4;
+    --sgh-cyan-deep: #1195cf;
+    --sgh-link: #e7f0f8;
+    --sgh-link-dim: #b9cbdc;
+    --sgh-ease: cubic-bezier(.16, 1, .3, 1);
+    /* Montserrat is what style.css asks for site-wide but is never actually
+       loaded as a webfont, so name the platform fallbacks explicitly rather
+       than dropping to whatever generic sans the browser picks. */
+    --sgh-font: "Montserrat", "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* ==========================================================================
+   1. The bar
+   ========================================================================== */
+
+.sgh-header {
+    background: var(--sgh-ink);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+    border-bottom: 1px solid rgba(255, 255, 255, .07);
+    box-shadow: 0 10px 30px -22px rgba(0, 0, 0, .85);
+    padding: 2px 0;
+}
+
+.sgh-header.sticky_menu {
+    background: rgba(7, 26, 46, .97) !important;
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(53, 198, 244, .22);
+    box-shadow: 0 16px 40px -24px rgba(0, 0, 0, .9) !important;
+    padding: 2px 0;
+}
+
+/* marine.css draws a gold hairline under the sticky bar — recolour it cyan */
+.sgh-header.sticky_menu::after {
+    background: linear-gradient(90deg, transparent, var(--sgh-cyan), transparent);
+    opacity: .55;
+}
+
+/* css/style.css ends with a stray global `.container { padding: 20px }` that
+   added 40px of dead height to the bar. Neutralise it inside the header only —
+   the rule still applies everywhere else on the page. */
+.sgh-header > .container {
+    padding-top: 0;
+    padding-bottom: 0;
+}
+
+/* One flex row in both states, so the logo and nav stay centred against each
+   other instead of relying on floats. */
+.sgh-header .navbar,
+.sgh-header.sticky_menu .navbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.sgh-header .navbar-collapse {
+    flex: 1 1 auto;
+}
+
+/* style.css hides the logo the moment the bar goes sticky; the reference keeps
+   it in place, and a bar that drops its own logo on scroll reads as a bug. */
+.sgh-header.sticky_menu .navbar-brand {
+    display: block;
+}
+
+/* The mark is nearly square (wheel over wordmark), so cap it by HEIGHT —
+   capping width alone left a 99px-tall logo and a 164px-tall bar. */
+.sgh-header .navbar-brand > img,
+.sgh-header.sticky_menu .navbar-brand > img {
+    max-width: none;
+    max-height: 48px;
+    width: auto;
+}
+
+.sgh-header .navbar-brand,
+.sgh-header.sticky_menu .navbar-brand {
+    padding: 4px 5px;
+    margin: 4px 0;
+}
+
+.sgh-header .menubar ul.nav,
+.sgh-header.sticky_menu .menubar ul.nav {
+    margin: 10px auto;
+}
+
+/* ==========================================================================
+   2. Top-level items
+   css/style.css sets `.nav > li > a { text-transform:uppercase; font-size:18px }`
+   — outranked here by the extra .sgh-header class.
+   ========================================================================== */
+
+.sgh-header #main-menu > li {
+    margin: 0 1px;
+}
+
+.sgh-header #main-menu > li > a {
+    position: relative;
+    padding: 10px 15px;
+    font-family: var(--sgh-font);
+    font-size: 15.5px;
+    font-weight: 500;
+    letter-spacing: .2px;
+    line-height: 1.4;
+    text-transform: none;
+    color: var(--sgh-link);
+    border-radius: 999px;
+    transition: color .3s var(--sgh-ease), background .3s var(--sgh-ease);
+}
+
+/* hover / current page: cyan text plus a cyan underline that wipes in.
+   Replaces marine.css' translucent pill + gold text. */
+.sgh-header #main-menu > li:not(:last-child) > a:hover,
+.sgh-header #main-menu > li:not(:last-child) > a:focus,
+.sgh-header #main-menu > li:not(:last-child).mrn-nav-active > a {
+    background: transparent;
+    color: var(--sgh-cyan-bright);
+}
+
+.sgh-header #main-menu > li:not(:last-child) > a::after {
+    content: "";
+    position: absolute;
+    left: 15px;
+    right: 15px;
+    bottom: 3px;
+    height: 2px;
+    border-radius: 2px;
+    background: var(--sgh-cyan-bright);
+    opacity: 1;
+    transform: scaleX(0);
+    transform-origin: center;
+    transition: transform .35s var(--sgh-ease);
+}
+
+.sgh-header #main-menu > li:not(:last-child) > a:hover::after,
+.sgh-header #main-menu > li:not(:last-child) > a:focus::after,
+.sgh-header #main-menu > li:not(:last-child).mrn-nav-active > a::after {
+    left: 15px;
+    right: 15px;
+    opacity: 1;
+    transform: scaleX(1);
+}
+
+/* Bootstrap's caret triangle */
+.sgh-header #main-menu > li > a .caret {
+    margin-left: 7px;
+    border-top-width: 5px;
+    border-right-width: 4px;
+    border-left-width: 4px;
+    border-top-color: rgba(255, 255, 255, .55);
+    transition: border-top-color .3s var(--sgh-ease), transform .3s var(--sgh-ease);
+}
+
+.sgh-header #main-menu > li:hover > a .caret,
+.sgh-header #main-menu > li.mrn-nav-active > a .caret {
+    border-top-color: var(--sgh-cyan-bright);
+}
+
+.sgh-header #main-menu > li.dropdown:hover > a .caret {
+    transform: rotate(180deg);
+}
+
+/* ==========================================================================
+   3. Contact Us pill
+   ========================================================================== */
+
+.sgh-header #main-menu > li:last-child {
+    margin-left: 14px;
+}
+
+.sgh-header #main-menu > li:last-child > a {
+    padding: 11px 26px;
+    background: linear-gradient(135deg, var(--sgh-cyan-bright) 0%, var(--sgh-cyan-deep) 100%);
+    color: #04263f !important;
+    font-weight: 600;
+    box-shadow: 0 12px 26px -14px rgba(34, 179, 230, .95);
+    transition: transform .35s var(--sgh-ease), box-shadow .35s var(--sgh-ease);
+}
+
+.sgh-header #main-menu > li:last-child > a:hover,
+.sgh-header #main-menu > li:last-child > a:focus {
+    background: linear-gradient(135deg, var(--sgh-cyan-deep) 0%, var(--sgh-cyan-bright) 100%);
+    color: #04263f !important;
+    transform: translateY(-2px);
+    box-shadow: 0 16px 32px -14px rgba(34, 179, 230, 1);
+}
+
+/* ==========================================================================
+   4. Dropdown panels
+   ========================================================================== */
+
+/* !important is needed only to answer style.css' own
+   `@media (min-width:992px) { .navbar-right .dropdown-menu { border-radius:0 !important } }` */
+.sgh-header .menubar .dropdown-menu {
+    min-width: 236px;
+    margin-top: 8px;
+    padding: 8px;
+    background: var(--sgh-panel);
+    border: 1px solid rgba(255, 255, 255, .08);
+    border-radius: 12px !important;
+    box-shadow: 0 26px 50px -26px rgba(0, 0, 0, .95);
+}
+
+.sgh-header .menubar .dropdown-menu > li > a {
+    padding: 10px 14px;
+    border-radius: 8px;
+    font-family: var(--sgh-font);
+    font-size: 14.5px;
+    font-weight: 400;
+    letter-spacing: .1px;
+    text-transform: none;
+    color: var(--sgh-link-dim);
+    white-space: normal;
+    /* style.css separates items with a black hairline that reads as a gash
+       on a navy panel — lighten it to a translucent white rule. */
+    border-bottom: 1px solid rgba(255, 255, 255, .06);
+}
+
+.sgh-header .menubar .dropdown-menu > li:last-child > a {
+    border-bottom: none;
+}
+
+/* style.css slides these 6px right on hover and paints them gold — hold the
+   padding steady and use a cyan wash instead. */
+.sgh-header .menubar .dropdown-menu > li > a:hover,
+.sgh-header .menubar .dropdown-menu > li > a:focus,
+.sgh-header #main-menu .dropdown-menu > li.mrn-nav-active > a {
+    padding-left: 14px;
+    background-color: rgba(34, 179, 230, .16);
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   5. Keyboard focus — css/style.css kills `a:focus { outline: 0 }` site-wide
+   ========================================================================== */
+
+.sgh-header a:focus-visible {
+    outline: 2px solid var(--sgh-cyan-bright);
+    outline-offset: 3px;
+}
+
+.sgh-header #main-menu > li:last-child > a:focus-visible {
+    outline-color: #ffffff;
+}
+
+/* ==========================================================================
+   6. Mobile (slicknav takes over below 992px)
+   ========================================================================== */
+
+@media (max-width: 991px) {
+
+    .sgh-header,
+    .sgh-header.sticky_menu {
+        padding: 0;
+    }
+
+    /* style.css paints this bar white, which fought the dark logo.
+       Brand + burger share one flex row; the nav panel is forced onto a second
+       row (it is a child of .slicknav_menu, so it would otherwise join them). */
+    .sgh-header .slicknav_menu {
+        display: flex;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: space-between;
+        background-color: transparent;
+        padding: 8px 14px;
+    }
+
+    .sgh-header .slicknav_brand {
+        max-width: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .sgh-header .slicknav_brand img {
+        max-width: none;
+        max-height: 44px;
+        width: auto;
+    }
+
+    .sgh-header .slicknav_btn {
+        margin: 0;
+        padding: 8px 10px;
+        background-color: transparent;
+    }
+
+    .sgh-header .slicknav_menu .slicknav_icon-bar {
+        background-color: #ffffff;
+        box-shadow: none;
+    }
+
+    .sgh-header .slicknav_nav {
+        flex: 0 0 100%;
+        width: 100%;
+        margin-top: 6px;
+        padding: 6px;
+        background: var(--sgh-panel);
+        border: 1px solid rgba(255, 255, 255, .08);
+        border-radius: 12px;
+    }
+
+    .sgh-header .slicknav_nav a {
+        font-family: var(--sgh-font);
+        font-size: 15px;
+        text-transform: none;
+        color: var(--sgh-link-dim);
+        border-radius: 8px;
+    }
+
+    .sgh-header .slicknav_nav .slicknav_row:hover,
+    .sgh-header .slicknav_nav a:hover {
+        background: rgba(34, 179, 230, .16);
+        color: #ffffff;
+        border-radius: 8px;
+    }
+
+    .sgh-header .slicknav_nav .slicknav_arrow {
+        color: var(--sgh-cyan-bright);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sgh-header #main-menu > li > a,
+    .sgh-header #main-menu > li > a::after,
+    .sgh-header #main-menu > li > a .caret {
+        transition: none;
+    }
+}
