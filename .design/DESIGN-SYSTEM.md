@@ -333,22 +333,35 @@ component** — the file was pruned once already to keep that true.
     <a href="#profile">Group Profile</a>…
   </div>
 </nav>
+
+<!-- seam wave. Caller: about_us.html, after the rail. Ink ground, white
+     curve — the same path the .mrnp-hero__wave uses. Only needed when
+     something sits between the banner and the first section. -->
+<div class="pfx-wave" aria-hidden="true">
+  <svg viewBox="0 0 1440 80" preserveAspectRatio="none">
+    <path fill="#ffffff" d="M0,40 C240,80 480,8 720,34 C960,60 1200,12 1440,42 L1440,80 L0,80 Z"/>
+  </svg>
+</div>
 ```
 
-### The page banner — `.mrn-hero--page`
+### The About banner
 
-`about_us.html` opens on **index.html's hero component**, not on `.mrnp-hero`: the same
-`images/banner/banner.mp4` footage, duotone scrim, light rays, particle canvas and stat rail.
-Every `.mrn-hero` rule in `index-theme.css` is class-scoped (zero `#home` in the file), so it
-transfers intact. `.mrn-hero--page` changes one thing — it trims the full-viewport height, because
-a banner announces a page and should not be the page.
+`about_us.html` uses the shared `.mrnp-hero` component like every other inner page — a **still
+photograph**, not footage. The image is `images/about/about-head-bg1.png`, the About banner the
+page originally shipped with, and the only asset in `images/about/` shaped as a banner strip
+(2050×688). It is a 1.6 MB PNG; converting it to WebP would be worth doing.
 
-Copy the hero block from `about_us.html` if another page earns this treatment. Two things must
-travel with it:
+What it adds over a standard page hero is two pieces borrowed from index's hero —
+`.mrn-hero__badge` and `.mrn-hero__actions`. Both are class-scoped in `index-theme.css`, so they
+compose inside `.mrnp-hero` with only spacing declared in `page-fx.css` section 6.4.
 
-1. `js/page-fx.js` guards on `.mrnp-section`, **not** on `.mrn-hero`. Switching that test back
-   would disable the choreography on exactly the pages that use this banner.
-2. The stat rail's figures must already appear in that page's own copy.
+**The wave is not inside the hero on this page.** The sticky `.pfx-jump` rail sits between the
+banner and the content, and a white curve on top of a dark bar reads as a mistake. The wave is
+lifted out into `.pfx-wave`, which carries its own ink ground. Order is
+**banner → rail → wave → first section**, and the curve does the same job it does everywhere
+else: takes dark into white.
+
+`js/page-fx.js` guards on `.mrnp-section`, **not** on `.mrn-hero` — leave that test alone.
 
 ### `position: sticky` needs `.wrapper` unblocked
 

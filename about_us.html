@@ -178,49 +178,50 @@
 
         <!-- ============================ PAGE HERO ============================ -->
         <!-- ============================ PAGE BANNER ============================
-             index.html's cinematic hero, reused. Same footage, same duotone
-             scrim, same light rays and particle canvas — .mrn-hero is entirely
-             class-scoped in css/index-theme.css, so it carries over intact.
-             .mrn-hero--page (css/page-fx.css section 6.4) only trims the
-             full-viewport height, because a banner announces a page and should
-             not be the page.
-             The rail figures are this page's own: 1983, 4,950 m², 100,000+ LT
-             and 73 vessels all appear in the copy below. -->
-        <section class="mrn-hero mrn-hero--page" id="banner">
-            <div class="mrn-hero__media" data-mrn-parallax="0.10">
-                <video autoplay muted loop playsinline preload="metadata" poster="images/gallery/5.jpg">
-                    <source src="images/banner/banner.mp4" type="video/mp4">
-                </video>
-            </div>
-            <div class="mrn-hero__scrim"></div>
-            <div class="mrn-hero__rays"></div>
-            <canvas class="mrn-hero__canvas" id="mrnHeroCanvas"></canvas>
+             Still photograph, not footage: images/about/about-head-bg1.png is
+             the About banner this page shipped with originally (2050x688,
+             the only asset in images/about/ shaped as a banner strip).
 
-            <div class="mrn-hero__inner">
+             This is .mrnp-hero, the shared page-banner component — so it comes
+             with the wave foot, the survey grid and the drifting orbs the rest
+             of the site's inner pages use. The badge, the action pair and the
+             breadcrumb are index-theme.css classes; every one of them is
+             class-scoped, so they compose here without a wrapper rule.
+
+             The wave is NOT inside the hero. It seams the dark chrome into the
+             white content, and the .pfx-jump rail sits between the two — a
+             white curve above a dark bar would read as a mistake. Order is:
+             banner -> rail -> wave -> first section. -->
+        <section class="mrnp-hero abt-hero" id="banner">
+            <div class="mrnp-hero__bg" style="background-image:url('images/about/about-head-bg1.png')"></div>
+            <div class="mrnp-hero__scrim"></div>
+            <div class="mrnp-hero__grid"></div>
+            <span class="mrnp-hero__orb mrnp-hero__orb--a" aria-hidden="true"></span>
+            <span class="mrnp-hero__orb mrnp-hero__orb--b" aria-hidden="true"></span>
+
+            <div class="mrnp-hero__inner">
                 <div class="mrn-container">
                     <nav class="mrnp-crumb">
                         <a href="index.html">Home</a><span class="sep">/</span><strong>About Us</strong>
                     </nav>
 
-                    <div class="mrn-hero__badge" data-anim="fade-up">
+                    <div class="mrn-hero__badge">
                         <b>&#9875;</b>
                         <span>Alang Ship Recycling Yard &middot; Since 1983</span>
                     </div>
 
-                    <h1 class="mrn-hero__title">
-                        <span class="mrn-word"><span style="--d:.15s">About</span></span>
-                        <span class="mrn-word"><span style="--d:.27s" class="mrn-hl">Sachdeva</span></span>
-                        <span class="mrn-word"><span style="--d:.39s" class="mrn-hl">Group</span></span>
-                    </h1>
+                    <h1 class="mrnp-hero__title" data-mrnp-split-words>About Sachdeva Group</h1>
 
-                    <p class="mrn-hero__sub" data-anim="fade-up">
+                    <p class="mrnp-hero__sub" data-sg-split>
                         The Sachdeva Group, through its companies Sachdeva Steel Products (Ship Breaking Unit) LLP
                         and Jai Jagdish Ship Breakers Pvt. Ltd., has been a cornerstone in the ship recycling
                         industry since its inception in Alang, Gujarat, in 1983.
                     </p>
 
+                    <div class="mrnp-hero__rule"></div>
+
                     <div class="mrn-hero__actions">
-                        <a href="contact_us.html" class="mrn-btn mrn-btn--gold" data-anim="fade-up" data-mrn-magnetic>
+                        <a href="contact_us.html" class="mrn-btn mrn-btn--gold" data-mrn-magnetic>
                             Discuss a Vessel
                             <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
                         </a>
@@ -232,33 +233,9 @@
                 </div>
             </div>
 
-            <span class="mrn-scrollcue" aria-hidden="true"></span>
-
-            <div class="mrn-hero__rail">
-                <div class="mrn-container">
-                    <div class="mrn-hero__rail-grid">
-                        <div class="mrn-hero__rail-item">
-                            <strong><span data-count="1983">0</span></strong>
-                            <span>Operating Since</span>
-                        </div>
-                        <!-- not data-count: marine.js prints the tally with
-                             toFixed(), which would render these as 4950 and
-                             100000 and drop the thousands separators the copy
-                             below uses -->
-                        <div class="mrn-hero__rail-item">
-                            <strong>4,950</strong>
-                            <span>Square Meters Of Land</span>
-                        </div>
-                        <div class="mrn-hero__rail-item">
-                            <strong>100,000<i>+</i></strong>
-                            <span>Lightweight Tons Annually</span>
-                        </div>
-                        <div class="mrn-hero__rail-item">
-                            <strong><span data-count="73">0</span></strong>
-                            <span>Vessels Recycled</span>
-                        </div>
-                    </div>
-                </div>
+            <div class="pfx-cue" aria-hidden="true">
+                <span>Scroll</span>
+                <i></i>
             </div>
         </section>
 
@@ -277,6 +254,13 @@
                 <a href="#creds">Credentials</a>
             </div>
         </nav>
+
+        <!-- the seam: ink above, white below -->
+        <div class="pfx-wave" aria-hidden="true">
+            <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                <path fill="#ffffff" d="M0,40 C240,80 480,8 720,34 C960,60 1200,12 1440,42 L1440,80 L0,80 Z" />
+            </svg>
+        </div>
 
         <!-- ============================ GROUP PROFILE ============================ -->
         <section class="mrnp-section mrn-light" id="profile">
@@ -313,6 +297,29 @@
                     </div>
                 </div>
 
+                <!-- These four figures rode in the banner while it was index's
+                     hero, which carries a stat rail. The still-photograph
+                     banner has no such slot, so they come back to the strip
+                     they were in before. Every one appears in the copy above:
+                     1983, 4,950 m2, 100,000+ LT, 37 + 36 vessels. -->
+                <div class="mrnp-strip">
+                    <div>
+                        <strong><span data-count="1983">0</span></strong>
+                        <span>Operating Since</span>
+                    </div>
+                    <div>
+                        <strong>4,950</strong>
+                        <span>Square Meters Of Land</span>
+                    </div>
+                    <div>
+                        <strong>100,000<i>+</i></strong>
+                        <span>Lightweight Tons Annually</span>
+                    </div>
+                    <div>
+                        <strong>37 + 36</strong>
+                        <span>Ships Recycled</span>
+                    </div>
+                </div>
             </div>
         </section>
 

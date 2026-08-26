@@ -1626,48 +1626,47 @@
     }
 }
 
-/* --- 6.4 page banner — index's cinematic hero, on an inner page ---------
+/* --- 6.4 banner extras — index chrome inside a page hero ----------------
    Caller: about_us.html.
 
-   The About page carries the whole story of the group — profile, heritage,
-   vision, mission, compliance, both units, testimonials, credentials — so it
-   opens on the same footage index.html opens on (images/banner/banner.mp4)
-   rather than on a still. That means it uses index's `.mrn-hero` component
-   outright, not `.mrnp-hero`: every `.mrn-hero` rule in index-theme.css is
-   class-scoped, with zero `#home` in the file, so the whole treatment —
-   duotone footage, light rays, particle canvas, stat rail — transfers as-is.
+   That page keeps the shared `.mrnp-hero` banner — still photograph, survey
+   grid, orbs — but borrows two pieces from index's hero: `.mrn-hero__badge`
+   and `.mrn-hero__actions`. Both are class-scoped in index-theme.css, so they
+   compose inside `.mrnp-hero` with only the spacing stated here. */
 
-   What this modifier changes is only what a page banner should not inherit
-   from a homepage takeover: the full-viewport height. A banner announces the
-   page; it should not BE the page. `js/page-fx.js` guards on `.mrnp-section`
-   rather than on `.mrn-hero` precisely so this page keeps its choreography. */
-
-.mrn-hero--page {
-    --sg-rail-h: 108px;
-    min-height: max(600px, calc(82svh - var(--sg-head, 104px)));
+.mrnp-hero .mrn-hero__badge {
+    margin-bottom: 22px;
 }
 
-.mrn-hero--page .mrn-hero__inner {
-    padding-top: clamp(56px, 7vh, 92px);
+.mrnp-hero .mrn-hero__actions {
+    margin-top: 34px;
 }
 
-/* the breadcrumb is the one thing index's hero has no slot for — it is what
-   tells a visitor this is an inner page and not the front door */
-.mrn-hero--page .mrnp-crumb {
-    margin-bottom: 20px;
-    opacity: 0;
-    animation: sgHeroFadeUp .8s var(--e-out) .05s forwards;
+/* --- 6.5 seam wave -----------------------------------------------------
+   Caller: about_us.html, between the section rail and the first section.
+
+   On every other inner page the wave lives inside .mrnp-hero and seams the
+   banner straight into the content. about_us.html has the sticky rail in
+   between, and a white curve sitting on top of a dark bar reads as a mistake,
+   so the wave is lifted out and given its own ink ground. Order on that page
+   is banner -> rail -> wave -> first section, and the curve does what it does
+   everywhere else: takes dark into white. */
+
+.pfx-wave {
+    position: relative;
+    z-index: 1;
+    line-height: 0;
+    background: var(--ink, #071a2e);
+    pointer-events: none;
 }
 
-.mrn-hero--page .mrn-hero__title {
-    max-width: 14ch;
+.pfx-wave svg {
+    display: block;
+    width: 100%;
+    height: 74px;
 }
 
-.mrn-hero--page .mrn-hero__sub {
-    max-width: 62ch;
-}
-
-/* --- 6.5 section rail — the sticky in-page nav -------------------------
+/* --- 6.6 section rail — the sticky in-page nav -------------------------
    Caller: about_us.html.
 
    The About material used to be split across three nav entries (Group
@@ -1772,13 +1771,7 @@
     transform: scaleX(1);
 }
 
-/* index's hero rail is the banner's foot; the section rail is the next thing
-   down, so the two must not both claim the seam */
-.mrn-hero--page + .pfx-jump {
-    border-top: 0;
-}
-
-/* --- 6.6 data table — the ships-recycled lists --------------------------
+/* --- 6.7 data table — the ships-recycled lists --------------------------
    sspsb.html and jjsb.html each carry a bare <table> holding the fleet
    record. It is styled by css/style.css:579-609, which paints it with the
    RETIRED #00008e -> #017280 gradient and white text — the one palette
@@ -2044,8 +2037,8 @@ html.sg-motion [data-sg-delay="10"] {
         mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
     }
 
-    .mrn-hero--page {
-        min-height: 540px;
+    .pfx-wave svg {
+        height: 52px;
     }
 
     .pfx-step {
@@ -2114,10 +2107,10 @@ html.sg-motion [data-sg-delay="10"] {
         animation: none !important;
     }
 
-    /* the banner's copy must still arrive — these animations carry a
-       `forwards` fill from opacity 0, so killing them outright would leave
-       the breadcrumb invisible */
-    .mrn-hero--page .mrnp-crumb {
+    /* the banner's copy must still arrive — the badge animation carries a
+       `forwards` fill from opacity 0, so killing it outright would leave the
+       badge invisible */
+    .mrnp-hero .mrn-hero__badge {
         opacity: 1 !important;
         animation: none !important;
     }
