@@ -124,18 +124,7 @@
 
                                     <ul class="nav navbar-nav navbar-right" id="main-menu">
                                         <li><a href="index.html">Home</a></li>
-                                        <li class="dropdown">
-                                            <a href="about_us.html" class="dropdown-toggle" data-toggle="dropdown"
-                                                role="button" aria-haspopup="true" aria-expanded="false">
-                                                About
-                                                <span class="caret"></span>
-                                            </a>
-                                            <ul class="dropdown-menu">
-                                                <li><a href="about_us.html">Group Profile</a></li>
-                                                <li><a href="vision_mission.html">Vision &amp; Mission</a></li>
-                                                <li><a href="testimonials.html">Testimonials</a></li>
-                                            </ul>
-                                        </li>
+                                        <li><a href="about_us.html">About Us</a></li>
                                         <li class="dropdown">
                                             <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
                                                 aria-haspopup="true" aria-expanded="false">
@@ -188,40 +177,106 @@
         </header>
 
         <!-- ============================ PAGE HERO ============================ -->
-        <section class="mrnp-hero abt-hero">
-            <div class="mrnp-hero__bg" style="background-image:url('images/gallery/5.jpg')"></div>
-            <div class="mrnp-hero__scrim"></div>
-            <div class="mrnp-hero__grid"></div>
-            <span class="mrnp-hero__orb mrnp-hero__orb--a"></span>
-            <span class="mrnp-hero__orb mrnp-hero__orb--b"></span>
+        <!-- ============================ PAGE BANNER ============================
+             index.html's cinematic hero, reused. Same footage, same duotone
+             scrim, same light rays and particle canvas — .mrn-hero is entirely
+             class-scoped in css/index-theme.css, so it carries over intact.
+             .mrn-hero--page (css/page-fx.css section 6.4) only trims the
+             full-viewport height, because a banner announces a page and should
+             not be the page.
+             The rail figures are this page's own: 1983, 4,950 m², 100,000+ LT
+             and 73 vessels all appear in the copy below. -->
+        <section class="mrn-hero mrn-hero--page" id="banner">
+            <div class="mrn-hero__media" data-mrn-parallax="0.10">
+                <video autoplay muted loop playsinline preload="metadata" poster="images/gallery/5.jpg">
+                    <source src="images/banner/banner.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="mrn-hero__scrim"></div>
+            <div class="mrn-hero__rays"></div>
+            <canvas class="mrn-hero__canvas" id="mrnHeroCanvas"></canvas>
 
-            <div class="mrnp-hero__inner">
+            <div class="mrn-hero__inner">
                 <div class="mrn-container">
                     <nav class="mrnp-crumb">
-                        <a href="index.html">Home</a><span class="sep">/</span><strong>Group Profile</strong>
+                        <a href="index.html">Home</a><span class="sep">/</span><strong>About Us</strong>
                     </nav>
-                    <h1 class="mrnp-hero__title" data-mrnp-split-words>Group Profile</h1>
-                    <p class="mrnp-hero__sub" data-sg-split>
+
+                    <div class="mrn-hero__badge" data-anim="fade-up">
+                        <b>&#9875;</b>
+                        <span>Alang Ship Recycling Yard &middot; Since 1983</span>
+                    </div>
+
+                    <h1 class="mrn-hero__title">
+                        <span class="mrn-word"><span style="--d:.15s">About</span></span>
+                        <span class="mrn-word"><span style="--d:.27s" class="mrn-hl">Sachdeva</span></span>
+                        <span class="mrn-word"><span style="--d:.39s" class="mrn-hl">Group</span></span>
+                    </h1>
+
+                    <p class="mrn-hero__sub" data-anim="fade-up">
                         The Sachdeva Group, through its companies Sachdeva Steel Products (Ship Breaking Unit) LLP
                         and Jai Jagdish Ship Breakers Pvt. Ltd., has been a cornerstone in the ship recycling
                         industry since its inception in Alang, Gujarat, in 1983.
                     </p>
-                    <div class="mrnp-hero__rule"></div>
+
+                    <div class="mrn-hero__actions">
+                        <a href="contact_us.html" class="mrn-btn mrn-btn--gold" data-anim="fade-up" data-mrn-magnetic>
+                            Discuss a Vessel
+                            <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                        </a>
+                        <a href="#profile" class="mrn-btn mrn-btn--ghost">
+                            Group Profile
+                            <i class="fa fa-angle-down" aria-hidden="true"></i>
+                        </a>
+                    </div>
                 </div>
             </div>
 
-            <div class="pfx-cue" aria-hidden="true">
-                <span>Scroll</span>
-                <i></i>
-            </div>
+            <span class="mrn-scrollcue" aria-hidden="true"></span>
 
-            <div class="mrnp-hero__wave">
-                <svg viewBox="0 0 1440 80" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-                    <path fill="#ffffff"
-                        d="M0,40 C240,80 480,8 720,34 C960,60 1200,12 1440,42 L1440,80 L0,80 Z" />
-                </svg>
+            <div class="mrn-hero__rail">
+                <div class="mrn-container">
+                    <div class="mrn-hero__rail-grid">
+                        <div class="mrn-hero__rail-item">
+                            <strong><span data-count="1983">0</span></strong>
+                            <span>Operating Since</span>
+                        </div>
+                        <!-- not data-count: marine.js prints the tally with
+                             toFixed(), which would render these as 4950 and
+                             100000 and drop the thousands separators the copy
+                             below uses -->
+                        <div class="mrn-hero__rail-item">
+                            <strong>4,950</strong>
+                            <span>Square Meters Of Land</span>
+                        </div>
+                        <div class="mrn-hero__rail-item">
+                            <strong>100,000<i>+</i></strong>
+                            <span>Lightweight Tons Annually</span>
+                        </div>
+                        <div class="mrn-hero__rail-item">
+                            <strong><span data-count="73">0</span></strong>
+                            <span>Vessels Recycled</span>
+                        </div>
+                    </div>
+                </div>
             </div>
         </section>
+
+        <!-- ====================== IN-PAGE SECTION RAIL ======================
+             This is what replaced the three-way About dropdown. Every section
+             it lists already lived on this page; the nav was the only thing
+             pretending otherwise. Scrollspy is js/page-fx.js railSpy(). -->
+        <nav class="pfx-jump" aria-label="On this page">
+            <div class="pfx-jump__inner">
+                <a href="#profile">Group Profile</a>
+                <a href="#heritage">Heritage</a>
+                <a href="#vision">Vision &amp; Mission</a>
+                <a href="#compliance">Compliance</a>
+                <a href="#units">Our Companies</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#creds">Credentials</a>
+            </div>
+        </nav>
 
         <!-- ============================ GROUP PROFILE ============================ -->
         <section class="mrnp-section mrn-light" id="profile">
@@ -258,24 +313,6 @@
                     </div>
                 </div>
 
-                <div class="mrnp-strip" data-mrn-stagger="120" data-mrn-reveal>
-                    <div>
-                        <strong data-count="1983">0</strong>
-                        <span>Operating Since</span>
-                    </div>
-                    <div>
-                        <strong>4,950</strong>
-                        <span>Square Meters Of Land</span>
-                    </div>
-                    <div>
-                        <strong>100,000+</strong>
-                        <span>Lightweight Tons Annually</span>
-                    </div>
-                    <div>
-                        <strong>37 + 36</strong>
-                        <span>Ships Recycled</span>
-                    </div>
-                </div>
             </div>
         </section>
 
@@ -656,7 +693,7 @@
                                     Home</a></li>
                             <li><a href="about_us.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     About Us</a></li>
-                            <li><a href="vision_mission.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                            <li><a href="about_us.html#vision"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     Vision &amp; Mission</a></li>
                             <li><a href="our_credentials.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     Our Credentials</a></li>
@@ -664,7 +701,7 @@
                                     Gallery</a></li>
                             <li><a href="news.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     News &amp; Media</a></li>
-                            <li><a href="testimonials.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                            <li><a href="about_us.html#testimonials"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     Testimonials</a></li>
                             <li><a href="contact_us.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     Contact Us</a></li>

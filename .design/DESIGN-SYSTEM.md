@@ -96,24 +96,37 @@ elements. `js/modernizr-3.5.0.min.js` is referenced but absent from `js/` — it
 
 All four are identical on every page. Copy them byte for byte.
 
-### Why the nav changed — do not "simplify" it back
-
-Three pages (`our_credentials`, `testimonials`, `vision_mission`) carried a **richer** nav with
-**About Us** and **Green Recycling** dropdowns; every other page had a reduced one. Those three were
-the *only* route to `vision_mission.html` and `testimonials.html` anywhere on the site.
-
-`_header.html` is now the **union** of both, so no page is orphaned:
+### The nav
 
 - Home
-- About Us ▾ — Group Profile · Vision & Mission · Our Credentials · Testimonials
-- Our Companies ▾ — Sachdeva Steel Products (Ship Breakers) · Jai Jagdish Ship Breakers
-- Green Recycling ▾ — Environment Management · Health & Safety · Waste Management
+- **About Us** — a single link, no dropdown
+- Companies ▾ — Sachdeva Steel Products · Jai Jagdish Ship Breakers
+- Operations ▾ — Environment Management · Health & Safety · Waste Management
+- Credentials
 - News & Media ▾ — News · Gallery
-- Contact
+- Contact Us
 
-It also fixes, relative to the old markup: the dead `group_profile.html` target, the visible typo
-**"Heatly & Safety"** → "Health & Safety", unterminated `&amp` entities, unclosed `<li>` elements,
-and `data-logo="images/logo-white.png"` (a white logo on the white mobile menu bar, i.e. invisible).
+Identical on all 13 pages. `js/marine.js` `initNavActive()` marks the current page's `<li>` with
+`.mrn-nav-active` by comparing the last path segment, so a plain `<li><a>` is all a top-level entry
+needs.
+
+**About Us was a three-item dropdown** — Group Profile · Vision & Mission · Testimonials — even
+though `about_us.html` already contained all three as sections (`#profile`, `#vision`,
+`#testimonials`). The dropdown was describing a split that did not exist in the content. It is now
+one link, and the page carries a `.pfx-jump` rail as its own table of contents. The footer's
+"Vision & Mission" and "Testimonials" entries point at `about_us.html#vision` and
+`about_us.html#testimonials`.
+
+> **`vision_mission.html` and `testimonials.html` are now unlinked.** They still render, and
+> nothing 404s, but nothing points at them either. They duplicate what `about_us.html` says.
+> Decide with the client: delete them, or add
+> `<link rel="canonical" href="about_us.html">` to each so search engines are not offered two
+> pages for the same copy. Do not simply leave the question open.
+
+An earlier pass fixed, relative to the original markup: the dead `group_profile.html` target, the
+visible typo **"Heatly & Safety"** → "Health & Safety", unterminated `&amp` entities, unclosed
+`<li>` elements, and `data-logo="images/logo-white.png"` (a white logo on the white mobile menu
+bar, i.e. invisible). Keep all of those fixed.
 
 ## Page skeleton
 
@@ -308,9 +321,44 @@ component** — the file was pruned once already to keep that true.
   </div>
 </div>
 
-<!-- hero scroll cue. Caller: every inner page, last child before the wave. -->
+<!-- hero scroll cue. Caller: every inner page with a .mrnp-hero, last child
+     before the wave. -->
 <div class="pfx-cue" aria-hidden="true"><span>Scroll</span><i></i></div>
+
+<!-- sticky in-page rail. Caller: about_us.html, directly after the banner.
+     Scrollspy, scroll-padding and the .wrapper unblock are all handled by
+     js/page-fx.js railSpy(); the markup is just links to section ids. -->
+<nav class="pfx-jump" aria-label="On this page">
+  <div class="pfx-jump__inner">
+    <a href="#profile">Group Profile</a>…
+  </div>
+</nav>
 ```
+
+### The page banner — `.mrn-hero--page`
+
+`about_us.html` opens on **index.html's hero component**, not on `.mrnp-hero`: the same
+`images/banner/banner.mp4` footage, duotone scrim, light rays, particle canvas and stat rail.
+Every `.mrn-hero` rule in `index-theme.css` is class-scoped (zero `#home` in the file), so it
+transfers intact. `.mrn-hero--page` changes one thing — it trims the full-viewport height, because
+a banner announces a page and should not be the page.
+
+Copy the hero block from `about_us.html` if another page earns this treatment. Two things must
+travel with it:
+
+1. `js/page-fx.js` guards on `.mrnp-section`, **not** on `.mrn-hero`. Switching that test back
+   would disable the choreography on exactly the pages that use this banner.
+2. The stat rail's figures must already appear in that page's own copy.
+
+### `position: sticky` needs `.wrapper` unblocked
+
+`.wrapper` ships `overflow: hidden`, which makes it the scrollport for any sticky descendant — and
+it never scrolls, so a sticky element just scrolls away (measured: the rail's top reached
+-1803px). `js/page-fx.js` adds `.has-jump-rail` when a rail exists, and `page-fx.css` switches that
+wrapper to `overflow-x: clip; overflow-y: visible` inside an `@supports (overflow-x: clip)` guard.
+The guard is load-bearing: without `clip`, a browser would drop that declaration and keep
+`overflow-y: visible` against `overflow-x: hidden`, and a pair with one axis visible computes the
+visible one to `auto` — the wrapper would grow its own vertical scrollbar.
 
 Data tables (`.table-responsive > table`, the ships-recycled lists) need **no
 class** — `page-fx.css` section 6.4 restyles them where they sit, unwinding the

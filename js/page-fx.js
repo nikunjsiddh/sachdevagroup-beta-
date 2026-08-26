@@ -54,9 +54,13 @@
     var html = doc.documentElement;
     if (!html || win.SGPageFX) return;
 
-    /* index.html has its own hand-authored choreography and its own theme
-       layer. If this file is ever pulled in there by mistake, do nothing. */
-    if (doc.querySelector('.mrn-hero')) return;
+    /* index.html has its own hand-authored choreography. If this file is ever
+       pulled in there by mistake, do nothing.
+       The test is `.mrnp-section`, which every inner page is built from and
+       index has none of. It deliberately is NOT `.mrn-hero`: about_us.html
+       reuses index's cinematic hero component, and testing for that would
+       switch this file off on the one page that needs it most. */
+    if (!doc.querySelector('.mrnp-section')) return;
 
     /* ----------------------------------------------------------------------
        0. Helpers
@@ -67,6 +71,14 @@
         try { n = (root || doc).querySelectorAll(sel); } catch (e) { return out; }
         for (i = 0; i < n.length; i++) out.push(n[i]);
         return out;
+    }
+
+    function hasClass(el, c) {
+        return (' ' + (el.className || '') + ' ').indexOf(' ' + c + ' ') > -1;
+    }
+
+    function addClass(el, c) {
+        if (!hasClass(el, c)) el.className += (el.className ? ' ' : '') + c;
     }
 
     /* identical to index-motion.js ownedByMarine() minus data-mrn-reveal,
@@ -277,7 +289,122 @@
         });
     }
 
-    /* 2.2 Generic progress.
+    /* 2.2 Section rail scrollspy.
+       For .pfx-jump — the sticky in-page bar that replaced the About dropdown.
+       js/marine-pages.js already ships a scrollspy but it is hard-bound to
+       .mrnp-pagenav, the sidebar variant, so this is the horizontal one.
+
+       It reads section tops once and re-reads on resize rather than every
+       frame: SGMotion.onScroll fires on the shared loop, and doing layout
+       reads inside it would cost the page a reflow per frame. */
+    function railSpy(SG) {
+        var rail = doc.querySelector('.pfx-jump');
+        if (!rail) return;
+
+        var links = list('a[href^="#"]', rail);
+        if (!links.length) return;
+
+        /* UNBLOCK position:sticky.
+           .wrapper carries `overflow: hidden` (css/style.css), which makes it
+           the sticky element's scrollport — and that box never scrolls, so the
+           rail scrolled away with the page. Measured: its top ran to -1803px.
+           `overflow-x: clip` clips exactly the same way WITHOUT establishing a
+           scroll container, which is the whole difference. Verified on this
+           page: the rail parks correctly and not one element starts
+           overflowing horizontally that was not already clipped.
+           The class is added here rather than in the markup so it can never
+           outlive the rail, and css/page-fx.css guards it behind
+           @supports — a browser without `clip` keeps `overflow: hidden` and
+           simply does not get a sticky rail, rather than getting a stray
+           vertical scrollbar from a half-applied pair. */
+        var wrap = rail.parentNode;
+        while (wrap && wrap.nodeType === 1 && !hasClass(wrap, 'wrapper')) wrap = wrap.parentNode;
+        if (wrap && wrap.nodeType === 1) addClass(wrap, 'has-jump-rail');
+
+        /* the bar the rail parks under is js/main.js's .sticky_menu header,
+           which is a different height from the one in normal flow — so it can
+           only be measured once it is actually sticky */
+        var header = doc.querySelector('.header');
+        var headMeasured = false;
+
+        function syncTop() {
+            if (headMeasured || !header) return;
+            if (!hasClass(header, 'sticky_menu')) return;
+            var h = Math.round(header.getBoundingClientRect().height);
+            if (h < 30 || h > 200) return;
+            headMeasured = true;
+            rail.style.setProperty('--pfx-jump-top', h + 'px');
+            remeasure();
+        }
+
+        var items = [], i, t;
+        for (i = 0; i < links.length; i++) {
+            t = doc.getElementById(links[i].getAttribute('href').slice(1));
+            if (t) items.push({ a: links[i], el: t, top: 0 });
+        }
+        if (!items.length) return;
+
+        var current = null;
+        var offset = 0;
+
+        function remeasure() {
+            /* the rail parks itself under the site header, so a section counts
+               as current once its top passes the underside of the rail */
+            var railH = rail.getBoundingClientRect().height;
+
+            /* marine.css:38 sets scroll-padding-top:96px for the sticky header
+               alone. This page stacks the rail on top of it, so an anchor
+               would land under the rail — including a cross-page one like the
+               footer's about_us.html#vision. Restate it with the rail counted
+               in. index-motion.js's padTop() reads this same property, so the
+               animated in-page tween and the browser's own jump agree. */
+            var parked = parseFloat(getComputedStyle(rail).top);
+            if (isNaN(parked)) parked = 0;
+            var pad = Math.round(parked + railH + 24);
+            html.style.scrollPaddingTop = pad + 'px';
+
+            /* The spy threshold is that same landing position plus a few px of
+               tolerance — derived from it rather than guessed, so clicking a
+               chip always lights the chip you clicked. A round number here
+               left the previous section highlighted by ~5px. */
+            offset = pad + 12;
+
+            var y = SG.scrollY();
+            for (var k = 0; k < items.length; k++) {
+                items[k].top = items[k].el.getBoundingClientRect().top + y;
+            }
+        }
+
+        function paint(y) {
+            var found = items[0];
+            for (var k = 0; k < items.length; k++) {
+                if (items[k].top - offset <= y) found = items[k];
+            }
+            if (found === current) return;
+            if (current) current.a.className = current.a.className
+                .replace(/\s*is-active/g, '');
+            current = found;
+            if (found.a.className.indexOf('is-active') === -1) {
+                found.a.className += (found.a.className ? ' ' : '') + 'is-active';
+            }
+            /* keep the active chip in view when the rail itself scrolls */
+            if (rail.scrollWidth > rail.clientWidth) {
+                var r = found.a.getBoundingClientRect(), rr = rail.getBoundingClientRect();
+                if (r.left < rr.left + 12) rail.scrollLeft += r.left - rr.left - 24;
+                else if (r.right > rr.right - 12) rail.scrollLeft += r.right - rr.right + 24;
+            }
+        }
+
+        remeasure();
+        paint(SG.scrollY());
+        SG.onResize(function () { headMeasured = false; syncTop(); remeasure(); paint(SG.scrollY()); });
+        SG.onScroll(function (y) { syncTop(); paint(y); });
+        if (win.addEventListener) {
+            win.addEventListener('load', function () { remeasure(); paint(SG.scrollY()); }, false);
+        }
+    }
+
+    /* 2.3 Generic progress.
        Writes --pfx-p from 0..1 across the element's own travel through the
        viewport. css/page-fx.css uses it to fill the .pfx-steps spine. The
        range is squeezed to the middle 70% of the pass so the line is full
@@ -323,6 +450,7 @@
         if (!SG || !SG.track) return;      /* index-motion.js absent — fine */
         try {
             heroScrub(SG);
+            railSpy(SG);
             progressScrub(SG);
         } catch (e) { }
     }

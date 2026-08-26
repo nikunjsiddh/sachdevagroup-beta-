@@ -1626,7 +1626,159 @@
     }
 }
 
-/* --- 6.4 data table — the ships-recycled lists --------------------------
+/* --- 6.4 page banner — index's cinematic hero, on an inner page ---------
+   Caller: about_us.html.
+
+   The About page carries the whole story of the group — profile, heritage,
+   vision, mission, compliance, both units, testimonials, credentials — so it
+   opens on the same footage index.html opens on (images/banner/banner.mp4)
+   rather than on a still. That means it uses index's `.mrn-hero` component
+   outright, not `.mrnp-hero`: every `.mrn-hero` rule in index-theme.css is
+   class-scoped, with zero `#home` in the file, so the whole treatment —
+   duotone footage, light rays, particle canvas, stat rail — transfers as-is.
+
+   What this modifier changes is only what a page banner should not inherit
+   from a homepage takeover: the full-viewport height. A banner announces the
+   page; it should not BE the page. `js/page-fx.js` guards on `.mrnp-section`
+   rather than on `.mrn-hero` precisely so this page keeps its choreography. */
+
+.mrn-hero--page {
+    --sg-rail-h: 108px;
+    min-height: max(600px, calc(82svh - var(--sg-head, 104px)));
+}
+
+.mrn-hero--page .mrn-hero__inner {
+    padding-top: clamp(56px, 7vh, 92px);
+}
+
+/* the breadcrumb is the one thing index's hero has no slot for — it is what
+   tells a visitor this is an inner page and not the front door */
+.mrn-hero--page .mrnp-crumb {
+    margin-bottom: 20px;
+    opacity: 0;
+    animation: sgHeroFadeUp .8s var(--e-out) .05s forwards;
+}
+
+.mrn-hero--page .mrn-hero__title {
+    max-width: 14ch;
+}
+
+.mrn-hero--page .mrn-hero__sub {
+    max-width: 62ch;
+}
+
+/* --- 6.5 section rail — the sticky in-page nav -------------------------
+   Caller: about_us.html.
+
+   The About material used to be split across three nav entries (Group
+   Profile / Vision & Mission / Testimonials) even though about_us.html
+   already contained all of it. The dropdown is now a single link and this
+   rail is what replaced it: the page's own table of contents, parked under
+   the header, tracking the reader's position.
+
+   `top` has to clear the site header, which main.js switches to
+   position:fixed at scrollTop 80 — measured 59px tall in that state. */
+
+/* .wrapper ships `overflow: hidden`, which makes it the scrollport for any
+   sticky descendant — and it never scrolls, so the rail scrolled away with the
+   page. `overflow-x: clip` clips identically without establishing a scroll
+   container. js/page-fx.js adds .has-jump-rail only when a rail is present.
+
+   The @supports guard is load-bearing, not decoration: without `clip` a
+   browser would drop overflow-x and keep overflow-y:visible, and a pair where
+   one axis is visible and the other is not computes the visible one to `auto`
+   — i.e. the wrapper would sprout its own vertical scrollbar. Guarded, such a
+   browser keeps `overflow: hidden` and merely does without a sticky rail. */
+@supports (overflow-x: clip) {
+    .wrapper.has-jump-rail {
+        overflow-x: clip;
+        overflow-y: visible;
+    }
+}
+
+.pfx-jump {
+    /* replaced at runtime with the measured .sticky_menu header height */
+    --pfx-jump-top: 71px;
+    position: sticky;
+    top: var(--pfx-jump-top);
+    z-index: 40;
+    /* 998 is the sticky header (css/header-modern.css); stay under it */
+    background: rgba(7, 26, 46, .95);
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    backdrop-filter: blur(14px) saturate(1.15);
+    border-bottom: 1px solid rgba(53, 198, 244, .22);
+    box-shadow: 0 18px 40px -30px rgba(4, 18, 31, .9);
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: none;
+}
+
+.pfx-jump::-webkit-scrollbar {
+    display: none;
+}
+
+.pfx-jump__inner {
+    display: flex;
+    align-items: stretch;
+    gap: 0;
+    width: max-content;
+    min-width: 100%;
+    padding: 0 clamp(16px, 4vw, 40px);
+}
+
+.pfx-jump a {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    white-space: nowrap;
+    padding: 20px 22px;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 12px;
+    font-weight: 400;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    color: rgba(167, 187, 207, .82);
+    text-decoration: none;
+    transition: color .34s var(--e-out), background .34s var(--e-out);
+}
+
+.pfx-jump a::after {
+    content: "";
+    position: absolute;
+    left: 22px;
+    right: 22px;
+    bottom: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan-bright, #35c6f4), var(--gold, #ffad18));
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .42s var(--e-out);
+}
+
+.pfx-jump a:hover,
+.pfx-jump a:focus {
+    color: #fff;
+    background: rgba(53, 198, 244, .08);
+    text-decoration: none;
+}
+
+.pfx-jump a.is-active {
+    color: var(--cyan-bright, #35c6f4);
+}
+
+.pfx-jump a.is-active::after,
+.pfx-jump a:hover::after {
+    transform: scaleX(1);
+}
+
+/* index's hero rail is the banner's foot; the section rail is the next thing
+   down, so the two must not both claim the seam */
+.mrn-hero--page + .pfx-jump {
+    border-top: 0;
+}
+
+/* --- 6.6 data table — the ships-recycled lists --------------------------
    sspsb.html and jjsb.html each carry a bare <table> holding the fleet
    record. It is styled by css/style.css:579-609, which paints it with the
    RETIRED #00008e -> #017280 gradient and white text — the one palette
@@ -1867,6 +2019,35 @@ html.sg-motion [data-sg-delay="10"] {
         display: none;
     }
 
+    /* the mobile bar is the slicknav strip, which stands taller than the
+       desktop sticky header */
+    .pfx-jump {
+        --pfx-jump-top: 64px;
+    }
+
+    .pfx-jump a {
+        padding: 16px 15px;
+        font-size: 11px;
+        letter-spacing: 1.8px;
+    }
+
+    .pfx-jump a::after {
+        left: 15px;
+        right: 15px;
+    }
+
+    /* the rail is wider than the viewport here (measured 801px in 375px), so
+       fade the trailing edge — otherwise a chip is simply cut off and nothing
+       says the bar scrolls */
+    .pfx-jump {
+        -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
+        mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
+    }
+
+    .mrn-hero--page {
+        min-height: 540px;
+    }
+
     .pfx-step {
         grid-template-columns: 46px 1fr;
         gap: 16px;
@@ -1931,6 +2112,18 @@ html.sg-motion [data-sg-delay="10"] {
     .pfx-cue i::after,
     .pfx-marquee__track {
         animation: none !important;
+    }
+
+    /* the banner's copy must still arrive — these animations carry a
+       `forwards` fill from opacity 0, so killing them outright would leave
+       the breadcrumb invisible */
+    .mrn-hero--page .mrnp-crumb {
+        opacity: 1 !important;
+        animation: none !important;
+    }
+
+    .pfx-jump a::after {
+        transition: none !important;
     }
 
     .pfx-marquee__track {
