@@ -29,6 +29,39 @@ regulated sector and every claim on the page must already exist in the current m
 
 Font is **Oswald** throughout. Already loaded.
 
+## The layer stack — read this before adding any CSS
+
+Five override layers, applied in this order. Each one only says what the layer
+above it could not:
+
+| Layer | Owns | Scope |
+|---|---|---|
+| `css/marine.css` | base `.mrn-*` kit, legacy `:root` tokens | all pages |
+| `css/marine-pages.css` | inner-page `.mrnp-*` components — layout | all pages |
+| `css/header-modern.css` / `footer-modern.css` | the shared bars | all pages |
+| `css/index-theme.css` | rethemes `:root` + every `.mrn-*` to the industrial palette; `#index-section` rules | all pages, but written for index |
+| `css/page-fx.css` | rethemes the `.mrnp-*` components to match, adds `.pfx-*`, extends the entrance vocabulary | **inner pages only** |
+
+`index-theme.css` contains **zero** `.mrnp-` selectors. That is why `page-fx.css`
+exists: without it an inner page gets the new tokens for type and ground but
+every card, frame, quote and field still renders in the retired `#00008e` navy
+with 20px radii. Do not "fix" that by editing `marine-pages.css` — it is the
+layout layer and index depends on nothing in it.
+
+**`page-fx.css` and `js/page-fx.js` must never be loaded on `index.html`.**
+The JS returns immediately if it sees `.mrn-hero`, but do not rely on that.
+
+### Never reuse an id that index-theme.css styles
+
+`index-theme.css` scopes rules by section id: `#about`, `#commitment`,
+`#companies`, `#contact`, `#credentials`, `#journey`, `#process`, `#yard`.
+Those ids are index.html's. An inner page that reuses one inherits index's
+rules at id specificity, which no class selector in `page-fx.css` can outrank.
+This was live: `#credentials .mrn-btn { width: 100% }` was stretching the "All
+Credentials" button on `about_us.html` to 562px. The inner pages now use
+`#units`, `#creds`, `#reach`, `#yard-details`, `#hs-commitment` instead.
+Before adding a section id, grep `css/index-theme.css` for it.
+
 ## File wiring — every page must end up byte-identical here
 
 An audit found **six different script blocks and no two matching head blocks** across the site, and
@@ -244,6 +277,45 @@ Map: wrap the existing iframe in `<div class="mrnp-map">…</div>`.
 `<strong><span data-count="71">0</span>+</strong>` — `js/marine.js` animates any `[data-count]`.
 **Only use numbers that already appear in the page's own copy.**
 
+### `.pfx-*` — added by `css/page-fx.css`
+
+Four components, each with a real caller. **If a caller goes away, delete the
+component** — the file was pruned once already to keep that true.
+
+```html
+<!-- status / empty state. Caller: news.html -->
+<div class="pfx-note"><p>…</p><p>…</p></div>
+
+<!-- numbered process spine. Caller: waste_management.html #procedure.
+     data-pfx-progress fills the spine as the reader descends. -->
+<ol class="pfx-steps" data-pfx-progress>
+  <li class="pfx-step">
+    <div class="pfx-step__no">01</div>
+    <div class="pfx-step__body">
+      <span class="pfx-step__icon"><svg …></svg></span>
+      <p>Step copy.</p>
+    </div>
+  </li>
+</ol>
+
+<!-- running rail. Caller: our_credentials.html #certificates.
+     data-mrn-marquee makes marine.js double the track; the keyframe travels
+     -50%, so ONE written pass must already be wider than .mrn-container or
+     the loop shows a gap at the wrap. Write the set out twice. -->
+<div class="pfx-marquee">
+  <div class="pfx-marquee__track" data-mrn-marquee>
+    <span class="pfx-marquee__item">ISO 9001:2015</span>…
+  </div>
+</div>
+
+<!-- hero scroll cue. Caller: every inner page, last child before the wave. -->
+<div class="pfx-cue" aria-hidden="true"><span>Scroll</span><i></i></div>
+```
+
+Data tables (`.table-responsive > table`, the ships-recycled lists) need **no
+class** — `page-fx.css` section 6.4 restyles them where they sit, unwinding the
+old `css/style.css` navy-gradient treatment.
+
 ### Sticky page nav (long pages only — about_us, sspsb, jjsb)
 ```html
 <div class="mrnp-pagenav">
@@ -255,8 +327,49 @@ Requires matching `id`s on the sections. Scrollspy is automatic.
 
 ## Reveal / animation attributes
 
-- `data-mrn-reveal` — fade + rise on scroll. Variants: `="left" "right" "zoom" "clip"`.
-- `data-mrn-stagger="120"` — on a **parent**; sets per-child delays.
+Two engines run on an inner page and they must not overlap:
+
+**`js/index-motion.js`** owns entrances — one IntersectionObserver, one rAF
+loop, published as `window.SGMotion`. Vocabulary: `data-sg-in`, `data-sg-delay`,
+`data-sg-split`.
+
+**`js/marine.js`** owns behaviours — tilt, magnetic, counters, marquee, and its
+own older `data-mrn-reveal` entrance.
+
+### You almost never write `data-sg-*` by hand
+
+`js/page-fx.js` runs before `index-motion.js` and stamps the entrance
+attributes from a table of selectors (`RULES`, near the top of that file). Card
+grids sweep row by row, lists step one at a time, headings split into words,
+image frames clip in. To change how a component enters, edit that table — not
+twelve HTML files.
+
+It skips anything already carrying `data-sg-in` / `data-sg-split` in the
+markup, so **a hand-authored attribute always wins**. It also skips anything
+carrying `data-mrn-tilt`, `data-mrn-magnetic` or `data-mrn-parallax`, because
+`marine.js` writes an inline transform on those and an entrance is also a
+transform. Where it does claim an element it strips that element's
+`data-mrn-reveal`, and its container's `data-mrn-reveal` / `data-mrn-stagger`,
+so only one engine animates a given subtree.
+
+> `data-mrn-stagger` was never doing anything on these pages. It writes
+> `--mrn-delay` onto each child, but `marine.css` only transitions elements
+> that carry `[data-mrn-reveal]` themselves — and the children do not. Grids
+> faded in as one block. Prefer the `page-fx.js` table.
+
+### Attribute reference
+
+- `data-sg-in` — `up` (default) `left` `right` `zoom` `rise` `tilt` `sink` `clip`.
+  The last four are added by `page-fx.css`; a new direction is one `--sg-from`
+  line in section 7 of that file.
+- `data-sg-delay="1".."10"` — 110ms per step. 7-10 come from `page-fx.css`.
+- `data-sg-split` — splits a heading into per-word, per-line staggered rise.
+- `data-pfx-progress` — the element gets `--pfx-p` 0→1 across its own travel
+  through the viewport. Drives the `.pfx-steps` spine.
+- `data-mrn-reveal` — the older engine. Still fine on anything the table does
+  not claim. Variants: `="left" "right" "zoom" "clip"`.
+- `data-mrn-stagger="120"` — on a **parent**; sets per-child delays. See the
+  note above before reaching for it.
 - `data-mrn-tilt="8"` — tilts a `.mrn-figure__frame` / `.mrnp-split__frame` child.
 - `data-mrnp-tilt="9"` — tilts the element itself with `translateZ` children (icards, certcards).
 - `data-mrn-magnetic` — button follows the cursor slightly.
@@ -330,7 +443,14 @@ empty state is correct here; fabricated news is not.
    the legacy `page-titleN` banner section, and duplicated blocks.
 5. Keep all images that are in use. Do not reference an image that does not exist on disk —
    check `images/` first.
-6. No inline `<style>` blocks and no new CSS files. Everything you need is already in
-   `marine.css` + `marine-pages.css`. If something is genuinely missing, note it in your report
-   rather than inventing a one-off style.
+6. No inline `<style>` blocks. New rules go in `css/page-fx.css`, which is the
+   inner-page override layer; do not start a sixth stylesheet and do not edit
+   `marine-pages.css` or `index-theme.css` to fix an inner page.
 7. The page must not scroll horizontally at 375px.
+8. Do not give a section an id that `css/index-theme.css` styles — see
+   "Never reuse an id" above.
+9. One transform owner per element. `marine.js` (tilt / magnetic / parallax),
+   `index-motion.js` (entrances) and any scroll scrub all write `transform`;
+   two of them on one element is a silent fight, and a CSS `animation` on
+   transform beats an inline write outright — which is why
+   `page-fx.css` sets `animation: none` on `.mrnp-hero__bg`.

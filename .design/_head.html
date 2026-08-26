@@ -18,6 +18,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
 
-    <!-- Marine experience layer (must load last) -->
+    <!-- Experience layer. ORDER IS LOAD-BEARING — every one of these is an
+         override layer over the one above it:
+           marine.css        base .mrn-* kit + legacy :root tokens
+           marine-pages.css  inner-page .mrnp-* components
+           footer/header     the shared bars
+           index-theme.css   rethemes :root and every .mrn-* to the industrial
+                             palette. Touches no .mrnp-* rule.
+           page-fx.css       rethemes the .mrnp-* components to match, adds the
+                             .pfx-* components and the extra entrances.
+                             INNER PAGES ONLY — never on index.html. -->
     <link rel="stylesheet" href="css/marine.css">
     <link rel="stylesheet" href="css/marine-pages.css">
+    <link rel="stylesheet" href="css/footer-modern.css">
+    <link rel="stylesheet" href="css/header-modern.css">
+    <link rel="stylesheet" href="css/index-theme.css">
+    <link rel="stylesheet" href="css/page-fx.css">

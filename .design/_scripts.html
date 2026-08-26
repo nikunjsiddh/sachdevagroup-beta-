@@ -1,3 +1,10 @@
+    <!-- ORDER IS LOAD-BEARING.
+         page-fx.js runs synchronously at parse time and stamps the entrance
+         attributes onto the page, so it must sit BEFORE index-motion.js, whose
+         single IntersectionObserver collects them on DOMContentLoaded. Swap the
+         two and the inner pages animate nothing.
+         page-fx.js is inner-page only; it returns immediately if it finds
+         index.html's .mrn-hero. -->
     <script src="js/jquery.1.12.4.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="js/plugins.js"></script>
@@ -9,3 +16,5 @@
     </script>
     <script src="js/marine.js"></script>
     <script src="js/marine-pages.js"></script>
+    <script src="js/page-fx.js"></script>
+    <script src="js/index-motion.js"></script>

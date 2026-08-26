@@ -26,3 +26,6 @@ _t-*.html
 .DS_Store
 Thumbs.db
 *.log
+
+# Claude Code local tooling (preview server config, worktrees)
+.claude/
