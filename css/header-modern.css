@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Sachdeva Group — dark-navy header bar
+   Sachdeva Group — light header bar
    Scope     : index.html only (loaded after marine.css / marine-pages.css)
    Namespace : every rule is gated on .sgh-header, the class added to
                <header class="header sgh-header">, so the other 12 pages keep
@@ -15,6 +15,9 @@
     --sgh-cyan: #22b3e6;
     --sgh-cyan-bright: #35c6f4;
     --sgh-cyan-deep: #1195cf;
+    /* #1195cf is only 2.96:1 on the light bar, which fails for 15.5px nav text.
+       This deeper marine reads 5.2:1 and still holds the cyan identity. */
+    --sgh-cyan-ink: #0a6a9c;
     --sgh-link: #e7f0f8;
     --sgh-link-dim: #b9cbdc;
     --sgh-ease: cubic-bezier(.16, 1, .3, 1);
@@ -28,21 +31,31 @@
    1. The bar
    ========================================================================== */
 
+/* The bar is LIGHT so the plain colour mark reads as artwork — no plate, no
+   halo, no filter on the image.
+   A light passage on the left only was tried first and rejected: the menu is
+   ~850px wide, so at a 1000px viewport the first nav link starts at x=110,
+   i.e. inside the light zone, where white type disappears. Lighting the whole
+   bar and flipping the nav to ink is the only version that cannot break at
+   any width. Ink type on this ground measures 15.9:1. */
 .sgh-header {
-    background: var(--sgh-ink);
+    --sgh-bar-1: #ffffff;
+    --sgh-bar-2: #e9f1f8;
+
+    background: linear-gradient(150deg, var(--sgh-bar-1) 0%, var(--sgh-bar-2) 100%);
     -webkit-backdrop-filter: none;
     backdrop-filter: none;
-    border-bottom: 1px solid rgba(255, 255, 255, .07);
-    box-shadow: 0 10px 30px -22px rgba(0, 0, 0, .85);
+    border-bottom: 1px solid rgba(7, 26, 46, .10);
+    box-shadow: 0 12px 30px -24px rgba(7, 26, 46, .55);
     padding: 2px 0;
 }
 
 .sgh-header.sticky_menu {
-    background: rgba(7, 26, 46, .97) !important;
+    background: linear-gradient(150deg, rgba(255, 255, 255, .97) 0%, rgba(233, 241, 248, .97) 100%) !important;
     -webkit-backdrop-filter: blur(12px);
     backdrop-filter: blur(12px);
-    border-bottom: 1px solid rgba(53, 198, 244, .22);
-    box-shadow: 0 16px 40px -24px rgba(0, 0, 0, .9) !important;
+    border-bottom: 1px solid rgba(34, 179, 230, .30);
+    box-shadow: 0 16px 38px -26px rgba(7, 26, 46, .65) !important;
     padding: 2px 0;
 }
 
@@ -58,6 +71,11 @@
 .sgh-header > .container {
     padding-top: 0;
     padding-bottom: 0;
+}
+
+/* the brand's own margin provides the bar's breathing room */
+.sgh-header .menubar {
+    padding: 0;
 }
 
 /* One flex row in both states, so the logo and nav stay centred against each
@@ -79,19 +97,44 @@
     display: block;
 }
 
-/* The mark is nearly square (wheel over wordmark), so cap it by HEIGHT —
-   capping width alone left a 99px-tall logo and a 164px-tall bar. */
-.sgh-header .navbar-brand > img,
-.sgh-header.sticky_menu .navbar-brand > img {
-    max-width: none;
-    max-height: 48px;
-    width: auto;
+/* images/logo.png is the full-colour mark: orange wheel over navy wordmark.
+   It sits directly on the light bar as plain artwork. */
+.sgh-header .navbar-brand {
+    display: inline-flex;
+    align-items: center;
+    height: auto;
+    padding: 0;
+    margin: 14px 0;
+    background: transparent;
+    border-radius: 0;
+    box-shadow: none;
 }
 
-.sgh-header .navbar-brand,
+/* The mark is nearly square (wheel over wordmark), so cap it by HEIGHT —
+   capping width alone left a 99px-tall logo and a 164px-tall bar.
+   70px is the largest size that stays under the file's own 110x99 pixels,
+   so it scales down (sharp) rather than up (soft). */
+/* Plain artwork: no plate, no halo, no filter. The light bar is the ground. */
+.sgh-header .navbar-brand > img {
+    max-width: none;
+    max-height: 70px;
+    width: auto;
+    transition: max-height .45s var(--sgh-ease), transform .45s var(--sgh-ease);
+}
+
+.sgh-header .navbar-brand:hover > img,
+.sgh-header .navbar-brand:focus-visible > img {
+    transform: translateY(-2px);
+}
+
+/* Scrolled: the bar is pinned over the page, so shrink the mark back down
+   instead of parking 110px of chrome on top of the content. */
 .sgh-header.sticky_menu .navbar-brand {
-    padding: 4px 5px;
-    margin: 4px 0;
+    margin: 10px 0;
+}
+
+.sgh-header.sticky_menu .navbar-brand > img {
+    max-height: 46px;
 }
 
 .sgh-header .menubar ul.nav,
@@ -118,7 +161,7 @@
     letter-spacing: .2px;
     line-height: 1.4;
     text-transform: none;
-    color: var(--sgh-link);
+    color: var(--sgh-ink);
     border-radius: 999px;
     transition: color .3s var(--sgh-ease), background .3s var(--sgh-ease);
 }
@@ -129,7 +172,7 @@
 .sgh-header #main-menu > li:not(:last-child) > a:focus,
 .sgh-header #main-menu > li:not(:last-child).mrn-nav-active > a {
     background: transparent;
-    color: var(--sgh-cyan-bright);
+    color: var(--sgh-cyan-ink);
 }
 
 .sgh-header #main-menu > li:not(:last-child) > a::after {
@@ -140,7 +183,7 @@
     bottom: 3px;
     height: 2px;
     border-radius: 2px;
-    background: var(--sgh-cyan-bright);
+    background: var(--sgh-cyan-deep);
     opacity: 1;
     transform: scaleX(0);
     transform-origin: center;
@@ -162,13 +205,13 @@
     border-top-width: 5px;
     border-right-width: 4px;
     border-left-width: 4px;
-    border-top-color: rgba(255, 255, 255, .55);
+    border-top-color: rgba(7, 26, 46, .45);
     transition: border-top-color .3s var(--sgh-ease), transform .3s var(--sgh-ease);
 }
 
 .sgh-header #main-menu > li:hover > a .caret,
 .sgh-header #main-menu > li.mrn-nav-active > a .caret {
-    border-top-color: var(--sgh-cyan-bright);
+    border-top-color: var(--sgh-cyan-ink);
 }
 
 .sgh-header #main-menu > li.dropdown:hover > a .caret {
@@ -210,10 +253,10 @@
     min-width: 236px;
     margin-top: 8px;
     padding: 8px;
-    background: var(--sgh-panel);
-    border: 1px solid rgba(255, 255, 255, .08);
+    background: #ffffff;
+    border: 1px solid rgba(7, 26, 46, .10);
     border-radius: 12px !important;
-    box-shadow: 0 26px 50px -26px rgba(0, 0, 0, .95);
+    box-shadow: 0 26px 50px -26px rgba(7, 26, 46, .45);
 }
 
 .sgh-header .menubar .dropdown-menu > li > a {
@@ -224,11 +267,10 @@
     font-weight: 400;
     letter-spacing: .1px;
     text-transform: none;
-    color: var(--sgh-link-dim);
+    color: #33506b;
     white-space: normal;
-    /* style.css separates items with a black hairline that reads as a gash
-       on a navy panel — lighten it to a translucent white rule. */
-    border-bottom: 1px solid rgba(255, 255, 255, .06);
+    /* style.css draws a heavy black hairline between items — soften it. */
+    border-bottom: 1px solid rgba(7, 26, 46, .07);
 }
 
 .sgh-header .menubar .dropdown-menu > li:last-child > a {
@@ -241,8 +283,8 @@
 .sgh-header .menubar .dropdown-menu > li > a:focus,
 .sgh-header #main-menu .dropdown-menu > li.mrn-nav-active > a {
     padding-left: 14px;
-    background-color: rgba(34, 179, 230, .16);
-    color: #ffffff;
+    background-color: rgba(34, 179, 230, .13);
+    color: var(--sgh-ink);
 }
 
 /* ==========================================================================
@@ -250,7 +292,7 @@
    ========================================================================== */
 
 .sgh-header a:focus-visible {
-    outline: 2px solid var(--sgh-cyan-bright);
+    outline: 2px solid var(--sgh-cyan-deep);
     outline-offset: 3px;
 }
 
@@ -281,16 +323,35 @@
         padding: 8px 14px;
     }
 
+    /* slicknav.min.css puts a `content:" "` clearfix on :before/:after. Inside
+       a flex container those become real flex items and eat two of the
+       space-between slots, which pushed the logo into the middle of the bar. */
+    .sgh-header .slicknav_menu::before,
+    .sgh-header .slicknav_menu::after {
+        display: none;
+    }
+
+    /* same plate-free treatment as the desktop brand */
     .sgh-header .slicknav_brand {
+        display: inline-flex;
+        align-items: center;
         max-width: none;
         padding: 0;
         margin: 0;
+        background: transparent;
+        border-radius: 0;
+        box-shadow: none;
     }
 
     .sgh-header .slicknav_brand img {
         max-width: none;
-        max-height: 44px;
+        max-height: 58px;
         width: auto;
+        transition: max-height .45s var(--sgh-ease);
+    }
+
+    .sgh-header.sticky_menu .slicknav_brand img {
+        max-height: 42px;
     }
 
     .sgh-header .slicknav_btn {
@@ -300,7 +361,7 @@
     }
 
     .sgh-header .slicknav_menu .slicknav_icon-bar {
-        background-color: #ffffff;
+        background-color: var(--sgh-ink);
         box-shadow: none;
     }
 
@@ -309,28 +370,29 @@
         width: 100%;
         margin-top: 6px;
         padding: 6px;
-        background: var(--sgh-panel);
-        border: 1px solid rgba(255, 255, 255, .08);
+        background: #ffffff;
+        border: 1px solid rgba(7, 26, 46, .10);
         border-radius: 12px;
+        box-shadow: 0 20px 40px -26px rgba(7, 26, 46, .5);
     }
 
     .sgh-header .slicknav_nav a {
         font-family: var(--sgh-font);
         font-size: 15px;
         text-transform: none;
-        color: var(--sgh-link-dim);
+        color: #33506b;
         border-radius: 8px;
     }
 
     .sgh-header .slicknav_nav .slicknav_row:hover,
     .sgh-header .slicknav_nav a:hover {
-        background: rgba(34, 179, 230, .16);
-        color: #ffffff;
+        background: rgba(34, 179, 230, .13);
+        color: var(--sgh-ink);
         border-radius: 8px;
     }
 
     .sgh-header .slicknav_nav .slicknav_arrow {
-        color: var(--sgh-cyan-bright);
+        color: var(--sgh-cyan-ink);
     }
 }
 
@@ -341,4 +403,63 @@
     .sgh-header #main-menu > li > a .caret {
         transition: none;
     }
+}
+
+
+/* ==========================================================================
+   DROPDOWN HOVER BRIDGE
+   ==========================================================================
+   The submenu closed before anything in it could be clicked.
+
+   Cause, measured in the browser: the panel carries margin-top:8px, so the
+   parent <li> ends at y=71 and the panel starts at y=79. Moving the pointer
+   from "About" down to "Group Profile" crosses an 8px strip that belongs to
+   NEITHER element, css/style.css:890 `.menubar li.dropdown:hover >
+   .dropdown-menu` goes false, and the menu is pulled before the pointer
+   arrives.
+
+   Fix: keep the 8px visual offset, but bridge the strip with a transparent
+   pseudo-element on the panel itself, so the hover chain is never broken.
+   It only exists while the panel is open (a hidden panel hides its own
+   ::before), so it can never swallow a click on the page behind it.
+   ========================================================================== */
+
+/* The bridge lives on the <li> and only while it is hovered. Measured gap is
+   28px (margin-top plus the panel's own offset), so 34px covers it with slack.
+   Gating it on :hover matters — a permanent 34px strip under every dropdown
+   link would sit over the hero and swallow clicks meant for the page. */
+.sgh-header #main-menu > li.dropdown:hover::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    /* as wide as the panel, not just the link: a pointer cutting diagonally
+       toward the third item would otherwise leave the bridge sideways before
+       it ever reached the menu */
+    width: 240px;
+    height: 34px;
+    background: transparent;
+}
+
+.sgh-header #main-menu > li.dropdown {
+    position: relative;
+}
+
+/* Forgiveness for a diagonal exit: leaving is delayed a fraction, arriving is
+   instant. Anyone cutting the corner toward the third item keeps the menu. */
+.sgh-header .menubar .dropdown-menu {
+    transition-delay: .22s;
+}
+
+.sgh-header .menubar li.dropdown:hover > .dropdown-menu {
+    transition-delay: 0s;
+}
+
+/* Keyboard parity: the panel must also stay while focus is inside it, or
+   tabbing into the submenu closes it on the first item. */
+.sgh-header .menubar li.dropdown:focus-within > .dropdown-menu {
+    visibility: visible;
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0s;
 }

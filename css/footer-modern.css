@@ -248,11 +248,19 @@
    3. Brand column
    ========================================================================== */
 
+/* Full-colour mark on the navy footer, with no plate behind it: stacked 1-px
+   white drop-shadows trace the artwork's own edge so the navy wordmark and
+   anchor separate from the background, and a cyan bloom lifts it off the ink.
+   Capped by height — the file is 110x99, so anything larger would upscale. */
 .sgf-logo {
     display: block;
-    width: 128px;
+    width: auto;
+    max-width: none;
+    max-height: 74px;
     height: auto;
     margin-bottom: 26px;
+    filter:
+        drop-shadow(0 0 1px rgba(255, 255, 255, .98)) drop-shadow(0 0 1px rgba(255, 255, 255, .98)) drop-shadow(0 0 2px rgba(255, 255, 255, .92)) drop-shadow(0 0 14px rgba(53, 198, 244, .5));
 }
 
 .sgf-about {

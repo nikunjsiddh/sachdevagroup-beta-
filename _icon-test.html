@@ -1,0 +1,1295 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    <!--<script>-->
+    <!--    function preloadFunc() {-->
+    <!--        try {-->
+    <!--            var request = new XMLHttpRequest();-->
+
+    <!--            request.open('GET', 'https://api.ipdata.co/?api-key=d850dc030d3ba6fc357068e124bedc643b200fab919d84276cbb1026');-->
+    <!--            request.setRequestHeader('Accept', 'application/json');-->
+
+    <!--            request.onreadystatechange = function () {-->
+    <!--                if (this.readyState === 4) {-->
+    <!--                    try {-->
+    <!--                        if (this.status === 200 && this.responseText) {-->
+    <!--                            var IPData = JSON.parse(this.responseText);-->
+    <!--                            if (IPData.country_code !== "IN") {-->
+    <!--                                location.href = "https://www.sachdevagroup.in/index.php";-->
+    <!--                            }-->
+    <!--                        } else {-->
+    <!--                            console.warn("IP lookup failed or empty response.");-->
+    <!--                            // Optionally fallback or don't redirect -->
+    <!--                        }-->
+    <!--                    } catch (err) {-->
+    <!--                        console.error("Error parsing IP data:", err);-->
+    <!--                        // Optionally fallback  -->
+    <!--                    }-->
+    <!--                }-->
+    <!--            };-->
+
+    <!--            request.send();-->
+    <!--        } catch (e) {-->
+    <!--            console.log("Request failed:", e);-->
+    <!--        }-->
+    <!--    }-->
+
+    <!--    window.onload = preloadFunc;-->
+    <!--</script>-->
+
+    <meta charset="utf-8">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <!-- SG MOTION arming shim. Sets the class js/index-motion.js's hidden
+         initial states are gated on, BEFORE the stylesheets resolve, so there
+         is no flash of un-animated content. The timer is the safety net: if
+         index-motion.js never loads or never finishes booting, the class is
+         pulled and every element is simply visible. -->
+    <script>(function(d){var h=d.documentElement,C=h.classList;if(C){C.add('sg-motion');}else{h.className+=' sg-motion';}setTimeout(function(){if(h.getAttribute('data-sg-ready'))return;if(C){C.remove('sg-motion');}else{h.className=(' '+h.className+' ').split(' sg-motion ').join(' ');}},4000);})(document);</script>
+
+    <title>Sachdeva Group of Industries - Leading Ship Recycling Companies in Alang Gujarat, India</title>
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <link rel="stylesheet" href="css/animate.min.css">
+    <link rel="stylesheet" href="css/footer.css">
+    <link rel="stylesheet" href="css/owl.carousel.css">
+    <link rel="stylesheet" href="css/font-awesome.min.css">
+    <link rel="stylesheet" href="css/magnific-popup.css">
+    <link rel="stylesheet" href="css/flaticon.css">
+    <link rel="stylesheet" href="css/lity.css">
+    <link rel="stylesheet" href="css/slicknav.min.css">
+    <link rel="stylesheet preload" as="style" href="css/slider.css">
+    <link rel="stylesheet" href="css/aos.css">
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css?family=Aldrich" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Signika+Negative" rel="stylesheet">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Oswald:wght@200..700&display=swap" rel="stylesheet">
+
+    <!-- Marine experience layer (must load last) -->
+    <link rel="stylesheet" href="css/marine.css">
+    <link rel="stylesheet" href="css/marine-pages.css">
+    <link rel="stylesheet" href="css/footer-modern.css">
+    <link rel="stylesheet" href="css/header-modern.css">
+    <link rel="stylesheet" href="css/index-theme.css">
+<style>
+/* ==========================================================================
+   SG MARINE 24 — the icon family
+   --------------------------------------------------------------------------
+   Replaces the stock line glyphs in the stats band, the process steps and the
+   commitment cards with one drawn-to-brief set: beaching, cutting, plate,
+   drum, PPE, certificate, gantry, datum post. All on a 24x24 grid, round
+   terminals, one stroke weight per surface.
+
+   DUOTONE
+   Every icon is two layers. `.sg-ico__lines` is the drawing and always uses
+   currentColor, so it inherits whatever the host surface already decided.
+   `.sg-ico__fill` is a single tinted mass underneath — the thing being worked
+   on (the hull, the plate, the hazardous stream, the sheet). Its colour is a
+   token, `--sgi-tint`, so the same file reads on navy (cyan tint) and on the
+   cyan commitment plate (ink tint) without a second copy of the artwork.
+
+   DRAW-ON
+   Every stroked path carries pathLength="100", so one dash length works on
+   every geometry regardless of its real length. The hidden state only exists
+   under `html.sg-ico-js`, which js/index-motion.js writes — with the script
+   absent or broken the icons are simply, permanently drawn.
+   ========================================================================== */
+
+.sg-ico {
+    /* the tinted mass — overridden per surface below */
+    --sgi-tint: rgba(53, 198, 244, .20);
+    --sgi-tint-hi: rgba(53, 198, 244, .34);
+    /* draw-on timing */
+    --sgi-draw: .78s;
+    --sgi-step: 90ms;
+    /* dash length; paths that hold several subpaths override it inline,
+       because stroke-dasharray restarts on every subpath */
+    --sgi-len: 100;
+
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 1.7;
+    stroke-linecap: round;
+    stroke-linejoin: round;
+}
+
+.sg-ico .sg-ico__fill {
+    fill: var(--sgi-tint);
+    stroke: none;
+    transition: fill .45s var(--e-out);
+}
+
+.sg-ico .sg-ico__lines > * {
+    fill: none;
+    stroke: currentColor;
+}
+
+/* --- surface 1: the stats band ------------------------------------------
+   index-theme.css:2446 demoted these to stroke-width 1.3 while they were
+   stock glyphs. The family is cut for 1.6-1.7; at the 26px render that reads
+   as the same optical weight the process tiles carry at 34px. */
+.mrn-stats .mrn-stat__icon .sg-ico {
+    stroke-width: 1.6;
+}
+
+.mrn-stats .mrn-stat:hover .sg-ico__fill,
+.mrn-stats .mrn-stat:focus-within .sg-ico__fill {
+    fill: var(--sgi-tint-hi);
+}
+
+/* --- surface 2: the process tiles ---------------------------------------
+   Cyan glyph on the machined navy tile, so the tint stays cyan but comes up
+   a little to survive the tile's own gradient. */
+#process .mrn-step__dot .sg-ico {
+    stroke-width: 1.7;
+    --sgi-tint: rgba(53, 198, 244, .30);
+    --sgi-tint-hi: rgba(53, 198, 244, .46);
+}
+
+#process .mrn-step:hover .sg-ico__fill,
+#process .mrn-step:focus-within .sg-ico__fill {
+    fill: var(--sgi-tint-hi);
+}
+
+/* --- surface 3: the commitment plates -----------------------------------
+   The plate itself is cyan (index-theme.css:4720) and the glyph is ink, so
+   the duotone inverts: the tinted mass becomes a darker ink wash. Same
+   artwork, no second file. */
+#commitment .mrn-card__icon .sg-ico {
+    stroke-width: 1.7;
+    --sgi-tint: rgba(4, 38, 63, .22);
+    --sgi-tint-hi: rgba(3, 32, 47, .34);
+}
+
+#commitment .mrn-card:hover .sg-ico__fill,
+#commitment .mrn-card:focus-within .sg-ico__fill {
+    fill: var(--sgi-tint-hi);
+}
+
+/* ==========================================================================
+   DRAW-ON
+   Armed only when js/index-motion.js has written `sg-ico-js` onto <html>.
+   Two triggers land on the same declaration, so they can never fight:
+     .sg-ico--in            written by the icon module's own observer
+     .mrn-in ancestor       already written by js/marine.js when the stats
+                            grid / flow / card row reveals, which keeps the
+                            draw behind the container entrance for free
+   ========================================================================== */
+
+html.sg-ico-js .sg-ico .sg-ico__lines > * {
+    stroke-dasharray: var(--sgi-len);
+    stroke-dashoffset: var(--sgi-len);
+    transition: stroke-dashoffset var(--sgi-draw) var(--e-out);
+    transition-delay: calc(var(--sgi-i, 0) * var(--sgi-step));
+}
+
+html.sg-ico-js .sg-ico .sg-ico__lines > *:nth-child(2) { --sgi-i: 1; }
+html.sg-ico-js .sg-ico .sg-ico__lines > *:nth-child(3) { --sgi-i: 2; }
+html.sg-ico-js .sg-ico .sg-ico__lines > *:nth-child(4) { --sgi-i: 3; }
+html.sg-ico-js .sg-ico .sg-ico__lines > *:nth-child(5) { --sgi-i: 4; }
+html.sg-ico-js .sg-ico .sg-ico__lines > *:nth-child(6) { --sgi-i: 5; }
+
+html.sg-ico-js .sg-ico .sg-ico__fill {
+    opacity: 0;
+    transition: opacity .55s var(--e-out) .26s, fill .45s var(--e-out);
+}
+
+html.sg-ico-js .sg-ico.sg-ico--in .sg-ico__lines > *,
+html.sg-ico-js .mrn-in .sg-ico .sg-ico__lines > * {
+    stroke-dashoffset: 0;
+}
+
+html.sg-ico-js .sg-ico.sg-ico--in .sg-ico__fill,
+html.sg-ico-js .mrn-in .sg-ico .sg-ico__fill {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   FONT AWESOME 4 GLYPHS -> the same family
+   The button arrows, the hero chevron, the CTA handset and the back-to-top
+   caret were FA 4 webfont glyphs and read as a different set. They are
+   swapped for masked copies of the family's own strokes, which keeps the
+   markup, the `.mrn-btn:hover i` translate (marine.css:253) and the
+   `.sgf-yard__btn:hover i` translate (footer-modern.css:196) untouched.
+   Wrapped in @supports so a browser without masking simply keeps the glyph
+   rather than rendering a solid box.
+   ========================================================================== */
+
+@supports ((-webkit-mask-image: url("#m")) or (mask-image: url("#m"))) {
+
+    .mrn-btn > .fa-long-arrow-right::before,
+    .sgf-yard__btn > .fa-long-arrow-right::before,
+    .mrn-btn > .fa-angle-down::before,
+    .mrn-btn > .fa-phone::before,
+    #toTopBtn > .fa-chevron-up::before {
+        content: none;
+    }
+
+    .mrn-btn > .fa-long-arrow-right,
+    .sgf-yard__btn > .fa-long-arrow-right,
+    .mrn-btn > .fa-angle-down,
+    .mrn-btn > .fa-phone,
+    #toTopBtn > .fa-chevron-up {
+        display: inline-block;
+        width: 1.15em;
+        height: 1.15em;
+        vertical-align: -.2em;
+        background-color: currentColor;
+        -webkit-mask-repeat: no-repeat;
+        mask-repeat: no-repeat;
+        -webkit-mask-position: 50% 50%;
+        mask-position: 50% 50%;
+        -webkit-mask-size: contain;
+        mask-size: contain;
+    }
+
+    .mrn-btn > .fa-long-arrow-right,
+    .sgf-yard__btn > .fa-long-arrow-right {
+        width: 1.35em;
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.6 12h15.6M13.8 6.6 19.4 12l-5.6 5.4'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M3.6 12h15.6M13.8 6.6 19.4 12l-5.6 5.4'/%3E%3C/svg%3E");
+    }
+
+    .mrn-btn > .fa-angle-down {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.2 9.4 12 15.2l5.8-5.8'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.2 9.4 12 15.2l5.8-5.8'/%3E%3C/svg%3E");
+    }
+
+    #toTopBtn > .fa-chevron-up {
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.2 14.6 12 8.8l5.8 5.8'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6.2 14.6 12 8.8l5.8 5.8'/%3E%3C/svg%3E");
+    }
+
+    .mrn-btn > .fa-phone {
+        width: 1.2em;
+        height: 1.2em;
+        -webkit-mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15.6 21.4a17.6 17.6 0 0 1-13-13 2 2 0 0 1 .6-1.9l2.4-2.1a1.3 1.3 0 0 1 2 .3l2 3.2a1.3 1.3 0 0 1-.3 1.7l-1.3 1a12.6 12.6 0 0 0 4.4 4.4l1-1.3a1.3 1.3 0 0 1 1.7-.3l3.2 2a1.3 1.3 0 0 1 .3 2l-2.1 2.4a2 2 0 0 1-1.9.6Z'/%3E%3C/svg%3E");
+        mask-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23000' stroke-width='1.7' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M15.6 21.4a17.6 17.6 0 0 1-13-13 2 2 0 0 1 .6-1.9l2.4-2.1a1.3 1.3 0 0 1 2 .3l2 3.2a1.3 1.3 0 0 1-.3 1.7l-1.3 1a12.6 12.6 0 0 0 4.4 4.4l1-1.3a1.3 1.3 0 0 1 1.7-.3l3.2 2a1.3 1.3 0 0 1 .3 2l-2.1 2.4a2 2 0 0 1-1.9.6Z'/%3E%3C/svg%3E");
+    }
+}
+
+/* ==========================================================================
+   REDUCED MOTION — everything is already drawn, nothing waits, nothing moves.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    html.sg-ico-js .sg-ico .sg-ico__lines > * {
+        stroke-dasharray: none;
+        stroke-dashoffset: 0;
+        transition: none;
+    }
+
+    html.sg-ico-js .sg-ico .sg-ico__fill {
+        opacity: 1;
+        transition: none;
+    }
+
+    .sg-ico .sg-ico__fill {
+        transition: none;
+    }
+}
+
+</style>
+</head>
+
+<body>
+    <!-- ====== reading progress ====== -->
+    <div class="mrn-progress" id="mrnProgress"></div>
+
+    <!-- ====== scroll to top ====== -->
+    <a id="toTopBtn" title="Go to top" href="javascript:void(0)">
+        <i class="fa fa-chevron-up"></i>
+    </a>
+
+
+    <div class="wrapper">
+        <header class="header sgh-header">
+            <div class="container">
+                <div class="menubar">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nav class="navbar navbar-static-top">
+                                <!-- Brand and toggle get grouped for better mobile display -->
+                                <div class="navbar-header">
+                                    <button type="button" class="navbar-toggle collapsed" data-toggle="collapse"
+                                        aria-expanded="false">
+                                        <span class="sr-only">Toggle navigation</span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                        <span class="icon-bar"></span>
+                                    </button>
+                                    <a class="navbar-brand" href="index.html">
+                                        <img src="images/logo.png" class="desktop-logo img-responsive"
+                                            alt="Sachdeva Group">
+                                    </a>
+                                </div>
+
+                                <!-- Collect the nav links, forms, and other content for toggling -->
+                                <div class="collapse navbar-collapse ">
+
+                                    <ul class="nav navbar-nav navbar-right" id="main-menu">
+                                        <li><a href="index.html">Home</a></li>
+                                        <li class="dropdown">
+                                            <a href="about_us.html" class="dropdown-toggle" data-toggle="dropdown"
+                                                role="button" aria-haspopup="true" aria-expanded="false">
+                                                About
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="about_us.html">Group Profile</a></li>
+                                                <li><a href="vision_mission.html">Vision &amp; Mission</a></li>
+                                                <li><a href="testimonials.html">Testimonials</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                Companies
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="sspsb.html">Sachdeva Steel Products</a></li>
+                                                <li><a href="jjsb.html">Jai Jagdish Ship Breakers</a></li>
+                                            </ul>
+                                        </li>
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                Operations
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="environment_management.html">Environment Management</a>
+                                                </li>
+                                                <li><a href="health_safety.html">Health &amp; Safety</a></li>
+                                                <li><a href="waste_management.html">Waste Management</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="our_credentials.html">Credentials</a></li>
+                                        <li class="dropdown">
+                                            <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button"
+                                                aria-haspopup="true" aria-expanded="false">
+                                                News &amp; Media
+                                                <span class="caret"></span>
+                                            </a>
+                                            <ul class="dropdown-menu">
+                                                <li><a href="news.html">News</a></li>
+                                                <li><a href="gallery.html">Gallery</a></li>
+                                            </ul>
+                                        </li>
+                                        <li><a href="contact_us.html">Contact Us</a></li>
+                                    </ul>
+
+                                </div>
+                                <!-- /.navbar-collapse -->
+                            </nav>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+            <div class="mobile-menu" data-logo="images/logo.png">
+            </div>
+        </header>
+        <!-- ============================ HERO ============================ -->
+        <section class="mrn-hero" id="home">
+            <div class="mrn-hero__media" data-mrn-parallax="0.10">
+                <video autoplay muted loop playsinline preload="metadata" poster="images/gallery/5.jpg">
+                    <source src="images/banner/banner.mp4" type="video/mp4">
+                </video>
+            </div>
+            <div class="mrn-hero__scrim"></div>
+            <div class="mrn-hero__rays"></div>
+            <canvas class="mrn-hero__canvas" id="mrnHeroCanvas"></canvas>
+
+            <div class="mrn-hero__inner">
+                <div class="mrn-container">
+                    <div class="mrn-hero__badge">
+                        <b>⚓</b>
+                        <span>Alang Ship Recycling Yard · Since 1983</span>
+                    </div>
+
+                    <h1 class="mrn-hero__title">
+                        <span class="mrn-word"><span style="--d:.15s">Recycling</span></span>
+                        <span class="mrn-word"><span style="--d:.27s">Ships.</span></span>
+                        <span class="mrn-word"><span style="--d:.39s" class="mrn-hl">Protecting</span></span>
+                        <span class="mrn-word"><span style="--d:.51s" class="mrn-hl">Oceans.</span></span>
+                    </h1>
+
+                    <p class="mrn-hero__sub">
+                        Sachdeva Group is your trusted partner for the safe and environmentally sound
+                        recycling of end-of-life vessels — four decades of engineering discipline across
+                        two fully-equipped yards on the Alang coastline.
+                    </p>
+
+                    <div class="mrn-hero__actions">
+                        <a href="contact_us.html" class="mrn-btn mrn-btn--gold" data-mrn-magnetic>
+                            Start a Conversation
+                            <i class="fa fa-long-arrow-right"></i>
+                        </a>
+                        <a href="#about" class="mrn-btn mrn-btn--ghost">
+                            Explore the Yard
+                            <i class="fa fa-angle-down"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+
+            <span class="mrn-scrollcue" aria-hidden="true"></span>
+
+            <div class="mrn-hero__rail">
+                <div class="mrn-container">
+                    <div class="mrn-hero__rail-grid">
+                        <div class="mrn-hero__rail-item">
+                            <strong><span data-count="71">0</span><i>+</i></strong>
+                            <span>Vessels Recycled</span>
+                        </div>
+                        <div class="mrn-hero__rail-item">
+                            <strong><span data-count="42">0</span></strong>
+                            <span>Years of Operation</span>
+                        </div>
+                        <div class="mrn-hero__rail-item">
+                            <strong><span data-count="2">0</span></strong>
+                            <span>Certified Yards</span>
+                        </div>
+                        <div class="mrn-hero__rail-item">
+                            <strong><span data-count="100">0</span><i>%</i></strong>
+                            <span>HKC Aligned</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ TICKER ============================ -->
+        <div class="mrn-ticker" role="region" aria-label="Operational status" tabindex="0">
+            <div class="mrn-ticker__track" data-mrn-marquee>
+                <span class="mrn-ticker__item"><b>Safe</b> Ship Recycling <i class="fa fa-circle"></i></span>
+                <span class="mrn-ticker__item">Hong Kong Convention <b>Aligned</b> <i class="fa fa-circle"></i></span>
+                <span class="mrn-ticker__item"><b>Zero</b> Beach Contamination <i class="fa fa-circle"></i></span>
+                <span class="mrn-ticker__item">Certified <b>Green</b> Yards <i class="fa fa-circle"></i></span>
+                <span class="mrn-ticker__item">Alang · <b>Gujarat</b> · India <i class="fa fa-circle"></i></span>
+                <span class="mrn-ticker__item">Trained <b>Workforce</b> <i class="fa fa-circle"></i></span>
+            </div>
+        </div>
+        <!-- ============================ ABOUT ============================ -->
+        <section class="mrn-section mrn-light" id="about">
+            <div class="mrn-wavesep mrn-wavesep--top">
+                <svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="mrnWaveGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#0a2340" />
+                            <stop offset="100%" stop-color="#22b3e6" />
+                        </linearGradient>
+                    </defs>
+                    <path fill="url(#mrnWaveGrad)"
+                        d="M0,0 L1440,0 L1440,26 C1200,68 960,6 720,38 C480,70 240,14 0,48 Z">
+                        <animate attributeName="d" dur="12s" repeatCount="indefinite"
+                            values="M0,0 L1440,0 L1440,26 C1200,68 960,6 720,38 C480,70 240,14 0,48 Z;
+                                    M0,0 L1440,0 L1440,48 C1200,14 960,70 720,38 C480,6 240,68 0,26 Z;
+                                    M0,0 L1440,0 L1440,26 C1200,68 960,6 720,38 C480,70 240,14 0,48 Z" />
+                    </path>
+                </svg>
+            </div>
+
+            <div class="mrn-container">
+                <div class="mrn-about__grid">
+                    <div class="mrn-figure" data-mrn-tilt="9" data-mrn-reveal="left">
+                        <span class="mrn-figure__ring" aria-hidden="true"></span>
+                        <div class="mrn-figure__frame">
+                            <img src="images/gallery/5.jpg" width="1152" height="648" loading="lazy"
+                                decoding="async"
+                                alt="Vessels beached for dismantling beside the plate deck at the Sachdeva Group yard, Alang">
+                            <span class="ab-reg" aria-hidden="true"></span>
+                            <div class="ab-cap">
+                                <span class="ab-cap__id">Plot No. 65</span>
+                                <span class="ab-cap__txt">Alang Ship Recycling Yard &middot; Bhavnagar, Gujarat,
+                                    India</span>
+                            </div>
+                        </div>
+                        <div class="mrn-figure__badge">
+                            <strong><span data-count="42">0</span></strong>
+                            <span class="ab-plate__label">Years at Alang</span>
+                            <span class="ab-plate__meta">Continuous operation since 1983</span>
+                        </div>
+                    </div>
+
+                    <div>
+                        <span class="mrn-eyebrow" data-mrn-reveal>Who We Are</span>
+                        <h2 class="mrn-title" data-mrn-reveal>Four decades on the <em>Alang coastline</em></h2>
+                        <p class="mrn-lead" data-mrn-reveal>
+                            Sachdeva Steel Products (Ship Breaking Unit) LLP and Jai Jagdish Ship Breakers Pvt. Ltd.
+                            have been in the business since ship recycling activity began at Alang in 1983. What
+                            started as Madhav Industrial Corporation has grown into two dedicated units with a
+                            combined record of 71 vessels safely dismantled.
+                        </p>
+
+                        <p class="ab-spec__head" data-mrn-reveal>
+                            <span>Operating standards</span>
+                            <span class="ab-spec__ref">01 &mdash; 06</span>
+                        </p>
+                        <ul class="mrn-about__points" data-mrn-stagger="120" data-mrn-reveal>
+                            <li>Hong Kong Convention aligned processes</li>
+                            <li>Impermeable primary cutting zones</li>
+                            <li>Certified hazardous waste handling</li>
+                            <li>Continuous workforce safety training</li>
+                            <li>Full inventory of hazardous materials</li>
+                            <li>Documented downstream traceability</li>
+                        </ul>
+
+                        <a href="about_us.html" class="mrn-btn mrn-btn--navy" data-mrn-reveal data-mrn-magnetic>
+                            More About Us
+                            <i class="fa fa-long-arrow-right"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ STATS ============================ -->
+        <section class="mrn-stats">
+            <div class="mrn-stats__bg" data-sg-parallax="band" aria-hidden="true"></div>
+            <div class="mrn-container">
+                <div class="mrn-stats__grid" data-mrn-stagger="130" data-mrn-reveal>
+                    <div class="mrn-stat" data-mrn-reveal>
+                        <div class="mrn-stat__icon">
+                            <svg class="sg-ico sg-ico--vessel" viewBox="0 0 24 24"
+                                 aria-hidden="true" focusable="false">
+                                <path class="sg-ico__fill" d="M3.4 13.2h15.2l-2 3.9a2.2 2.2 0 0 1-2 1.2H7.4a2.2 2.2 0 0 1-2-1.2L3.4 13.2Z" />
+                                <g class="sg-ico__lines">
+                                    <path pathLength="100" d="M3.4 13.2h15.2l-2 3.9a2.2 2.2 0 0 1-2 1.2H7.4a2.2 2.2 0 0 1-2-1.2L3.4 13.2Z" />
+                                    <path pathLength="100" d="M8.8 13.2V9h4.4v4.2" />
+                                    <path pathLength="100" style="--sgi-len:76" d="M15.8 13.2V5.8M14.6 7.8h2.4" />
+                                    <path pathLength="100" d="M2.4 20.8c1.6 0 1.6-1.4 3.2-1.4s1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="mrn-stat__num"><span data-count="71">0</span><i>+</i></div>
+                        <div class="mrn-stat__label">Ships Recycled</div>
+                    </div>
+                    <div class="mrn-stat" data-mrn-reveal>
+                        <div class="mrn-stat__icon">
+                            <svg class="sg-ico sg-ico--certificate" viewBox="0 0 24 24"
+                                 aria-hidden="true" focusable="false">
+                                <path class="sg-ico__fill" d="M5 2.6h8.6l3.9 3.9v8.2a1.6 1.6 0 0 1-1.6 1.6H5a1.6 1.6 0 0 1-1.6-1.6V4.2A1.6 1.6 0 0 1 5 2.6Z" />
+                                <g class="sg-ico__lines">
+                                    <path pathLength="100" d="M5 2.6h8.6l3.9 3.9v8.2a1.6 1.6 0 0 1-1.6 1.6H5a1.6 1.6 0 0 1-1.6-1.6V4.2A1.6 1.6 0 0 1 5 2.6Z" />
+                                    <path pathLength="100" d="M13.6 2.6v3.9h3.9" />
+                                    <path pathLength="100" style="--sgi-len:60" d="M6.4 9.2h6M6.4 11.9h4" />
+                                    <path pathLength="100" style="--sgi-len:64" d="M17.2 15.2a2.4 2.4 0 1 0 0 4.8 2.4 2.4 0 0 0 0-4.8ZM15.4 19.6l-.8 2.6 2.6-1.1 2.6 1.1-.8-2.6" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="mrn-stat__num"><span data-count="100">0</span><i>%</i></div>
+                        <div class="mrn-stat__label">Compliance Focus</div>
+                    </div>
+                    <div class="mrn-stat" data-mrn-reveal>
+                        <div class="mrn-stat__icon">
+                            <svg class="sg-ico sg-ico--yards" viewBox="0 0 24 24"
+                                 aria-hidden="true" focusable="false">
+                                <path class="sg-ico__fill" d="M3.2 8.6h7.6v7.2H3.2ZM13.2 8.6h7.6v7.2h-7.6Z" />
+                                <g class="sg-ico__lines">
+                                    <path pathLength="100" d="M3.2 8.6h7.6v7.2H3.2Z" />
+                                    <path pathLength="100" d="M13.2 8.6h7.6v7.2h-7.6Z" />
+                                    <path pathLength="100" style="--sgi-len:74" d="M5 15.8v-5h4.2v5M7.1 10.8v3.1M6.2 13.9h1.8" />
+                                    <path pathLength="100" style="--sgi-len:74" d="M15 15.8v-5h4.2v5M17.1 10.8v3.1M16.2 13.9h1.8" />
+                                    <path pathLength="100" d="M2.4 20.8c1.6 0 1.6-1.4 3.2-1.4s1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="mrn-stat__num"><span data-count="2">0</span></div>
+                        <div class="mrn-stat__label">Operating Yards</div>
+                    </div>
+                    <div class="mrn-stat" data-mrn-reveal>
+                        <div class="mrn-stat__icon">
+                            <svg class="sg-ico sg-ico--datum" viewBox="0 0 24 24"
+                                 aria-hidden="true" focusable="false">
+                                <path class="sg-ico__fill" d="M10.3 3.6h3.4v14.8h-3.4Z" />
+                                <g class="sg-ico__lines">
+                                    <path pathLength="100" d="M10.3 3.6h3.4v14.8h-3.4Z" />
+                                    <path pathLength="100" d="M13.7 4.2h4.2l-1.4 1.8 1.4 1.8h-4.2" />
+                                    <path pathLength="100" style="--sgi-len:40" d="M13.7 9.4h2.6M13.7 12h1.6M13.7 14.6h2.6" />
+                                    <path pathLength="100" d="M2.4 20.4c1.6 0 1.6-1.4 3.2-1.4s1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="mrn-stat__num"><span data-count="1983">0</span></div>
+                        <div class="mrn-stat__label">Operating Since</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ COMPANIES ============================ -->
+        <section class="mrn-section mrn-soft" id="companies">
+            <div class="mrn-container">
+                <div class="mrn-center">
+                    <span class="mrn-eyebrow" data-mrn-reveal>Our Companies</span>
+                    <h2 class="mrn-title" data-mrn-reveal>Two yards. <em>One standard.</em></h2>
+                    <p class="mrn-lead" data-mrn-reveal>
+                        Each unit runs the same safety architecture, the same environmental controls and the same
+                        documentation discipline — so the vessel you hand over is treated identically whichever
+                        plot it beaches on.
+                    </p>
+                </div>
+
+                <div class="mrn-units d3-stage" data-mrn-stagger="160" data-mrn-reveal>
+                    <article class="mrn-unit mrn-unit--a d3-card edge-sweep" data-mrn-reveal data-mrn-tilt="6">
+                        <div class="sg-plx-clip" aria-hidden="true"><img src="images/gallery/3.jpg" alt="" width="1152" height="648" loading="lazy" decoding="async"></div>
+                        <div class="mrn-unit__body d3-pop-sm" data-mrn-reveal>
+                            <div class="mrn-unit__no" aria-hidden="true">01</div>
+                            <h3>Sachdeva Steel Products<br>(Ship Breakers)</h3>
+                            <p>
+                                Established in 1997 as the group's flagship recycling unit, carrying forward the
+                                operations first begun under Madhav Industrial Corporation in 1983.
+                            </p>
+                            <a href="sspsb.html" class="mrn-btn mrn-btn--gold">View Unit <i
+                                    class="fa fa-long-arrow-right"></i></a>
+                        </div>
+                        <div class="mrn-unit__meta" data-mrn-reveal>
+                            <div><strong><span data-count="36">0</span></strong><span>Ships Recycled</span></div>
+                            <div><strong>1997</strong><span>Established</span></div>
+                        </div>
+                    </article>
+
+                    <article class="mrn-unit mrn-unit--b d3-card edge-sweep" data-mrn-reveal data-mrn-tilt="6">
+                        <div class="sg-plx-clip" aria-hidden="true"><img src="images/gallery/6.jpg" alt="" width="1152" height="648" loading="lazy" decoding="async"></div>
+                        <div class="mrn-unit__body d3-pop-sm" data-mrn-reveal>
+                            <div class="mrn-unit__no" aria-hidden="true">02</div>
+                            <h3>Jai Jagdish<br>Ship Breakers Pvt. Ltd.</h3>
+                            <p>
+                                Commissioned in 1998 to expand group capacity, equipped to handle vessels of all
+                                classes with dedicated hazardous-material handling infrastructure.
+                            </p>
+                            <a href="jjsb.html" class="mrn-btn mrn-btn--gold">View Unit <i
+                                    class="fa fa-long-arrow-right"></i></a>
+                        </div>
+                        <div class="mrn-unit__meta" data-mrn-reveal>
+                            <div><strong><span data-count="35">0</span></strong><span>Ships Recycled</span></div>
+                            <div><strong>1998</strong><span>Established</span></div>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ PROCESS ============================ -->
+        <section class="mrn-section mrn-light" id="process">
+            <div class="mrn-container">
+                <div class="mrn-center">
+                    <span class="mrn-eyebrow" data-mrn-reveal>The Yard Process</span>
+                    <h2 class="mrn-title" data-mrn-reveal>From <em>arrival</em> to <em>re-rolling mill</em></h2>
+                    <p class="mrn-lead" data-mrn-reveal>
+                        Every vessel moves through four controlled stages, each with its own inspection gate,
+                        waste stream and record.
+                    </p>
+                </div>
+
+                <div class="mrn-flow d3-stage" data-mrn-stagger="140" data-mrn-reveal>
+                    <div class="mrn-step d3-card" data-mrn-tilt="5">
+                        <div class="mrn-step__dot" data-step="1">
+                            <svg class="sg-ico sg-ico--beaching" viewBox="0 0 24 24"
+                                 aria-hidden="true" focusable="false">
+                                <path class="sg-ico__fill" transform="rotate(-16 11.7 13.4)" d="M4.6 11.6h14.2l-1.9 3.6a2 2 0 0 1-1.8 1.1H8.3a2 2 0 0 1-1.8-1.1L4.6 11.6Z" />
+                                <g class="sg-ico__lines">
+                                    <path pathLength="100" transform="rotate(-16 11.7 13.4)" d="M4.6 11.6h14.2l-1.9 3.6a2 2 0 0 1-1.8 1.1H8.3a2 2 0 0 1-1.8-1.1L4.6 11.6Z" />
+                                    <path pathLength="100" transform="rotate(-16 11.7 13.4)" style="--sgi-len:57" d="M9.4 11.6V8.6h3.2v3M14.4 11.6V6.6h1.9" />
+                                    <path pathLength="100" d="M2.4 21c3.4-.2 6.2-1.2 8.8-2.6s6.6-2.6 10.4-3.2" />
+                                </g>
+                            </svg>
+                        </div>
+                        <h4>Beaching &amp; Survey</h4>
+                        <p>Vessel arrival, gas-free certification and a full inventory of hazardous materials before
+                            any cutting begins.</p>
+                    </div>
+                    <div class="mrn-step d3-card" data-mrn-tilt="5">
+                        <div class="mrn-step__dot" data-step="2">
+                            <svg class="sg-ico sg-ico--torch" viewBox="0 0 24 24"
+                                 aria-hidden="true" focusable="false">
+                                <path class="sg-ico__fill" d="M2.4 19h3.6l-.5 3H2.4ZM7.2 19h14.4v3H7.7Z" />
+                                <g class="sg-ico__lines">
+                                    <path pathLength="100" transform="rotate(-45 12 12)" d="M8 11.2 11.2 10.4V9.6h8.2a1.8 1.8 0 0 1 0 3.6H11.2v-.8L8 12.8Z" />
+                                    <path pathLength="100" transform="rotate(-45 12 12)" style="--sgi-len:50" d="M14.2 9.6v3.6M16.2 9.6v3.6" />
+                                    <path pathLength="100" transform="rotate(-45 12 12)" d="M8 11.3 4.2 12 8 12.7Z" />
+                                    <path pathLength="100" transform="rotate(-45 12 12)" style="--sgi-len:34" d="M3.4 12H2.6M4.2 10.4 3.6 9.8M4.2 13.6l-.6.6" />
+                                    <path pathLength="100" style="--sgi-len:72" d="M2.4 19h3.6l-.5 3H2.4ZM7.2 19h14.4v3H7.7Z" />
+                                </g>
+                            </svg>
+                        </div>
+                        <h4>Controlled Dismantling</h4>
+                        <p>Block-by-block cutting on impermeable flooring, with cranes and winches rated to the load
+                            profile of each section.</p>
+                    </div>
+                    <div class="mrn-step d3-card" data-mrn-tilt="5">
+                        <div class="mrn-step__dot" data-step="3">
+                            <svg class="sg-ico sg-ico--streams" viewBox="0 0 24 24"
+                                 aria-hidden="true" focusable="false">
+                                <path class="sg-ico__fill" d="M3 13.2h5.2l-.7 5.4H3.7Z" />
+                                <g class="sg-ico__lines">
+                                    <path pathLength="100" d="M12 2.8v3.4" />
+                                    <path pathLength="100" style="--sgi-len:39" d="M12 6.2 5.9 10.9M12 6.2v4.7M12 6.2l6.1 4.7" />
+                                    <path pathLength="100" style="--sgi-len:34" d="M7 8.8 5.9 10.9 8.2 10.4M10.9 9.4 12 10.9 13.1 9.4M17 8.8 18.1 10.9 15.8 10.4" />
+                                    <path pathLength="100" style="--sgi-len:34" d="M3 13.2h5.2l-.7 5.4H3.7ZM9.4 13.2h5.2l-.7 5.4H10.1ZM15.8 13.2H21l-.7 5.4h-3.8Z" />
+                                </g>
+                            </svg>
+                        </div>
+                        <h4>Waste Segregation</h4>
+                        <p>Asbestos, oils, PCBs and e-waste separated into licensed streams and routed to authorised
+                            downstream facilities.</p>
+                    </div>
+                    <div class="mrn-step d3-card" data-mrn-tilt="5">
+                        <div class="mrn-step__dot" data-step="4">
+                            <svg class="sg-ico sg-ico--plate" viewBox="0 0 24 24"
+                                 aria-hidden="true" focusable="false">
+                                <path class="sg-ico__fill" d="M6.4 11h11.2v2.6H6.4Z" />
+                                <g class="sg-ico__lines">
+                                    <path pathLength="100" style="--sgi-len:74" d="M18.6 9.6Q12 2.4 5.4 9.2M5.2 6.2 5.4 9.2 8.4 8.7" />
+                                    <path pathLength="100" d="M6.4 11h11.2v2.6H6.4Z" />
+                                    <path pathLength="100" d="M3.6 14.6h16.8v2.6H3.6Z" />
+                                    <path pathLength="100" d="M3.6 18.2h16.8v2.6H3.6Z" />
+                                </g>
+                            </svg>
+                        </div>
+                        <h4>Recovery &amp; Reuse</h4>
+                        <p>Re-rollable plate, machinery and fittings graded, weighed and released back into the
+                            Indian steel economy.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ JOURNEY ============================ -->
+        <section class="mrn-section mrn-dark" id="journey">
+            <div class="mrn-journey__plate" data-mrn-parallax="0.07" aria-hidden="true"></div>
+            <div class="mrn-container">
+                <div class="mrn-center">
+                    <span class="mrn-eyebrow" data-mrn-reveal>Our Journey</span>
+                    <h2 class="mrn-title" data-mrn-reveal>A <em>legacy</em> built plate by plate</h2>
+                    <p class="mrn-lead" data-mrn-reveal>
+                        Since our inception in 1983, Sachdeva Group has been a pioneer in the ship recycling
+                        industry — committed to sustainable practice and to raising the benchmark of the sector.
+                    </p>
+                </div>
+
+                <ul class="mrn-timeline" id="mrnTimeline">
+                    <div class="mrn-timeline__progress" id="mrnTimelineProgress" aria-hidden="true"></div>
+
+                    <li class="mrn-tl" data-mrn-reveal="right">
+                        <span class="mrn-tl__dot"></span>
+                        <span class="mrn-tl__year">1983</span>
+                        <h4>The Early Years</h4>
+                        <p>Our founder established the group with a single recycling yard at Alang, driven by
+                            environmental stewardship and a deep understanding of the maritime trade. The early years
+                            went into building a skilled team and investing in facilities.</p>
+                    </li>
+
+                    <li class="mrn-tl" data-mrn-reveal="left">
+                        <span class="mrn-tl__dot"></span>
+                        <span class="mrn-tl__year">1997 – 1998</span>
+                        <h4>Growth &amp; Expansion</h4>
+                        <p>Sachdeva Steel Products (Ship Breakers) formalised the operation, and Jai Jagdish Ship
+                            Breakers Pvt. Ltd. followed a year later — doubling capacity and equipping both yards to
+                            handle ships of all sizes.</p>
+                    </li>
+
+                    <li class="mrn-tl" data-mrn-reveal="right">
+                        <span class="mrn-tl__dot"></span>
+                        <span class="mrn-tl__year">2000s</span>
+                        <h4>Innovation &amp; Compliance</h4>
+                        <p>Processes were continuously adapted to evolving international regulation, including the
+                            Hong Kong International Convention for the Safe and Environmentally Sound Recycling of
+                            Ships, with rigorous HSE standards throughout.</p>
+                    </li>
+
+                    <li class="mrn-tl" data-mrn-reveal="left">
+                        <span class="mrn-tl__dot"></span>
+                        <span class="mrn-tl__year">Today</span>
+                        <h4>Community &amp; Workforce</h4>
+                        <p>Comprehensive training programmes keep our workforce skilled, safe and motivated — because
+                            our success is inseparable from the well-being of our people and the communities around
+                            the yard.</p>
+                    </li>
+
+                    <li class="mrn-tl" data-mrn-reveal="right">
+                        <span class="mrn-tl__dot"></span>
+                        <span class="mrn-tl__year">Looking Forward</span>
+                        <h4>The Next Decade</h4>
+                        <p>We remain dedicated to pushing the boundaries of what is possible in ship recycling,
+                            striving to leave a positive legacy for the generations that follow.</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+
+        <!-- ============================ COMMITMENT ============================ -->
+        <section class="mrn-section mrn-light" id="commitment">
+            <div class="mrn-container">
+                <div class="mrn-center">
+                    <span class="mrn-eyebrow" data-mrn-reveal>Our Commitment</span>
+                    <h2 class="mrn-title" data-mrn-reveal>Responsibility is the <em>whole job</em></h2>
+                    <p class="mrn-lead" data-mrn-reveal>
+                        Recycling a ship well means protecting the coastline, the crew and the community around it.
+                        These three disciplines govern everything that happens on our plots.
+                    </p>
+                </div>
+
+                <div class="mrn-cards d3-stage" data-mrn-stagger="150" data-mrn-reveal>
+                    <article class="mrn-card d3-card" data-mrn-tilt="5">
+                        <a href="environment_management.html" class="mrn-card__link"
+                            aria-label="Environment Management"></a>
+                        <div class="mrn-card__img">
+                            <img src="images/Environmental-Concerns.jpg" alt="Vessels beached at the Alang tideline before dismantling begins" width="800" height="500" loading="lazy" decoding="async">
+                        </div>
+                        <div class="mrn-card__veil"></div>
+                        <div class="mrn-card__icon">
+                            <svg class="sg-ico sg-ico--containment" viewBox="0 0 24 24"
+                                 aria-hidden="true" focusable="false">
+                                <path class="sg-ico__fill" d="M3.2 13.4h17.6v2.9H3.2Z" />
+                                <g class="sg-ico__lines">
+                                    <path pathLength="100" d="M12 4.6c2.3 2.7 3.4 4.6 3.4 5.9a3.4 3.4 0 0 1-6.8 0c0-1.3 1.1-3.2 3.4-5.9Z" />
+                                    <path pathLength="100" d="M3.2 13.4h17.6v2.9H3.2Z" />
+                                    <path pathLength="100" d="M4.6 16.4v1.5h14.8v-1.5" />
+                                    <path pathLength="100" d="M2.4 21.4c1.6 0 1.6-1.4 3.2-1.4s1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4 1.6-1.4 3.2-1.4 1.6 1.4 3.2 1.4" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="mrn-card__body">
+                            <h4>Environment Management</h4>
+                            <p>We take proactive steps to minimise our ecological footprint — from impermeable
+                                cutting floors to eco-conscious operations, sustainability is built into every level
+                                of the yard.</p>
+                            <span class="mrn-card__more">Read More</span>
+                        </div>
+                    </article>
+
+                    <article class="mrn-card d3-card" data-mrn-tilt="5">
+                        <a href="health_safety.html" class="mrn-card__link" aria-label="Health and Safety"></a>
+                        <div class="mrn-card__img">
+                            <img src="images/health_safety.jpg" alt="Yard-issue personal protective equipment: hard hat, gloves, goggles and hand tools" width="370" height="260" loading="lazy" decoding="async">
+                        </div>
+                        <div class="mrn-card__veil"></div>
+                        <div class="mrn-card__icon">
+                            <svg class="sg-ico sg-ico--ppe" viewBox="0 0 24 24"
+                                 aria-hidden="true" focusable="false">
+                                <path class="sg-ico__fill" d="M5.4 15.2a6.6 6.6 0 0 1 13.2 0Z" />
+                                <g class="sg-ico__lines">
+                                    <path pathLength="100" d="M5.4 15.2a6.6 6.6 0 0 1 13.2 0" />
+                                    <path pathLength="100" d="M12 8.7v6.5" />
+                                    <path pathLength="100" style="--sgi-len:52" d="M9.4 9.6c-.9 1.4-1.4 3.2-1.4 5.6M14.6 9.6c.9 1.4 1.4 3.2 1.4 5.6" />
+                                    <path pathLength="100" d="M3.4 15.2h17.2a1.4 1.4 0 0 1 0 2.8H3.4a1.4 1.4 0 0 1 0-2.8Z" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="mrn-card__body">
+                            <h4>Health &amp; Safety</h4>
+                            <p>The health and safety of our people and partners come first. We follow stringent
+                                protocols and foster a culture of awareness that keeps every shift secure.</p>
+                            <span class="mrn-card__more">Read More</span>
+                        </div>
+                    </article>
+
+                    <article class="mrn-card d3-card" data-mrn-tilt="5">
+                        <a href="waste_management.html" class="mrn-card__link" aria-label="Waste Management"></a>
+                        <div class="mrn-card__img">
+                            <img src="images/gallery/6.jpg" alt="Aerial view of the plot showing segregated plate stacks, cranes and machinery rows" width="1152" height="648" loading="lazy" decoding="async">
+                        </div>
+                        <div class="mrn-card__veil"></div>
+                        <div class="mrn-card__icon">
+                            <svg class="sg-ico sg-ico--drum" viewBox="0 0 24 24"
+                                 aria-hidden="true" focusable="false">
+                                <path class="sg-ico__fill" d="M8.4 9.6v6.8a3.6 1.6 0 0 0 7.2 0V9.6a3.6 1.6 0 0 0-7.2 0Z" />
+                                <g class="sg-ico__lines">
+                                    <path pathLength="100" d="M8.4 9.6v6.8a3.6 1.6 0 0 0 7.2 0V9.6" />
+                                    <path pathLength="100" d="M15.6 9.6a3.6 1.6 0 1 0-7.2 0 3.6 1.6 0 1 0 7.2 0Z" />
+                                    <path pathLength="100" d="M8.5 12.8c1.3.5 5.7.5 7 0" />
+                                    <path pathLength="100" style="--sgi-len:84" d="M3.5 10.5A8.6 8.6 0 0 1 20.5 10.5M18.2 10 20.5 10.5 20.1 12.8" />
+                                    <path pathLength="100" style="--sgi-len:84" d="M20.5 13.5A8.6 8.6 0 0 1 3.5 13.5M5.8 14 3.5 13.5 3.9 11.2" />
+                                </g>
+                            </svg>
+                        </div>
+                        <div class="mrn-card__body">
+                            <h4>Waste Management</h4>
+                            <p>Our strategies prioritise reduction, reuse and recycling. Smart disposal methods and
+                                licensed downstream routes keep us compliant with global standards.</p>
+                            <span class="mrn-card__more">Read More</span>
+                        </div>
+                    </article>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ CERTIFICATIONS ============================ -->
+        <section class="mrn-section mrn-section--tight mrn-soft" id="credentials">
+            <div class="mrn-container mrn-center">
+                <span class="mrn-eyebrow" data-mrn-reveal>Credentials</span>
+                <h2 class="mrn-title" data-mrn-reveal>Audited, certified, <em>documented</em></h2>
+            </div>
+            <div class="mrn-certs" data-mrn-reveal role="group" aria-label="Certifications and approvals">
+                <div class="mrn-certs__track" data-mrn-marquee>
+                    <div class="mrn-cert"><img src="images/cert/1.jpg" alt="Certification"></div>
+                    <div class="mrn-cert"><img src="images/cert/2.jpg" alt="Certification"></div>
+                    <div class="mrn-cert"><img src="images/cert/3.jpg" alt="Certification"></div>
+                    <div class="mrn-cert"><img src="images/cert/4.jpg" alt="Certification"></div>
+                    <div class="mrn-cert"><img src="images/cert/5.jpg" alt="Certification"></div>
+                    <div class="mrn-cert"><img src="images/cert/6.jpg" alt="Certification"></div>
+                    <div class="mrn-cert"><img src="images/cert/7.jpg" alt="Certification"></div>
+                    <div class="mrn-cert"><img src="images/cert/8.jpg" alt="Certification"></div>
+                    <div class="mrn-cert"><img src="images/cert/9.jpg" alt="Certification"></div>
+                </div>
+            </div>
+            <div class="mrn-container mrn-center">
+                <a href="our_credentials.html" class="mrn-btn mrn-btn--navy" data-mrn-reveal data-mrn-magnetic>
+                    All Credentials <i class="fa fa-long-arrow-right"></i>
+                </a>
+            </div>
+        </section>
+
+        <!-- ============================ YARD GALLERY ============================ -->
+        <section class="mrn-section mrn-dark" id="yard">
+            <div class="mrn-container">
+                <div class="mrn-center">
+                    <span class="mrn-eyebrow" data-mrn-reveal>Inside the Yard</span>
+                    <h2 class="mrn-title" data-mrn-reveal>Where <em>steel returns</em> to service</h2>
+                    <p class="mrn-lead" data-mrn-reveal>
+                        Cranes, cutting crews, plate stacks and the tideline — a look at the working face of Alang.
+                    </p>
+                </div>
+
+                <div class="mrn-mosaic__rule hazard-rule" aria-hidden="true" data-mrn-reveal></div>
+                <div class="mrn-mosaic" data-mrn-stagger="70" data-mrn-reveal>
+                    <a href="gallery.html" class="mrn-tile" data-mrn-reveal aria-label="Yard gallery: tideline approach">
+                        <img src="images/ship_recycling.jpg" alt="Aerial view of the Sachdeva plot at Alang, vessels drawn up on the tideline" loading="lazy" decoding="async">
+                        <span class="mrn-tile__cap">Tideline Approach</span>
+                    </a>
+                    <a href="gallery.html" class="mrn-tile" data-mrn-reveal aria-label="Yard gallery: beaching">
+                        <img src="images/gallery/2.jpg" alt="A vessel beached at the head of the plot with cranes standing by" loading="lazy" decoding="async">
+                        <span class="mrn-tile__cap">Beaching</span>
+                    </a>
+                    <a href="gallery.html" class="mrn-tile" data-mrn-reveal aria-label="Yard gallery: block handling">
+                        <img src="images/gallery/3.jpg" alt="Aerial of a vessel opened up mid-dismantling, blocks cut away from the hull" loading="lazy" decoding="async">
+                        <span class="mrn-tile__cap">Block Handling</span>
+                    </a>
+                    <a href="gallery.html" class="mrn-tile" data-mrn-reveal aria-label="Yard gallery: plate recovery">
+                        <img src="images/gallery/4.jpg" alt="Cut plate stacked on the yard deck, ready to move to the rolling mills" loading="lazy" decoding="async">
+                        <span class="mrn-tile__cap">Plate Recovery</span>
+                    </a>
+                    <a href="gallery.html" class="mrn-tile" data-mrn-reveal aria-label="Yard gallery: the primary cutting zone">
+                        <img src="images/gallery/5.jpg" alt="The working face at Alang: several vessels beached along the primary cutting zone" loading="lazy" decoding="async">
+                        <span class="mrn-tile__cap">Primary Cutting Zone</span>
+                    </a>
+                    <a href="gallery.html" class="mrn-tile" data-mrn-reveal aria-label="Yard gallery: yard overview">
+                        <img src="images/gallery/6.jpg" alt="Aerial of the full plot: plate stacks, crane rows and machinery bays" loading="lazy" decoding="async">
+                        <span class="mrn-tile__cap">Yard Overview</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================ CTA ============================ -->
+        <section class="mrn-cta" id="contact">
+            <div class="mrn-cta__bg" data-sg-parallax="band" aria-hidden="true"></div>
+            <span class="mrn-cta__orb mrn-cta__orb--1" data-mrn-parallax="0.16" aria-hidden="true"></span>
+            <span class="mrn-cta__orb mrn-cta__orb--2" data-mrn-parallax="0.10" aria-hidden="true"></span>
+            <div class="mrn-container">
+                <span class="mrn-eyebrow" data-mrn-reveal>Next Step</span>
+                <h2 data-mrn-reveal>Have a vessel reaching<br>end of life?</h2>
+                <p data-mrn-reveal>
+                    Talk to our team about tonnage, timelines and the documentation your flag state will need.
+                    We will walk you through the whole recycling plan before a single plate is cut.
+                </p>
+                <div class="mrn-cta__actions" data-mrn-reveal>
+                    <a href="contact_us.html" class="mrn-btn mrn-btn--gold" data-mrn-magnetic>
+                        Contact Us <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                    </a>
+                    <a href="tel:+912782429573" class="mrn-btn mrn-btn--ghost">
+                        <i class="fa fa-phone" aria-hidden="true"></i> +91 278 2429573
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ======================= YARD ADDRESS BAND ======================= -->
+        <section class="sgf-yard" id="yard-address">
+            <div class="sgf-yard__inner">
+                <div class="sgf-yard__card" data-mrn-reveal>
+                    <span class="sgf-yard__glow" aria-hidden="true"></span>
+                    <svg class="sgf-yard__swell" viewBox="0 0 1140 260" preserveAspectRatio="none" aria-hidden="true"
+                        focusable="false">
+                        <path d="M0,150 C170,88 330,182 512,152 C700,120 840,44 1140,104"></path>
+                        <path d="M0,196 C190,140 350,224 540,198 C740,170 880,102 1140,150" opacity=".55"></path>
+                    </svg>
+
+                    <div class="sgf-yard__text">
+                        <span class="sgf-yard__badge">
+                            <span class="sgf-yard__dot" aria-hidden="true"></span> Yard Address
+                        </span>
+                        <h2 class="sgf-yard__title">Plot No. 65, Alang Ship Breaking Yard</h2>
+                        <p class="sgf-yard__meta">
+                            Alang, Bhavnagar, Gujarat, India
+                            <span class="sgf-yard__sep" aria-hidden="true">&middot;</span>
+                            <a href="tel:+912782429573">+91 278 2429573</a>
+                            <span class="sgf-yard__sep" aria-hidden="true">&middot;</span>
+                            <a href="mailto:info@sachdevagroup.in">info@sachdevagroup.in</a>
+                        </p>
+                    </div>
+
+                    <a class="sgf-yard__btn" href="contact_us.html">
+                        Discuss a Vessel <i class="fa fa-long-arrow-right" aria-hidden="true"></i>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- ============================== FOOTER ============================== -->
+        <footer class="sgf-footer">
+            <div class="sgf-footer__wave" aria-hidden="true">
+                <svg viewBox="0 0 1440 92" preserveAspectRatio="none" focusable="false">
+                    <path d="M0,0 H1440 V24 C1290,62 1128,76 938,60 C742,44 566,4 340,15 C222,21 106,36 0,55 Z"></path>
+                </svg>
+            </div>
+
+            <div class="sgf-footer__inner">
+                <div class="sgf-footer__grid">
+
+                    <!-- Brand -->
+                    <div class="sgf-col sgf-col--brand">
+                        <a href="index.html">
+                            <img src="images/logo.png" class="sgf-logo" alt="Sachdeva Group of Industries">
+                        </a>
+                        <p class="sgf-about">
+                            India's trusted partner for the safe and environmentally sound recycling of end-of-life
+                            vessels &mdash; recycling steel at Alang since 1983.
+                        </p>
+                        <div class="sgf-badges">
+                            <span class="sgf-badge">ISO Certified</span>
+                            <span class="sgf-badge">HKC Aligned</span>
+                        </div>
+                        <div class="sgf-social">
+                            <a href="#" aria-label="Facebook" title="Facebook">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path
+                                        d="M9 8h-3v4h3v12h5v-12h3.642l.358-4h-4v-1.667c0-.955.192-1.333 1.115-1.333h2.885v-5h-3.808c-3.596 0-5.192 1.583-5.192 4.615v3.385z">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a href="#" aria-label="Twitter" title="Twitter">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path
+                                        d="M24 4.557c-.883.392-1.832.656-2.828.775 1.017-.609 1.798-1.574 2.165-2.724-.951.564-2.005.974-3.127 1.195-.897-.957-2.178-1.555-3.594-1.555-3.179 0-5.515 2.966-4.797 6.045-4.091-.205-7.719-2.165-10.148-5.144-1.29 2.213-.669 5.108 1.523 6.574-.806-.026-1.566-.247-2.229-.616-.054 2.281 1.581 4.415 3.949 4.89-.693.188-1.452.232-2.224.084.626 1.956 2.444 3.379 4.6 3.419-2.07 1.623-4.678 2.348-7.29 2.04 2.179 1.397 4.768 2.212 7.548 2.212 9.142 0 14.307-7.721 13.995-14.646.962-.695 1.797-1.562 2.457-2.549z">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a href="#" aria-label="LinkedIn" title="LinkedIn">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path
+                                        d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z">
+                                    </path>
+                                </svg>
+                            </a>
+                            <a href="#" aria-label="Instagram" title="Instagram">
+                                <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                    <path
+                                        d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z">
+                                    </path>
+                                </svg>
+                            </a>
+                        </div>
+                    </div>
+
+                    <!-- Explore -->
+                    <div class="sgf-col">
+                        <h3 class="sgf-col__title"><span class="sgf-tick" aria-hidden="true"></span> Explore</h3>
+                        <ul class="sgf-links">
+                            <li><a href="index.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                                    Home</a></li>
+                            <li><a href="about_us.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                                    About Us</a></li>
+                            <li><a href="vision_mission.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                                    Vision &amp; Mission</a></li>
+                            <li><a href="our_credentials.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                                    Our Credentials</a></li>
+                            <li><a href="gallery.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                                    Gallery</a></li>
+                            <li><a href="news.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                                    News &amp; Media</a></li>
+                            <li><a href="testimonials.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                                    Testimonials</a></li>
+                            <li><a href="contact_us.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                                    Contact Us</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Operations -->
+                    <div class="sgf-col">
+                        <h3 class="sgf-col__title"><span class="sgf-tick" aria-hidden="true"></span> Operations</h3>
+                        <ul class="sgf-links">
+                            <li><a href="sspsb.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                                    Sachdeva Steel Products</a></li>
+                            <li><a href="jjsb.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                                    Jai Jagdish Ship Breakers</a></li>
+                            <li><a href="environment_management.html"><span class="sgf-chev"
+                                        aria-hidden="true">&rsaquo;</span>
+                                    Environment Management</a></li>
+                            <li><a href="health_safety.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                                    Health &amp; Safety</a></li>
+                            <li><a href="waste_management.html"><span class="sgf-chev"
+                                        aria-hidden="true">&rsaquo;</span>
+                                    Waste Management</a></li>
+                        </ul>
+                    </div>
+
+                    <!-- Get in touch -->
+                    <div class="sgf-col sgf-col--contact">
+                        <h3 class="sgf-col__title"><span class="sgf-tick" aria-hidden="true"></span> Get in Touch</h3>
+                        <ul class="sgf-contact">
+                            <li>
+                                <span class="sgf-contact__icon">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <path
+                                            d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z">
+                                        </path>
+                                    </svg>
+                                </span>
+                                <div>
+                                    <span class="sgf-contact__label">Address</span>
+                                    <span class="sgf-contact__value">Sachdeva House, Opp Swaminarayan Mandir,
+                                        Lokhand Bazar, Bhavnagar, Gujarat, India</span>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="sgf-contact__icon">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <path
+                                            d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z">
+                                        </path>
+                                    </svg>
+                                </span>
+                                <div>
+                                    <span class="sgf-contact__label">Phone</span>
+                                    <a class="sgf-contact__value" href="tel:+912782429573">+91 278 2429573</a>
+                                </div>
+                            </li>
+                            <li>
+                                <span class="sgf-contact__icon">
+                                    <svg viewBox="0 0 24 24" aria-hidden="true" focusable="false">
+                                        <path
+                                            d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z">
+                                        </path>
+                                    </svg>
+                                </span>
+                                <div>
+                                    <span class="sgf-contact__label">Email</span>
+                                    <a class="sgf-contact__value"
+                                        href="mailto:info@sachdevagroup.in">info@sachdevagroup.in</a>
+                                </div>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="sgf-footer__bottom">
+                    <p>&copy; 2026 Sachdeva Group of Industries. All rights reserved.</p>
+                    <p>Designed &amp; Developed by Two12 Design Studio</p>
+                </div>
+            </div>
+        </footer>
+
+    </div>
+    <script src="js/jquery.1.12.4.js"></script>
+    <script src="js/bootstrap.min.js"></script>
+    <script src="js/plugins.js"></script>
+    <script src="js/slider.js"></script>
+    <script src="js/main.js"></script>
+    <script src="js/aos.js"></script>
+    <script>
+        AOS.init({ once: true });
+    </script>
+    <script src="js/marine.js"></script>
+    <script src="js/marine-pages.js"></script>
+    <script src="js/index-motion.js"></script>
+<script>
+/* ==========================================================================
+   SG MARINE 24 — icon draw-on
+   --------------------------------------------------------------------------
+   Arms the stroke-dash hidden state and marks each icon when it enters view.
+   Vanilla, ES5, no dependencies, one IntersectionObserver for the whole set.
+
+   Why the arming class: with this file missing or broken, `sg-ico-js` is never
+   written, the dash rules in css/index-theme.css never match, and every icon
+   is simply drawn. Nothing can be permanently invisible.
+
+   Why it does not use data-mrn-reveal: js/marine.js already fades and lifts
+   the stats grid, the process flow and the card row. Registering the icons
+   there too would animate the same elements twice. This only touches
+   stroke-dashoffset on paths, which marine.js never reads or writes.
+   ========================================================================== */
+(function () {
+    'use strict';
+
+    function init() {
+        var root = document.documentElement;
+        var icons = document.querySelectorAll('.sg-ico');
+        var i;
+
+        if (!icons.length) return;
+
+        var reduced = window.matchMedia &&
+            window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* mark drawn via setAttribute rather than classList: SVGElement.classList
+           is missing on a few older engines the site still serves. */
+        function markIn(el) {
+            var c = el.getAttribute('class') || '';
+            if (c.indexOf('sg-ico--in') > -1) return;
+            el.setAttribute('class', c + ' sg-ico--in');
+        }
+
+        root.className += ' sg-ico-js';
+
+        if (reduced || !('IntersectionObserver' in window)) {
+            for (i = 0; i < icons.length; i++) markIn(icons[i]);
+            return;
+        }
+
+        var io = new IntersectionObserver(function (entries) {
+            var n;
+            for (n = 0; n < entries.length; n++) {
+                if (entries[n].isIntersecting) {
+                    markIn(entries[n].target);
+                    io.unobserve(entries[n].target);
+                }
+            }
+        }, { threshold: 0.25, rootMargin: '0px 0px -6% 0px' });
+
+        /* One cached read pass, in the same task that armed the class, so an
+           icon that is already on screen at boot never flashes drawn-then-blank
+           waiting for the observer's first async callback. */
+        var vh = window.innerHeight || root.clientHeight;
+        for (i = 0; i < icons.length; i++) {
+            if (icons[i].getBoundingClientRect().top < vh) {
+                markIn(icons[i]);
+            } else {
+                io.observe(icons[i]);
+            }
+        }
+    }
+
+    if (document.readyState === 'loading') {
+        document.addEventListener('DOMContentLoaded', init);
+    } else {
+        init();
+    }
+})();
+
+</script>
+</body>
+
+</html>

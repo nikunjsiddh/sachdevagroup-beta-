@@ -1,0 +1,28 @@
+# ---------------------------------------------------------------------------
+# Archives and site backups.
+# GitHub hard-rejects any file over 100MB, which is what blocked the push:
+# css.zip was 646MB and sachdevagroup-beta-.rar 112MB. These are backups of the
+# site, not source — they belong in a drive or a release, never in the repo.
+# ---------------------------------------------------------------------------
+*.zip
+*.rar
+*.7z
+*.tar
+*.tar.gz
+*.bak
+
+# working backups this project keeps on disk
+_backup_pages/
+*.prev.html
+*.pre-*.html
+
+# scratch files from tooling
+_sgtest*.html
+_icon-*.html
+_t-*.html
+*.js.bak
+
+# local server / editor noise
+.DS_Store
+Thumbs.db
+*.log
