@@ -132,9 +132,39 @@
         }
 
         each(triggers, function (t) {
-            t.addEventListener('click', function (e) {
+            /* KEYBOARD ACCESS.
+               The triggers are <a> elements with no href (gallery tiles) and
+               <article> elements (certificate cards). Neither is focusable, and
+               the only handler here was 'click' — so the gallery and the
+               certificate wall could not be reached or opened by keyboard at
+               all. Made operable in JS rather than in markup so every page that
+               uses [data-mrnp-lightbox] gets it without 13 edits.
+
+               aria-label comes from the caption the lightbox already reads, so
+               the control announces what it opens instead of nothing. */
+            var tag = t.tagName.toLowerCase();
+            var nativelyFocusable = tag === 'button' || (tag === 'a' && t.hasAttribute('href'));
+
+            if (!nativelyFocusable) {
+                if (!t.hasAttribute('tabindex')) t.setAttribute('tabindex', '0');
+                if (!t.getAttribute('role')) t.setAttribute('role', 'button');
+            }
+            if (!t.getAttribute('aria-label')) {
+                var img = t.querySelector('img');
+                var cap = t.getAttribute('data-mrnp-caption') ||
+                    (img ? img.getAttribute('alt') : '') || '';
+                if (cap) t.setAttribute('aria-label', 'Enlarge image: ' + cap);
+            }
+
+            function fire(e) {
                 e.preventDefault();
                 open(parseInt(t.getAttribute('data-mrnp-index'), 10));
+            }
+
+            t.addEventListener('click', fire);
+            t.addEventListener('keydown', function (e) {
+                /* Spacebar for the older browsers this site still targets */
+                if (e.key === 'Enter' || e.key === ' ' || e.key === 'Spacebar') fire(e);
             });
         });
 
