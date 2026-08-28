@@ -190,6 +190,48 @@
 }
 
 /* ==========================================================================
+   6b. #process — put the hidden state behind the JS gate
+   ==========================================================================
+   css/index-theme.css sets `#process .mrn-step__dot`, `.mrn-step h4` and
+   `.mrn-step p` to opacity:0 unconditionally, and lifts them again only under
+   `#process .mrn-flow.mrn-in`. Nothing on index.html adds `.mrn-in` — that
+   class belongs to js/marine.js's [data-mrn-reveal] pass, and this page has
+   none — so those eight elements have been permanently invisible to every
+   visitor not running prefers-reduced-motion.
+
+   js/motion.js now adds the class, which fixes it whenever the page is
+   healthy. But an armed-hidden state whose only rescue is a script is exactly
+   the contract the rest of this site refuses to make: measured with the GSAP
+   CDN 404ing, motion.js returns at its guard, the class never arrives, and all
+   eight go dark again.
+
+   So the hidden state is re-gated on `html.sg-anim`, the same class that gates
+   every other reveal on the page. It is set by the head shim and pulled again
+   after 4s unless motion.js reports in, which means:
+     JS + GSAP fine  -> gate present, hidden, .mrn-in reveals them
+     CDN down        -> motion.js drops the gate at its first guard -> visible
+     no JS at all    -> gate never set -> visible
+   ========================================================================== */
+
+#process .mrn-step__dot,
+#process .mrn-step h4,
+#process .mrn-step p {
+    opacity: 1;
+}
+
+html.sg-anim #process .mrn-step__dot,
+html.sg-anim #process .mrn-step h4,
+html.sg-anim #process .mrn-step p {
+    opacity: 0;
+}
+
+html.sg-anim #process .mrn-flow.mrn-in .mrn-step__dot,
+html.sg-anim #process .mrn-flow.mrn-in .mrn-step h4,
+html.sg-anim #process .mrn-flow.mrn-in .mrn-step p {
+    opacity: 1;
+}
+
+/* ==========================================================================
    7. WILL-CHANGE POLICY
    will-change is added by motion.js on enter and removed on leave — never
    parked on a selector for the life of the page. The only standing hints are
