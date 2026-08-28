@@ -530,12 +530,34 @@
         if (!list.length) return;
         var i;
 
-        if (reduced || !hasIO) {                 /* nothing may stay invisible */
+        /* CALM TIER — reduced motion is not the same as no motion.
+           This used to settle every element at load whenever the user asked
+           for reduced motion, which on Windows is switched by "Show animations
+           in Windows" and by the "Adjust for best performance" profile. The
+           result on any machine with that off was the entire site arriving
+           pre-revealed: no entrance, no scroll response, nothing to read as
+           motion at all — 45 of 45 elements already shown before the first
+           scroll.
+
+           What the preference actually asks us to remove is VESTIBULAR motion:
+           travel, parallax, zoom, spin. A short opacity fade is not that, and
+           is the accepted way to keep a page feeling alive for these users.
+           So the entrance still runs on scroll; css/index-theme.css strips the
+           transform off it under html.sg-calm, leaving opacity alone.
+
+           Parallax and scroll-coupled drift stay off entirely — those ARE the
+           vestibular case. See js/scroll-drift.js, which still returns at its
+           own guard. */
+        if (!hasIO) {                            /* no observer: no choice */
             for (i = 0; i < list.length; i++) settle(list[i]);
             return;
         }
 
-        for (i = 0; i < list.length; i++) split(list[i]);
+        if (reduced) {
+            addC(doc.documentElement, 'sg-calm');
+        } else {
+            for (i = 0; i < list.length; i++) split(list[i]);
+        }
 
         /* rootMargin bottom -20% pulls the root rect up by 20vh, so the entry
            fires the instant the element's top passes 80% of the viewport —

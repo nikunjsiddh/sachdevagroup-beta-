@@ -6918,6 +6918,55 @@ html.sg-motion .sg-shown {
     }
 }
 
+/* ==========================================================================
+   9.9  CALM TIER — reduced motion is not the same as no motion
+   ==========================================================================
+   The block directly above pins every entrance to its finished state, and
+   js/index-motion.js used to settle all of them at load whenever the user
+   asked for reduced motion. Between them the site arrived fully revealed on
+   any machine with the preference set — and on Windows that preference is
+   switched by "Show animations in Windows" and by the "Adjust for best
+   performance" profile, which plenty of laptops have off for reasons that
+   have nothing to do with motion sensitivity. Measured on about_us.html with
+   the real preference: 0 ScrollTriggers, 0 tilts, 45 of 45 elements already
+   shown before the first scroll. A completely static page.
+
+   What the preference asks us to drop is VESTIBULAR motion — travel,
+   parallax, zoom, spin. A short opacity fade is none of those, and is the
+   accepted way to keep a page alive for these users. So the entrance runs on
+   scroll and only opacity moves.
+
+   Specificity is deliberate: .sg-calm.sg-motion is (0,3,1), which beats both
+   the rule above and marine.css:294's `*{transition-duration:.001ms}`
+   regardless of where the files land in the cascade.
+
+   Parallax and scroll-coupled drift stay off entirely — js/scroll-drift.js
+   still returns at its own guard, because that IS the vestibular case.
+   ========================================================================== */
+
+html.sg-calm.sg-motion [data-sg-in] {
+    opacity: 0 !important;
+    transform: none !important;
+    clip-path: none !important;
+    transition-property: opacity !important;
+    transition-duration: .5s !important;
+    transition-timing-function: cubic-bezier(.16, 1, .3, 1) !important;
+    transition-delay: var(--sg-d, 0ms) !important;
+    animation: none !important;
+}
+
+html.sg-calm.sg-motion [data-sg-in].sg-in {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
+/* the words never split under calm, so the box fades as one */
+html.sg-calm.sg-motion [data-sg-split] .sg-w,
+html.sg-calm.sg-motion .sg-w {
+    opacity: 1 !important;
+    transform: none !important;
+}
+
 
 /* ==========================================================================
    10. PARALLAX — the reference's "view images while scrolling"
@@ -7720,6 +7769,24 @@ html.sg-plx .mrn-cta .mrn-cta__bg {
 .sg-anim [data-anim].settled {
     --d: 0s !important;
     will-change: auto;
+}
+
+/* CALM TIER for the [data-anim] vocabulary — the index-page twin of section
+   9.9 above. js/motion.js used to resolve every reveal instantly under
+   reduced motion, which left index.html as static as about_us.html was.
+   The reveal still runs on scroll; only the travel is removed, so fade-up,
+   fade-left, zoom, pop and card all collapse to the same plain fade. */
+html.sg-calm.sg-anim [data-anim] {
+    transform: none !important;
+    -webkit-clip-path: none !important;
+    clip-path: none !important;
+    transition: opacity .5s cubic-bezier(.16, 1, .3, 1) var(--d, 0s) !important;
+}
+
+html.sg-calm.sg-anim [data-anim].in,
+html.sg-calm.sg-anim [data-anim].settled {
+    opacity: 1 !important;
+    transform: none !important;
 }
 
 /* image curtain — the clip opens while the photograph settles out of a zoom */

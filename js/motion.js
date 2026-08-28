@@ -249,11 +249,26 @@
         if (!groups.length) return;
 
         if (reduced) {
-            /* nothing may stay hidden, and nothing may travel */
+            /* CALM TIER — nothing may TRAVEL, but it does not follow that
+               nothing may happen. This used to add .in and .settled to every
+               element at load, so index.html arrived fully revealed for anyone
+               with the preference set — and on Windows that is switched by
+               "Show animations in Windows" and by the "Adjust for best
+               performance" profile, neither of which is a statement about
+               motion sensitivity.
+
+               The reveal still runs on scroll; css/index-theme.css strips the
+               transform under html.sg-calm so every direction collapses to a
+               plain opacity fade. Parallax, scrubbing and Lenis stay off — the
+               caller below still tears those down. */
+            if (html.classList) html.classList.add('sg-calm');
+            else html.className += ' sg-calm';
+
             groups.forEach(function (g) {
-                g.items.forEach(function (el) {
-                    el.style.setProperty('--d', '0s');
-                    if (el.classList) { el.classList.add('in'); el.classList.add('settled'); }
+                ST.batch(g.items, {
+                    start: 'top 88%',
+                    once: true,
+                    onEnter: revealBatch
                 });
             });
             return;
