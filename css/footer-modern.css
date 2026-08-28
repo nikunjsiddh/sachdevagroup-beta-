@@ -1,8 +1,10 @@
 /* ==========================================================================
    Sachdeva Group — Yard-address band + modern footer
-   Scope     : index.html only (loaded after marine-pages.css)
-   Namespace : .sgf-*  — nothing here collides with the legacy
-               .footer-enhanced rules in css/footer.css that inner pages use.
+   Scope     : all 13 pages (loaded after marine-pages.css)
+   Namespace : .sgf-*  — this is the footer the whole site now uses. The
+               legacy .footer-enhanced rules it replaced lived in
+               css/footer.css, which was deleted once every page had moved
+               off it.
    ========================================================================== */
 
 :root {

@@ -31,12 +31,9 @@ Thumbs.db
 .claude/
 
 # throwaway motion test harness
+
+# throwaway browser test harness (regenerate with the tools in git history)
 _mtest.html
-tools-mktest.js
 _mtest/
 _itest-*.html
-tools-mkinner.js
-_mtest-nogsap.html
-tools-icons.js
-tools-a11y.js
-tools-badge.js
+tools-*.js
