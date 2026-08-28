@@ -195,7 +195,6 @@
 }
 
 #profile .mrnp-prose > p,
-#vision .mrnp-prose > p,
 #compliance .mrn-lead,
 #testimonials .mrn-lead {
     color: var(--ab-body);
@@ -513,92 +512,364 @@
 }
 
 /* ==========================================================================
-   8. #vision — a full-width band, then the two statements side by side
+   8. #vision — a tideline band, and two plates floating over it
    ==========================================================================
-   Measured before this: the media column rendered 526x329 against 604x752 of
-   cards — a 423px gap that `align-items: center` filled with dead space — and
-   marine-pages.css:556 runs `animation: mrnFloatY` on the offset accent plate,
-   so it drifted out of register with the photograph on a loop. That was the
-   misalignment, not a stray margin.
+   WHAT WAS WRONG
+     Two identical white rectangles side by side, each with a chip icon, a
+     19px heading and a 64-word paragraph set as one undifferentiated grey
+     block. Nothing separated VISION from MISSION but the icon, and the
+     photograph above ran 1329px wide from an 800x500 source — a 66% upscale,
+     which is where the softness came from.
 
-   Stretching the column to match was the obvious fix and it was wrong: the
-   source is 800x500, and object-fit:cover into a portrait box shows 39% of the
-   frame, cropping the beached hulls out of both sides. So the section is
-   re-composed instead — the photograph runs full width at 21:9, cropping sky
-   and foreground rather than subject, and the two statements sit beneath it.
-   100% of the source width is visible. Pure CSS; the markup is untouched.
+   THE 3D WAS NEVER RENDERING
+     .mrnp-icard declares `transform-style: preserve-3d` AND `overflow:
+     hidden` (marine-pages.css:300, restated page-fx.css:473). overflow is a
+     grouping property: it forces the used transform-style to flat. So
+     `.mrnp-icard:hover > * { transform: translateZ(34px) }` at
+     marine-pages.css:349 has never moved anything, on any page. No ancestor
+     set `perspective` either, so it was dead twice over.
+
+     Measured in an isolated rig — a child at translateZ(38px) under
+     perspective:1100px renders 74.50px wide, and 71.92px once flattened:
+       FLATTENS   overflow:hidden|clip · isolation:isolate · opacity:.99
+                  filter:* · will-change:opacity
+       SAFE       contain:paint · will-change:transform · border-radius
+                  box-shadow
+     That is why this block uses its own `.viz-*` classes rather than
+     .mrnp-icard: inheriting that card meant inheriting the one declaration
+     that cancels the effect being asked for. It is also why .edge-sweep must
+     never be put on a .d3-card — `isolation: isolate` flattens it the same
+     way.
+
+   THE COMPOSITION
+     The band is capped at 1100px so the photograph is never blown past its
+     source, and carries a scrim so it reads as depth rather than as a soft
+     picture. The two plates are pulled up over its lower edge, which puts
+     them physically in front of the tideline instead of stacked under it.
+     They are deliberately NOT symmetrical: vision is a light plate looking
+     out, mission is a dark plate — the yard at work. Each statement leads
+     with its own first sentence set large, with the remainder beneath it as
+     supporting text, so neither is a wall of grey.
    ========================================================================== */
 
-#vision .mrnp-split {
-    grid-template-columns: 1fr;
-    gap: 48px;
-    align-items: stretch;
+#vision .viz {
+    position: relative;
+    margin-top: 52px;
 }
 
-#vision .mrnp-split__frame {
-    width: 100%;
+/* --- 8.1 the band ------------------------------------------------------- */
+
+#vision .viz__band {
+    position: relative;
+    /* the source is 800x500; past ~1100 it is being invented */
+    max-width: 1100px;
+    margin: 0 auto;
     border-radius: var(--ab-r);
+    overflow: hidden;
     border: 1px solid rgba(255, 255, 255, .9);
     box-shadow: var(--ab-lift);
 }
 
-#vision .mrnp-split__frame img {
+/* SAFE: the band is a sibling of the stage, never an ancestor of a plate, so
+   its overflow:hidden cannot flatten the 3D above. */
+
+#vision .viz__band img {
+    display: block;
     width: 100%;
     height: auto;
     aspect-ratio: 21 / 9;
     object-fit: cover;
-    object-position: 50% 56%;
+    object-position: 50% 54%;
+    filter: saturate(.88) contrast(1.04);
 }
 
 @supports not (aspect-ratio: 1) {
-    #vision .mrnp-split__frame img {
+    #vision .viz__band img {
         height: 420px;
     }
 }
 
-#vision .mrnp-split__frame::after {
-    background: linear-gradient(160deg, rgba(10, 35, 64, .12) 0%, transparent 50%, rgba(34, 179, 230, .10) 100%);
+/* the plates sit on the lower half, so the scrim is weighted there */
+#vision .viz__band::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(6, 24, 42, .06) 0%, rgba(6, 24, 42, .16) 38%, rgba(6, 24, 42, .74) 100%);
 }
 
-/* the accent plate stops floating and becomes a static registration frame */
-#vision .mrnp-split__media::before {
-    animation: none;
-    left: 10px;
-    top: -18px;
-    right: 18px;
-    bottom: 18px;
-    border: 1px solid rgba(34, 179, 230, .35);
-    border-radius: var(--ab-r);
+#vision .viz__waterline {
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 32%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(53, 198, 244, .75) 22%, rgba(53, 198, 244, .75) 78%, transparent);
+    opacity: .65;
 }
 
-#vision .mrnp-grid {
+/* --- 8.2 the stage ------------------------------------------------------ */
+
+#vision .viz__stage {
+    position: relative;
+    z-index: 2;
+    max-width: 1280px;
+    /* pull the plates up over the band's lower edge */
+    margin: -136px auto 0;
+    padding: 0 clamp(0px, 1.4vw, 20px);
+    display: grid;
     grid-template-columns: 1fr 1fr;
     align-items: stretch;
-    gap: 34px;
+    gap: 30px;
+
 }
 
-#vision .mrnp-icard {
-    height: 100%;
+/* --- 8.3 the plates ----------------------------------------------------- */
+
+#vision .viz-card {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 40px 38px 38px;
     border-radius: var(--ab-r);
-    background: #fff;
+    will-change: transform;
+    transition: box-shadow .55s var(--ab-ease), border-color .55s var(--ab-ease);
+
+    /* THE 3D ROOM IS THE PLATE, NOT THE STAGE.
+       One stage-wide perspective projects from a single vanishing point, so
+       content on the left plate splays LEFT as it rises and overruns the
+       plate's own edge — measured, the heading crossed it. A perspective per
+       plate, origin at its own centre, lifts each element straight towards
+       the viewer instead.
+       Nothing here may set overflow, isolation, opacity or filter: each of
+       those is a grouping property and would flatten the depth outright. */
+    perspective: 900px;
+    perspective-origin: 50% 46%;
+    transform-style: preserve-3d;
+}
+
+/* the plate's own movement belongs to data-mrnp-tilt, which writes an inline
+   transform — a CSS hover transform here would fight it every frame */
+
+#vision .viz-card--vision {
+    background: linear-gradient(178deg, #ffffff 0%, #f1f8fd 100%);
     border: var(--ab-ring);
     box-shadow: var(--ab-soft);
-    transition: transform .5s var(--ab-ease), box-shadow .5s var(--ab-ease);
 }
 
-#vision .mrnp-icard:hover {
-    transform: translateY(-6px);
+#vision .viz-card--mission {
+    background: var(--ab-card-dark);
+    border: var(--ab-ring-dark);
+    box-shadow: var(--ab-lift-dark);
+}
+
+/* --- 8.4 plate contents ------------------------------------------------- */
+
+#vision .viz-card__no {
+    position: absolute;
+    top: 26px;
+    right: 30px;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-weight: 200;
+    font-size: 54px;
+    line-height: 1;
+    letter-spacing: 1px;
+    transform: translateZ(8px);
+}
+
+#vision .viz-card--vision .viz-card__no {
+    color: rgba(11, 31, 51, .13);
+}
+
+#vision .viz-card--mission .viz-card__no {
+    color: rgba(159, 220, 247, .20);
+}
+
+#vision .viz-card__icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 60px;
+    height: 60px;
+    margin-bottom: 24px;
+    border-radius: 16px;
+    transform: translateZ(30px);
+    transition: transform .55s var(--ab-ease), background .55s var(--ab-ease),
+        color .55s var(--ab-ease), box-shadow .55s var(--ab-ease);
+}
+
+#vision .viz-card__icon svg {
+    width: 28px;
+    height: 28px;
+}
+
+#vision .viz-card--vision .viz-card__icon {
+    background: linear-gradient(140deg, rgba(34, 179, 230, .16), rgba(34, 179, 230, .06));
+    border: 1px solid rgba(34, 179, 230, .22);
+    color: #0b6d97;
+}
+
+#vision .viz-card--mission .viz-card__icon {
+    background: linear-gradient(140deg, rgba(53, 198, 244, .18), rgba(53, 198, 244, .05));
+    border: 1px solid rgba(53, 198, 244, .28);
+    color: #6fd3f7;
+}
+
+#vision .viz-card h3 {
+    margin: 0;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-weight: 500;
+    font-size: 27px;
+    line-height: 1.1;
+    letter-spacing: .3px;
+    text-transform: uppercase;
+    transform: translateZ(24px);
+}
+
+#vision .viz-card--vision h3 {
+    color: var(--ab-ink);
+}
+
+#vision .viz-card--mission h3 {
+    background: var(--ab-gold);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+}
+
+/* a cut edge under the heading rather than a border — the yard's own line */
+#vision .viz-card__seam {
+    display: block;
+    width: 66px;
+    height: 3px;
+    margin: 18px 0 22px;
+    border-radius: 2px;
+    transform: translateZ(18px);
+}
+
+#vision .viz-card--vision .viz-card__seam {
+    background: linear-gradient(90deg, #1195cf, rgba(17, 149, 207, .12));
+}
+
+#vision .viz-card--mission .viz-card__seam {
+    background: repeating-linear-gradient(135deg, #f0a500 0 7px, rgba(240, 165, 0, .18) 7px 14px);
+}
+
+/* the lead sentence carries the statement; the rest supports it */
+#vision .viz-card__lead {
+    margin: 0 0 16px;
+    font-size: 17.5px;
+    line-height: 1.62;
+    font-weight: 500;
+    transform: translateZ(13px);
+}
+
+#vision .viz-card--vision .viz-card__lead {
+    color: var(--ab-ink);
+}
+
+#vision .viz-card--mission .viz-card__lead {
+    color: #eaf6fd;
+}
+
+#vision .viz-card__body {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.78;
+    transform: translateZ(6px);
+}
+
+#vision .viz-card--vision .viz-card__body {
+    color: var(--ab-body);
+}
+
+#vision .viz-card--mission .viz-card__body {
+    color: rgba(190, 214, 232, .88);
+}
+
+/* --- 8.5 the 3D hover --------------------------------------------------- */
+
+#vision .viz-card--vision:hover {
+    border-color: rgba(34, 179, 230, .42);
     box-shadow: var(--ab-lift);
 }
 
-#vision .mrnp-icard__icon {
-    border-radius: 12px;
+#vision .viz-card--mission:hover {
+    border-color: rgba(53, 198, 244, .5);
+    box-shadow: 0 44px 80px -30px rgba(34, 179, 230, .45);
 }
 
-#vision .mrnp-icard__no {
-    font-weight: 200;
-    font-size: 46px;
-    color: rgba(11, 31, 51, .10);
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+
+    #vision .viz-card h3,
+    #vision .viz-card__seam,
+    #vision .viz-card__lead,
+    #vision .viz-card__body,
+    #vision .viz-card__no {
+        transition: transform .55s var(--ab-ease), width .55s var(--ab-ease);
+    }
+
+    /* the plate stays put — the tilt owns that — and its contents come
+       forward off the face, which is what reads as depth */
+    /* the icon sits in the top-left corner, which is the furthest point from
+       the plate's perspective origin, so it travels outward fastest as it
+       rises. Measured at translateZ(74) with rotate(-6deg) scale(1.05) it
+       cleared the plate's own edge by 5.4px. This is the limit that stays in. */
+    #vision .viz-card:hover .viz-card__icon {
+        transform: translateZ(52px) rotate(-4deg);
+    }
+
+    #vision .viz-card:hover h3 {
+        transform: translateZ(54px);
+    }
+
+    #vision .viz-card:hover .viz-card__seam {
+        transform: translateZ(42px);
+        width: 108px;
+    }
+
+    #vision .viz-card:hover .viz-card__lead {
+        transform: translateZ(30px);
+    }
+
+    #vision .viz-card:hover .viz-card__body {
+        transform: translateZ(14px);
+    }
+
+    #vision .viz-card:hover .viz-card__no {
+        transform: translateZ(20px);
+    }
+
+    #vision .viz-card--vision:hover .viz-card__icon {
+        background: linear-gradient(140deg, #1195cf, #35c6f4);
+        color: #fff;
+        box-shadow: 0 18px 30px -14px rgba(17, 149, 207, .7);
+    }
+
+    #vision .viz-card--mission:hover .viz-card__icon {
+        background: var(--ab-gold);
+        color: #07182e;
+        box-shadow: 0 18px 30px -14px rgba(240, 165, 0, .55);
+    }
+}
+
+/* MOTION OFF, AFFORDANCE ON — the plate still answers, it just does not move */
+@media (hover: hover) and (prefers-reduced-motion: reduce) {
+
+    #vision .viz-card--vision:hover .viz-card__icon {
+        background: linear-gradient(140deg, #1195cf, #35c6f4);
+        color: #fff;
+    }
+
+    #vision .viz-card--mission:hover .viz-card__icon {
+        background: var(--ab-gold);
+        color: #07182e;
+    }
+
+    #vision .viz-card:hover .viz-card__seam {
+        width: 108px;
+    }
 }
 
 /* ==========================================================================
@@ -794,8 +1065,7 @@
 /* hover keeps the material change; the tilt owns the movement */
 #heritage .abt-time__item:hover,
 #compliance .abt-comply li:hover,
-#testimonials .mrnp-quote:hover,
-#vision .mrnp-icard:hover {
+#testimonials .mrnp-quote:hover {
     transform: none;
 }
 
@@ -846,6 +1116,15 @@
         grid-template-columns: repeat(2, 1fr);
     }
 
+    #vision .viz__stage {
+        margin-top: -96px;
+        gap: 22px;
+    }
+
+    #vision .viz-card {
+        padding: 34px 28px 32px;
+    }
+
     #profile .mrnp-strip strong {
         font-size: clamp(32px, 4.4vw, 42px);
     }
@@ -879,11 +1158,28 @@
     }
 
     /* a 21:9 band is a 40px sliver on a phone */
-    #vision .mrnp-split__frame img {
+    #vision .viz__band img {
         aspect-ratio: 4 / 3;
     }
 
-    #vision .mrnp-grid,
+    /* one column, and the plates stop overlapping the band — at this width
+       the overlap would bury most of the photograph */
+    #vision .viz__stage {
+        grid-template-columns: 1fr;
+        gap: 18px;
+        margin-top: -48px;
+    }
+
+    #vision .viz-card {
+        padding: 30px 24px 28px;
+    }
+
+    #vision .viz-card__no {
+        font-size: 42px;
+        top: 20px;
+        right: 22px;
+    }
+
     #heritage .abt-time {
         grid-template-columns: 1fr;
         gap: 20px;
@@ -907,7 +1203,13 @@
     #testimonials .mrnp-quote p,
     #testimonials .mrnp-quote__by,
     #creds .mrnp-certcard__bar,
-    #profile .abt-frame__cap {
+    #profile .abt-frame__cap,
+    #vision .viz-card__no,
+    #vision .viz-card__icon,
+    #vision .viz-card h3,
+    #vision .viz-card__seam,
+    #vision .viz-card__lead,
+    #vision .viz-card__body {
         transform: none;
     }
 }
@@ -926,7 +1228,7 @@
     #profile .abt-frame img,
     #profile .abt-split__body .mrn-btn,
     #heritage .abt-time__item,
-    #vision .mrnp-icard,
+    #vision .viz-card,
     #compliance .abt-comply li,
     #units .abt-unit,
     #units .abt-unit__media img,
