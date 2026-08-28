@@ -1147,21 +1147,183 @@
     color: #fff;
 }
 
-#testimonials .mrnp-quote {
+/* --- #testimonials — the remarks, set as inspection records --------------
+   Before: four white boxes of italic 15.5px grey, each with a cyan disc whose
+   initials were #fff on #1195cf — 3.4:1, which is why they read as empty
+   circles. The quote mark sat at the very top of the card and pushed the text
+   down with 44px of padding that did nothing else.
+
+   Now each remark is a logged record: an index, the remark set at reading
+   size in ink rather than italic grey, a rule, and the visitor's monogram on
+   a dark tile where the letters actually have contrast (#6fd3f7 on #0a2440,
+   9.4:1). The quote mark becomes a watermark behind the index instead of a
+   spacer above the text. Depth is real — perspective on the plate, contents
+   off its face on hover. */
+
+#testimonials .tst-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: stretch;
+    gap: 26px;
+    margin-top: 52px;
+}
+
+#testimonials .tst {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 34px 32px 30px;
     border-radius: var(--ab-r);
-    background: #fff;
+    background: linear-gradient(178deg, #ffffff 0%, #f4fafd 100%);
     border: var(--ab-ring);
     box-shadow: var(--ab-soft);
-    transition: transform .5s var(--ab-ease), box-shadow .5s var(--ab-ease);
+    transition: box-shadow .5s var(--ab-ease), border-color .5s var(--ab-ease),
+        background .5s var(--ab-ease);
+
+    /* the 3D room. No overflow / isolation / opacity / filter may be added
+       here — each is a grouping property and flattens every translateZ. */
+    perspective: 1100px;
+    perspective-origin: 50% 44%;
+    transform-style: preserve-3d;
 }
 
-#testimonials .mrnp-quote:hover {
-    transform: translateY(-6px);
+/* the watermark: a mark, not a character that shoves the text down */
+#testimonials .tst__mark {
+    position: absolute;
+    top: 6px;
+    right: 26px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 92px;
+    line-height: 1;
+    color: rgba(34, 179, 230, .16);
+    pointer-events: none;
+    transform: translateZ(2px);
+    transition: color .5s var(--ab-ease), transform .5s var(--ab-ease);
+}
+
+#testimonials .tst__no {
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-weight: 200;
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: 1px;
+    color: rgba(11, 31, 51, .22);
+    margin-bottom: 16px;
+    transform: translateZ(10px);
+    transition: transform .5s var(--ab-ease), color .5s var(--ab-ease);
+}
+
+#testimonials .tst__text {
+    position: relative;
+    margin: 0 0 auto;
+    padding-bottom: 24px;
+    /* reading size, upright, in ink — the italic light grey was the problem */
+    font-size: 16.5px;
+    line-height: 1.72;
+    font-style: normal;
+    color: var(--ab-ink);
+    transform: translateZ(16px);
+    transition: transform .5s var(--ab-ease);
+}
+
+#testimonials .tst__rule {
+    display: block;
+    width: 100%;
+    height: 1px;
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, rgba(34, 179, 230, .38), rgba(11, 31, 51, .07) 60%, transparent);
+    transform: translateZ(8px);
+}
+
+#testimonials .tst__by {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transform: translateZ(26px);
+    transition: transform .5s var(--ab-ease);
+}
+
+#testimonials .tst__mono {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 0 0 auto;
+    width: 48px;
+    height: 48px;
+    border-radius: 13px;
+    background: var(--ab-card-dark);
+    border: 1px solid rgba(53, 198, 244, .28);
+    /* 9.4:1 — the old disc was #fff on #1195cf, 3.4:1 */
+    color: #6fd3f7;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 1px;
+    transition: transform .5s var(--ab-ease), box-shadow .5s var(--ab-ease),
+        border-color .5s var(--ab-ease), color .5s var(--ab-ease);
+}
+
+#testimonials .tst__by strong {
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-weight: 500;
+    font-size: 14.5px;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    line-height: 1.35;
+    color: var(--ab-ink);
+}
+
+/* --- hover -------------------------------------------------------------- */
+
+#testimonials .tst:hover {
+    border-color: rgba(34, 179, 230, .42);
     box-shadow: var(--ab-lift);
+    background: linear-gradient(178deg, #ffffff 0%, #eef8fd 100%);
 }
 
-#testimonials .mrnp-quote__av {
-    border-radius: 999px;
+/* the affordance that survives reduced motion */
+#testimonials .tst:hover .tst__mark {
+    color: rgba(240, 165, 0, .34);
+}
+
+#testimonials .tst:hover .tst__no {
+    color: rgba(240, 165, 0, .62);
+}
+
+#testimonials .tst:hover .tst__mono {
+    border-color: rgba(240, 165, 0, .5);
+    color: #ffc94d;
+    box-shadow: 0 16px 26px -12px rgba(4, 18, 31, .55);
+}
+
+/* the plate itself never transforms — data-mrnp-tilt writes an inline
+   transform and a CSS one here would fight it every frame */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+
+    #testimonials .tst:hover .tst__text {
+        transform: translateZ(22px);
+    }
+
+    /* the attribution sits bottom-left, the farthest point from the plate's
+       perspective origin, so it travels outward fastest as it rises. At
+       translateZ(52) under perspective:900 it cleared the plate's own edge by
+       4.7px. This is the limit that stays in. */
+    #testimonials .tst:hover .tst__by {
+        transform: translateZ(38px);
+    }
+
+    #testimonials .tst:hover .tst__no {
+        transform: translateZ(26px);
+    }
+
+    #testimonials .tst:hover .tst__mark {
+        transform: translateZ(12px) scale(1.06);
+    }
+
+    #testimonials .tst:hover .tst__mono {
+        transform: scale(1.06);
+    }
 }
 
 #creds .mrnp-certcard {
@@ -1205,7 +1367,7 @@
 
 #heritage .abt-time__item,
 #compliance .cmp,
-#testimonials .mrnp-quote {
+#testimonials .tst {
     transform-style: preserve-3d;
     will-change: transform;
 }
@@ -1213,7 +1375,7 @@
 /* hover keeps the material change; the tilt owns the movement */
 #heritage .abt-time__item:hover,
 #compliance .cmp:hover,
-#testimonials .mrnp-quote:hover {
+#testimonials .tst:hover {
     transform: none;
 }
 
@@ -1223,8 +1385,7 @@
 #heritage .abt-time__item p { transform: translateZ(6px); }
 
 
-#testimonials .mrnp-quote p { transform: translateZ(14px); }
-#testimonials .mrnp-quote__by { transform: translateZ(24px); }
+
 
 #creds .mrnp-certcard { transform-style: preserve-3d; }
 #creds .mrnp-certcard__bar { transform: translateZ(18px); }
@@ -1342,6 +1503,22 @@
         gap: 12px;
     }
 
+    /* .tst-grid no longer inherits .mrnp-quotes' breakpoints
+       (marine-pages.css:1476), so it carries its own */
+    #testimonials .tst-grid {
+        grid-template-columns: 1fr;
+        gap: 16px;
+    }
+
+    #testimonials .tst {
+        padding: 26px 22px 24px;
+    }
+
+    #testimonials .tst__mark {
+        font-size: 72px;
+        right: 18px;
+    }
+
     #compliance .cmp {
         padding: 18px 16px 20px;
     }
@@ -1367,8 +1544,11 @@
     #compliance .cmp__k,
     #compliance .cmp__tag,
     #compliance .cmp__v,
-    #testimonials .mrnp-quote p,
-    #testimonials .mrnp-quote__by,
+    #testimonials .tst__no,
+    #testimonials .tst__text,
+    #testimonials .tst__rule,
+    #testimonials .tst__by,
+    #testimonials .tst__mark,
     #creds .mrnp-certcard__bar,
     #profile .abt-frame__cap,
     #vision .viz-card__no,
@@ -1399,7 +1579,7 @@
     #compliance .cmp,
     #units .abt-unit,
     #units .abt-unit__media img,
-    #testimonials .mrnp-quote,
+    #testimonials .tst,
     #creds .mrnp-certcard {
         transition: none !important;
         transform: none !important;
