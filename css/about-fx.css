@@ -349,6 +349,11 @@
     content: "";
     position: absolute;
     inset: 0;
+    /* the cell is a stacking context (preserve-3d), so this stays inside it
+       and simply sits under the figures. Without it the plate depends on the
+       3D surviving to stay behind — and anything that flattens the cell puts
+       an opaque panel straight over the numerals. */
+    z-index: -1;
     border-radius: 14px;
     background: linear-gradient(180deg, #ffffff 0%, #edf7fd 100%);
     border: 1px solid rgba(34, 179, 230, .28);
@@ -445,9 +450,11 @@
    simply does not travel. */
 @media (hover: hover) and (prefers-reduced-motion: reduce) {
 
+    /* opacity ONLY. `transform: none` here would drop the plate's
+       translateZ(-28px), landing it in the same plane as the figures — and
+       because ::after paints after its content, it covered them completely. */
     #profile .mrnp-strip > div:hover::after {
         opacity: 1;
-        transform: none;
     }
 
     #profile .mrnp-strip > div:hover strong {
