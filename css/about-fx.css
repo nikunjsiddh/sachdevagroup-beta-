@@ -222,10 +222,117 @@
 
 /* ==========================================================================
    4. #vision — the two statements, given real depth
+   ==========================================================================
+   THE LAYOUT WAS BROKEN, and the numbers say why. Measured at 1440:
+
+     .mrnp-split            1192 x 798, columns 526 / 604
+     .mrnp-split__media      526 x 329   <- the photograph's own 800x500 ratio
+     .mrnp-grid              604 x 752   <- the two statement cards
+     height gap                     423px
+
+   `align-items: center` then parked that 329px block in the middle of a 798px
+   row, so the photograph floated in ~210px of dead space above and below it
+   while the cards ran the full height beside it. On top of that,
+   marine-pages.css:556 runs `animation: mrnFloatY` on the offset accent plate
+   (.mrnp-split__media::before) — so the plate drifts vertically while the
+   photograph stays put, and the two are almost never in register. That is the
+   misalignment in the screenshot: not a stray margin, a plate on a loop.
+
+   Stretching the media column to match was the obvious fix and it was wrong.
+   The source is 800x500 — a wide shot of vessels beached along the tideline —
+   and `object-fit: cover` into a 500x800 portrait box scales it 1.6x and then
+   shows 500 of 1280 pixels: 39% of the frame. It balanced the row by throwing
+   away the photograph.
+
+   So the section is re-composed instead of re-proportioned. The photograph
+   runs the FULL WIDTH as a cinematic band, and Vision and Mission sit side by
+   side beneath it. That uses the shot the way it was taken, gives the two
+   statements equal width and equal height, and leaves no dead space to centre
+   anything in. Pure CSS — the markup is untouched.
    ========================================================================== */
 
+#vision .mrnp-split {
+    grid-template-columns: 1fr;
+    gap: 48px;
+    align-items: stretch;
+}
+
+#vision .mrnp-split__media {
+    /* room for the draft ladder, the same device #profile uses */
+    padding-left: 26px;
+}
+
+#vision .mrnp-split__frame {
+    width: 100%;
+    border-radius: 3px;
+    box-shadow: var(--ab-lift);
+}
+
+/* A 21:9 band. The crop now takes from the top and bottom of a wide frame,
+   which is sky and foreground water, rather than from the sides, which is the
+   subject. 56% holds the waterline and the hulls. */
+#vision .mrnp-split__frame img {
+    width: 100%;
+    height: auto;
+    aspect-ratio: 21 / 9;
+    object-fit: cover;
+    object-position: 50% 56%;
+}
+
+@supports not (aspect-ratio: 1) {
+    #vision .mrnp-split__frame img {
+        height: 420px;
+    }
+}
+
+/* The offset plate stops floating and becomes a registration frame — the
+   drawing sheet the photograph is pinned to. Offset up and left so it reads as
+   a deliberate second plane, and static so it stays in register. It rotates
+   WITH the photograph: js/marine.js's data-mrn-tilt targets
+   `.mrn-figure__frame || the element itself`, and there is no such child here,
+   so the whole media block tilts as one piece. */
+#vision .mrnp-split__media::before {
+    animation: none;
+    left: 6px;
+    top: -20px;
+    right: 20px;
+    bottom: 20px;
+    border: 1px solid rgba(34, 179, 230, .45);
+    border-radius: 3px;
+    transition: border-color .6s var(--ab-ease);
+}
+
+#vision .mrnp-split__media:hover::before {
+    border-color: rgba(34, 179, 230, .8);
+}
+
+/* draft ladder, matching #profile so the two sections read as one system */
+#vision .mrnp-split__media::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 10%;
+    bottom: 10%;
+    width: 12px;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, var(--cyan) 0 2px, transparent 2px) 0 0 / 100% 34px repeat-y,
+        linear-gradient(90deg, rgba(34, 179, 230, .45) 0 1px, transparent 1px) 0 0 / 100% 100% no-repeat;
+    opacity: .7;
+}
+
+/* Vision and Mission, side by side and the same height. The grid was a single
+   column stacking them; `1fr 1fr` with stretched items means the shorter
+   statement no longer leaves a step under it. */
 #vision .mrnp-grid {
     perspective: 1200px;
+    grid-template-columns: 1fr 1fr;
+    align-items: stretch;
+    gap: 34px;
+}
+
+#vision .mrnp-grid > .mrnp-icard {
+    height: 100%;
 }
 
 #vision .mrnp-icard {
@@ -543,6 +650,29 @@
     /* the draft ladder needs a margin it does not have on a phone */
     #profile .abt-split__media::after {
         display: none;
+    }
+
+    /* the band and the two statements all go full width */
+    #vision .mrnp-split {
+        gap: 32px;
+    }
+
+    #vision .mrnp-split__media {
+        padding-left: 0;
+    }
+
+    #vision .mrnp-split__media::after {
+        display: none;
+    }
+
+    /* a 21:9 band is a 40px-tall sliver on a phone — give it back some height */
+    #vision .mrnp-split__frame img {
+        aspect-ratio: 4 / 3;
+    }
+
+    #vision .mrnp-grid {
+        grid-template-columns: 1fr;
+        gap: 20px;
     }
 
     #heritage .abt-time {
