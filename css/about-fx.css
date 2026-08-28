@@ -1,0 +1,644 @@
+/* ==========================================================================
+   SACHDEVA GROUP — ABOUT, premium layer
+   ==========================================================================
+   Scope : about_us.html ONLY. Loaded last, after css/icons.css.
+
+   WHY A PAGE-SPECIFIC FILE
+     The About page is the one inner page that carries the whole company story,
+     so it is the one worth spending depth on. Its `.abt-*` rules currently sit
+     in css/index-theme.css with 14-18px radii and a flat translateY hover —
+     which is both conventional and out of step with the squared plate language
+     css/page-fx.css established for every other inner page. Overriding them
+     here keeps the change on one page instead of re-theming the whole site,
+     and it cannot be scoped by section id: #profile also exists on sspsb.html
+     and jjsb.html.
+
+   THE IDEA — a yard reads as an engineering drawing
+     Three devices, repeated at different scales, so the page reads as one
+     thing rather than as seven decorated blocks. They are applied to the
+     components that already exist rather than through a generic .ab-plate
+     helper — a shared class nothing used would just be dead CSS.
+
+       PLATE   squared steel at 3px, hairline ring, real depth. Never a
+               rounded card. Replaces the 14-18px radii the .abt-* rules in
+               index-theme.css shipped with.
+       SEAM    a cyan weld line where two plates meet — the rail under
+               #heritage, the tie-down above each date plate, the stamp bar on
+               #compliance, the waterline under each #units photograph and the
+               rule beside each quotation. The per-item ones grow from zero as
+               their plate arrives; see section 9 for which class that hangs
+               off, which is not the obvious one.
+       DRAFT   the numerals ARE the data. Years, hull numbers and standards
+               codes are set large and thin — weight 200 — the way draft marks
+               are painted on a bow, instead of as small bold labels.
+
+   DEPTH IS REAL, NOT PAINTED
+     `perspective` on the stage, `preserve-3d` on the plate, and children
+     lifted on `translateZ` so they physically stand off the plate face when it
+     tilts. js/marine.js's [data-mrn-tilt] writes the rotation from the
+     pointer; everything here is built so that rotation has something to reveal.
+     No fake drop-shadow-as-depth anywhere.
+
+   MOTION BUDGET
+     This page is driven by js/page-fx.js + js/marine.js + js/index-motion.js.
+     GSAP is deliberately NOT here: js/motion.js is index-only, and loading it
+     would set SG_MOTION_ENGINE='gsap', which stands marine.js and
+     index-motion.js down — and this page depends on both (12 [data-mrn-reveal],
+     10 [data-sg-split], and js/page-fx.js rides window.SGMotion). Every
+     transition below is CSS, triggered by the classes those engines already
+     add.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. LOCAL TOKENS
+   ========================================================================== */
+
+#profile,
+#heritage,
+#vision,
+#compliance,
+#units,
+#testimonials,
+#creds {
+    --ab-plate: linear-gradient(168deg, #ffffff 0%, #f7fbff 100%);
+    --ab-plate-dark: linear-gradient(168deg, #0c2947 0%, #071a2e 58%, #04121f 100%);
+    --ab-ring: 1px solid rgba(7, 26, 46, .11);
+    --ab-ring-dark: 1px solid rgba(53, 198, 244, .17);
+    --ab-seam: linear-gradient(90deg, transparent, var(--cyan-bright) 18%, var(--cyan) 50%, var(--cyan-bright) 82%, transparent);
+    --ab-tick: 16px;
+    --ab-lift: 0 34px 70px -34px rgba(4, 18, 31, .72);
+    --ab-lift-cyan: 0 30px 64px -30px rgba(34, 179, 230, .55);
+    --ab-ease: cubic-bezier(.16, 1, .3, 1);
+}
+
+/* ==========================================================================
+   2. #profile — the group story against a real yard photograph
+   ========================================================================== */
+
+#profile .abt-split {
+    gap: 68px;
+    align-items: center;
+}
+
+/* the frame becomes a machined bezel with a draft scale down its left edge */
+#profile .abt-frame {
+    border-radius: 3px;
+    border: 1px solid rgba(7, 26, 46, .16);
+    box-shadow: var(--ab-lift);
+    transition: box-shadow .6s var(--ab-ease);
+}
+
+#profile .abt-frame img {
+    /* duotone at rest so the photograph sits inside the palette; the colour
+       comes back as the reader engages with it */
+    filter: saturate(.58) contrast(1.06);
+    transition: filter .8s var(--ab-ease), transform 1.2s var(--ab-ease);
+}
+
+#profile .abt-split__media:hover .abt-frame img {
+    filter: none;
+    transform: scale(1.04);
+}
+
+/* inset bezel ring — reads as the machined lip of a viewing port */
+#profile .abt-frame::before {
+    content: "";
+    position: absolute;
+    inset: 12px;
+    z-index: 2;
+    border: 1px solid rgba(53, 198, 244, .34);
+    pointer-events: none;
+    transition: inset .6s var(--ab-ease), border-color .6s var(--ab-ease);
+}
+
+#profile .abt-split__media:hover .abt-frame::before {
+    inset: 18px;
+    border-color: rgba(53, 198, 244, .6);
+}
+
+/* DRAFT MARKS — the measurement ladder down the outside of the frame.
+   Pure decoration, but it is the cue that says "this is a survey", and it
+   costs one gradient. */
+#profile .abt-split__media {
+    padding-left: 26px;
+}
+
+#profile .abt-split__media::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 8%;
+    bottom: 8%;
+    width: 12px;
+    pointer-events: none;
+    background:
+        linear-gradient(180deg, var(--cyan) 0 2px, transparent 2px) 0 0 / 100% 34px repeat-y,
+        linear-gradient(90deg, rgba(34, 179, 230, .45) 0 1px, transparent 1px) 0 0 / 100% 100% no-repeat;
+    opacity: .75;
+}
+
+/* ==========================================================================
+   3. #heritage — the four dates, read as a slipway
+   ==========================================================================
+   Was four rounded cards in a row. It is now one run of plates on a shared
+   rail: the rail is the seam, each plate carries its year as a draft mark, and
+   the plate lifts off the rail on approach.
+   ========================================================================== */
+
+#heritage .abt-time {
+    position: relative;
+    gap: 22px;
+    padding-top: 30px;
+}
+
+/* the rail every plate stands on */
+#heritage .abt-time::before {
+    content: "";
+    position: absolute;
+    top: 14px;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(53, 198, 244, .5) 12%, rgba(53, 198, 244, .5) 88%, transparent);
+}
+
+#heritage .abt-time__item {
+    border-radius: 3px;
+    background: var(--ab-plate-dark);
+    border: var(--ab-ring-dark);
+    padding: 40px 26px 30px;
+    transform-style: preserve-3d;
+    transition:
+        transform .55s var(--ab-ease),
+        box-shadow .55s var(--ab-ease),
+        border-color .55s var(--ab-ease);
+}
+
+/* the tie-down that fixes the plate to the rail */
+#heritage .abt-time__item::before {
+    top: -17px;
+    left: 50%;
+    right: auto;
+    width: 2px;
+    height: 17px;
+    margin-left: -1px;
+    background: linear-gradient(180deg, rgba(53, 198, 244, .8), rgba(53, 198, 244, .12));
+    border-radius: 0;
+    transition: height .5s var(--ab-ease), background .5s var(--ab-ease);
+}
+
+#heritage .abt-time__item:hover {
+    transform: translateY(-10px);
+    border-color: rgba(53, 198, 244, .48);
+    box-shadow: var(--ab-lift-cyan);
+}
+
+#heritage .abt-time__item:hover::before {
+    height: 27px;
+    background: linear-gradient(180deg, var(--gold), rgba(255, 173, 24, .12));
+}
+
+/* the year set as a draft mark: large, thin, in the plate's own margin */
+#heritage .abt-time__year {
+    font-weight: 200;
+    font-size: 34px;
+    letter-spacing: -.5px;
+    color: var(--cyan-bright);
+    transform: translateZ(18px);
+    transition: color .45s var(--ab-ease);
+}
+
+#heritage .abt-time__item:hover .abt-time__year {
+    color: var(--gold-light);
+}
+
+#heritage .abt-time__item h4 {
+    transform: translateZ(10px);
+}
+
+#heritage .abt-time__item p {
+    transform: translateZ(4px);
+}
+
+/* ==========================================================================
+   4. #vision — the two statements, given real depth
+   ========================================================================== */
+
+#vision .mrnp-grid {
+    perspective: 1200px;
+}
+
+#vision .mrnp-icard {
+    transform-style: preserve-3d;
+}
+
+/* the children stand off the card face when marine.js tilts it */
+#vision .mrnp-icard__icon {
+    transform: translateZ(34px);
+}
+
+#vision .mrnp-icard h4 {
+    transform: translateZ(22px);
+}
+
+#vision .mrnp-icard p {
+    transform: translateZ(10px);
+}
+
+#vision .mrnp-icard__no {
+    transform: translateZ(46px);
+    font-weight: 200;
+    font-size: 46px;
+}
+
+/* ==========================================================================
+   5. #compliance — five standards, as class-society stamps
+   ==========================================================================
+   These are the bodies the yard is audited against, so they should read as
+   stamped steel, not as pills.
+   ========================================================================== */
+
+#compliance .abt-comply {
+    gap: 16px;
+}
+
+#compliance .abt-comply li {
+    position: relative;
+    border-radius: 3px;
+    background: var(--ab-plate);
+    border: var(--ab-ring);
+    box-shadow: var(--lift-1);
+    padding: 22px 20px 20px;
+    overflow: hidden;
+    transition:
+        transform .45s var(--ab-ease),
+        box-shadow .45s var(--ab-ease),
+        border-color .45s var(--ab-ease);
+}
+
+/* the stamp bar across the top */
+#compliance .abt-comply li::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--ab-seam);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform .55s var(--ab-ease);
+}
+
+#compliance .abt-comply li:hover {
+    transform: translateY(-6px);
+    border-color: rgba(34, 179, 230, .45);
+    box-shadow: var(--ab-lift);
+}
+
+#compliance .abt-comply li:hover::before {
+    transform: scaleX(1);
+}
+
+#compliance .abt-comply__k {
+    font-weight: 200;
+    font-size: 30px;
+    letter-spacing: -.4px;
+    color: var(--cyan-deep);
+    transition: color .4s var(--ab-ease);
+}
+
+#compliance .abt-comply li:hover .abt-comply__k {
+    color: var(--gold-dark);
+}
+
+/* ==========================================================================
+   6. #units — the two companies, the page's deepest moment
+   ==========================================================================
+   These carry data-mrn-tilt, so marine.js writes a pointer-tracked rotation on
+   them. Everything here exists to give that rotation something to reveal.
+   ========================================================================== */
+
+#units .abt-units {
+    perspective: 1500px;
+    gap: 46px;
+}
+
+#units .abt-unit {
+    border-radius: 3px;
+    background: var(--ab-plate-dark);
+    border: var(--ab-ring-dark);
+    transform-style: preserve-3d;
+    overflow: hidden;
+    transition:
+        box-shadow .6s var(--ab-ease),
+        border-color .6s var(--ab-ease);
+}
+
+#units .abt-unit:hover {
+    border-color: rgba(53, 198, 244, .5);
+    box-shadow: var(--ab-lift-cyan);
+}
+
+#units .abt-unit__media img {
+    filter: saturate(.5) contrast(1.08) brightness(.86);
+    transition: filter .9s var(--ab-ease), transform 1.3s var(--ab-ease);
+}
+
+#units .abt-unit:hover .abt-unit__media img {
+    filter: saturate(.95) contrast(1.02) brightness(1);
+    transform: scale(1.06);
+}
+
+/* the waterline: where the photograph meets the plate body */
+#units .abt-unit__media::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 3;
+    height: 2px;
+    background: var(--ab-seam);
+    transform: scaleX(0);
+    transform-origin: left center;
+    transition: transform 1s var(--ab-ease);
+}
+
+#units .abt-unit:hover .abt-unit__media::before {
+    transform: scaleX(1);
+}
+
+/* the hull number, set as a draft mark */
+#units .abt-unit__no {
+    font-weight: 200;
+    letter-spacing: -1px;
+    transform: translateZ(40px);
+}
+
+#units .abt-unit__body h3 {
+    transform: translateZ(26px);
+}
+
+#units .abt-unit__body p {
+    transform: translateZ(12px);
+}
+
+#units .abt-unit__body .mrn-btn {
+    transform: translateZ(34px);
+}
+
+#units .abt-unit__meta {
+    transform: translateZ(18px);
+    border-top: 1px solid rgba(53, 198, 244, .18);
+}
+
+#units .abt-unit__meta strong {
+    font-weight: 200;
+    color: #fff;
+}
+
+/* ==========================================================================
+   7. #testimonials — the auditors' own words
+   ========================================================================== */
+
+#testimonials .mrnp-quote {
+    border-radius: 3px;
+    transition:
+        transform .5s var(--ab-ease),
+        box-shadow .5s var(--ab-ease),
+        border-color .5s var(--ab-ease);
+}
+
+#testimonials .mrnp-quote::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(180deg, var(--cyan-bright), rgba(34, 179, 230, 0));
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform .6s var(--ab-ease);
+}
+
+#testimonials .mrnp-quote:hover::after {
+    transform: scaleY(1);
+}
+
+#testimonials .mrnp-quote:hover {
+    transform: translateY(-7px);
+}
+
+/* ==========================================================================
+   8. #creds — the certificate wall
+   ========================================================================== */
+
+#creds .mrnp-certs {
+    perspective: 1400px;
+}
+
+#creds .mrnp-certcard {
+    border-radius: 3px;
+    transform-style: preserve-3d;
+}
+
+#creds .mrnp-certcard__bar {
+    transform: translateZ(16px);
+}
+
+/* ==========================================================================
+   9. THE SEAMS DRAW ON SCROLL, NOT ONLY ON HOVER
+   ==========================================================================
+   WHICH CLASS TO KEY ON — this is not obvious and I got it wrong first.
+
+   These blocks carry data-mrn-reveal + data-mrn-stagger in the markup, so
+   `.mrn-in` looks like the natural hook. It never arrives. js/page-fx.js runs
+   an auto-choreography pass over every inner page that migrates elements from
+   marine.js's engine to index-motion.js's — it stamps data-sg-in on the child,
+   strips data-mrn-reveal from it (page-fx.js:104) and then releases the parent
+   container's data-mrn-reveal / data-mrn-stagger too (page-fx.js:121-122), so
+   exactly one engine owns each element. Measured on this page: 5 elements end
+   with .mrn-in, 45 end with .sg-shown, and none of these four containers has
+   either.
+
+   So the per-ITEM seams key on `.sg-shown`, which index-motion.js leaves
+   behind permanently once an entrance finishes. That also removes the need for
+   hand-set nth-child delays: the reveal engine already staggers the items, so
+   each seam simply follows its own plate in.
+
+   The two seams that sit on a CONTAINER — the heritage rail and the units
+   waterline — get no class at all, so they are NOT animated from zero. A seam
+   waiting on a class that never comes is a seam that is invisible for ever.
+   They render at full width and respond to hover instead.
+   ========================================================================== */
+
+/* the rail is structure, not an entrance — always drawn */
+#heritage .abt-time::before {
+    transform: none;
+}
+
+/* each tie-down drops as its own plate lands */
+#heritage .abt-time__item::before {
+    transform: scaleY(0);
+    transform-origin: top center;
+    transition: transform .55s var(--ab-ease), height .5s var(--ab-ease), background .5s var(--ab-ease);
+}
+
+#heritage .abt-time__item.sg-shown::before,
+#heritage .abt-time__item:hover::before {
+    transform: scaleY(1);
+}
+
+/* the stamp bar comes down with its own plate */
+#compliance .abt-comply li.sg-shown::before {
+    transform: scaleX(1);
+}
+
+/* the rule beside each quotation, likewise */
+#testimonials .mrnp-quote.sg-shown::after {
+    transform: scaleY(1);
+}
+
+/* The units waterline sits on .abt-unit__media, inside a card that page-fx.js
+   deliberately skips — .abt-unit carries data-mrn-tilt, and blocked() leaves
+   anything marine.js already owns alone. Nothing ever stamps it, so it is
+   drawn at rest and only brightens on approach. */
+#units .abt-unit__media::before {
+    transform: none;
+    opacity: .45;
+    transition: opacity .7s var(--ab-ease);
+}
+
+#units .abt-unit:hover .abt-unit__media::before {
+    opacity: 1;
+}
+
+/* ==========================================================================
+   10. RESPONSIVE
+   ========================================================================== */
+
+@media (max-width: 1100px) {
+
+    #heritage .abt-time {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    #profile .abt-split__media {
+        padding-left: 18px;
+    }
+}
+
+@media (max-width: 860px) {
+
+    #profile .abt-split {
+        gap: 40px;
+    }
+
+    #profile .abt-split__media {
+        padding-left: 0;
+    }
+
+    /* the draft ladder needs a margin it does not have on a phone */
+    #profile .abt-split__media::after {
+        display: none;
+    }
+
+    #heritage .abt-time {
+        grid-template-columns: 1fr;
+        gap: 18px;
+    }
+
+    #heritage .abt-time::before {
+        display: none;
+    }
+
+    #heritage .abt-time__item {
+        padding: 30px 22px 26px;
+    }
+
+    #heritage .abt-time__item::before {
+        top: -1px;
+        left: 22px;
+        right: 22px;
+        width: auto;
+        height: 2px;
+        margin-left: 0;
+    }
+
+    #heritage .abt-time__item:hover::before {
+        height: 2px;
+    }
+
+    #units .abt-units {
+        gap: 30px;
+    }
+
+    /* real 3D on a touch screen only ever shows the first frame of a hover
+       that never arrives — flatten it and keep the material */
+    #heritage .abt-time__year,
+    #heritage .abt-time__item h4,
+    #heritage .abt-time__item p,
+    #vision .mrnp-icard__icon,
+    #vision .mrnp-icard h4,
+    #vision .mrnp-icard p,
+    #vision .mrnp-icard__no,
+    #units .abt-unit__no,
+    #units .abt-unit__body h3,
+    #units .abt-unit__body p,
+    #units .abt-unit__body .mrn-btn,
+    #units .abt-unit__meta,
+    #creds .mrnp-certcard__bar {
+        transform: none;
+    }
+}
+
+/* ==========================================================================
+   11. REDUCED MOTION
+   Material stays, movement goes.
+
+   The important half is the second rule. Every seam on this page is authored
+   at scale 0 and grown to 1 — so switching the transition off is not enough:
+   without also forcing them to `none` (which is identity, i.e. full size) the
+   rail, the tie-downs, the stamp bars, the waterlines and the quote rules
+   would all sit at zero for ever and the page would look unfinished rather
+   than still.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    /* things that only ever MOVED — stop them moving */
+    #profile .abt-frame,
+    #profile .abt-frame img,
+    #profile .abt-frame::before,
+    #heritage .abt-time__item,
+    #compliance .abt-comply li,
+    #units .abt-unit,
+    #units .abt-unit__media img,
+    #testimonials .mrnp-quote,
+    #creds .mrnp-certcard {
+        transition: none !important;
+        transform: none !important;
+    }
+
+    /* things that START at scale 0 — show them outright.
+       `transform: none` is identity, i.e. full size. Without this the tie-downs,
+       stamp bars and quote rules would sit at zero for ever and the page would
+       look unfinished rather than merely still. */
+    #heritage .abt-time__item::before,
+    #heritage .abt-time__item.sg-shown::before,
+    #compliance .abt-comply li::before,
+    #compliance .abt-comply li.sg-shown::before,
+    #testimonials .mrnp-quote::after,
+    #testimonials .mrnp-quote.sg-shown::after {
+        transform: none !important;
+        transition: none !important;
+    }
+
+    /* the units waterline is drawn at rest and only brightens on hover */
+    #units .abt-unit__media::before {
+        opacity: 1 !important;
+        transition: none !important;
+    }
+}
