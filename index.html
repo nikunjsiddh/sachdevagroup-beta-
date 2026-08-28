@@ -266,7 +266,7 @@
             </div>
         </div>
         <!-- ============================ ABOUT ============================ -->
-        <section class="mrn-section mrn-light" id="about">
+        <section class="mrn-section mrn-light" id="about" data-drift="30">
             <div class="mrn-wavesep mrn-wavesep--top">
                 <svg viewBox="0 0 1440 90" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
                     <defs>
@@ -377,7 +377,7 @@
         </section>
 
         <!-- ============================ COMPANIES ============================ -->
-        <section class="mrn-section mrn-soft" id="companies">
+        <section class="mrn-section mrn-soft" id="companies" data-drift>
             <div class="mrn-container">
                 <div class="mrn-center">
                     <span class="mrn-eyebrow" data-anim="fade-up">Our Companies</span>
@@ -428,7 +428,7 @@
         </section>
 
         <!-- ============================ PROCESS ============================ -->
-        <section class="mrn-section mrn-light" id="process">
+        <section class="mrn-section mrn-light" id="process" data-drift>
             <div class="mrn-container">
                 <div class="mrn-center">
                     <span class="mrn-eyebrow" data-anim="fade-up">The Yard Process</span>
@@ -477,7 +477,7 @@
         </section>
 
         <!-- ============================ JOURNEY ============================ -->
-        <section class="mrn-section mrn-dark" id="journey">
+        <section class="mrn-section mrn-dark" id="journey" data-drift="40">
             <div class="mrn-journey__plate" data-sg-parallax="far" aria-hidden="true"></div>
             <div class="mrn-container">
                 <div class="mrn-center">
@@ -541,7 +541,7 @@
 
 
         <!-- ============================ COMMITMENT ============================ -->
-        <section class="mrn-section mrn-light" id="commitment">
+        <section class="mrn-section mrn-light" id="commitment" data-drift="34">
             <div class="mrn-container">
                 <div class="mrn-center">
                     <span class="mrn-eyebrow" data-anim="fade-up">Our Commitment</span>
@@ -610,7 +610,7 @@
         </section>
 
         <!-- ============================ CERTIFICATIONS ============================ -->
-        <section class="mrn-section mrn-section--tight mrn-soft" id="credentials">
+        <section class="mrn-section mrn-section--tight mrn-soft" id="credentials" data-drift="28">
             <div class="mrn-container mrn-center">
                 <span class="mrn-eyebrow" data-anim="fade-up">Credentials</span>
                 <h2 class="mrn-title" data-anim="fade-up">Audited, certified, <em>documented</em></h2>
@@ -636,7 +636,7 @@
         </section>
 
         <!-- ============================ YARD GALLERY ============================ -->
-        <section class="mrn-section mrn-dark" id="yard">
+        <section class="mrn-section mrn-dark" id="yard" data-drift="34">
             <div class="mrn-container">
                 <div class="mrn-center">
                     <span class="mrn-eyebrow" data-anim="fade-up">Inside the Yard</span>
@@ -677,7 +677,7 @@
         </section>
 
         <!-- ============================ CTA ============================ -->
-        <section class="mrn-cta" id="contact">
+        <section class="mrn-cta" id="contact" data-drift="36">
             <div class="mrn-cta__bg" data-sg-parallax="band" aria-hidden="true"></div>
             <span class="mrn-cta__orb mrn-cta__orb--1" data-sg-parallax="mid" aria-hidden="true"></span>
             <span class="mrn-cta__orb mrn-cta__orb--2" data-sg-parallax="near" aria-hidden="true"></span>
@@ -900,6 +900,12 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="js/motion.js"></script>
+
+    <!-- Additive scrub layer. motion.js owns the background/media parallax and
+         the SG_MOTION_ENGINE handoff; this only adds the content counter-drift
+         that the reference build uses on every section and we had nowhere. It
+         sets no engine flag, so nothing stands down because of it. -->
+    <script src="js/scroll-drift.js"></script>
 </body>
 
 </html>

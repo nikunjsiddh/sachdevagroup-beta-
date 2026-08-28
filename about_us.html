@@ -257,7 +257,7 @@
         </div>
 
         <!-- ============================ GROUP PROFILE ============================ -->
-        <section class="mrnp-section mrn-light" id="profile">
+        <section class="mrnp-section mrn-light" id="profile" data-drift="34">
             <div class="mrn-container">
 
                 <div class="abt-split">
@@ -318,7 +318,7 @@
         </section>
 
         <!-- ============================ HERITAGE ============================ -->
-        <section class="mrnp-section mrn-dark" id="heritage">
+        <section class="mrnp-section mrn-dark" id="heritage" data-drift="32">
             <div class="mrn-container">
                 <div class="mrn-center">
                     <span class="mrn-eyebrow" data-sg-in="up">Our Heritage</span>
@@ -358,7 +358,7 @@
         </section>
 
         <!-- ============================ VISION / MISSION ============================ -->
-        <section class="mrnp-section mrn-soft" id="vision">
+        <section class="mrnp-section mrn-soft" id="vision" data-drift="38">
             <div class="mrn-container">
                 <div class="mrn-center">
                     <span class="mrn-eyebrow" data-sg-in="up">What Drives The Yard</span>
@@ -367,7 +367,7 @@
 
                 <div class="viz">
                     <div class="viz__band" data-sg-in="up">
-                        <img src="images/Environmental-Concerns.jpg"
+                        <img src="images/Environmental-Concerns.jpg" data-drift-bg="5"
                             alt="Vessels beached at the Alang tideline before dismantling begins">
                         <span class="viz__waterline" aria-hidden="true"></span>
                     </div>
@@ -421,7 +421,7 @@
         </section>
 
         <!-- ============================ COMPLIANCE ============================ -->
-        <section class="mrnp-section mrn-section--tight mrn-light" id="compliance">
+        <section class="mrnp-section mrn-section--tight mrn-light" id="compliance" data-drift>
             <div class="mrn-container">
                 <div class="mrn-center">
                     <span class="mrn-eyebrow" data-sg-in="up">Standards We Work To</span>
@@ -488,7 +488,7 @@
         </section>
 
         <!-- ============================ OUR COMPANIES ============================ -->
-        <section class="mrnp-section mrn-dark" id="units">
+        <section class="mrnp-section mrn-dark" id="units" data-drift="36">
             <div class="mrn-container">
                 <div class="mrn-center">
                     <span class="mrn-eyebrow" data-sg-in="up">Our Companies</span>
@@ -543,7 +543,7 @@
         </section>
 
         <!-- ============================ TESTIMONIALS ============================ -->
-        <section class="mrnp-section mrn-light" id="testimonials">
+        <section class="mrnp-section mrn-light" id="testimonials" data-drift>
             <div class="mrn-container">
                 <div class="mrn-center">
                     <span class="mrn-eyebrow" data-sg-in="up">In Their Words</span>
@@ -598,7 +598,7 @@
         </section>
 
         <!-- ============================ OUR CREDENTIALS ============================ -->
-        <section class="mrnp-section mrn-soft" id="creds">
+        <section class="mrnp-section mrn-soft" id="creds" data-drift="30">
             <div class="mrn-container">
                 <div class="mrn-center">
                     <span class="mrn-eyebrow" data-sg-in="up">Credentials</span>
@@ -840,6 +840,17 @@
     <script src="js/marine-pages.js"></script>
     <script src="js/page-fx.js"></script>
     <script src="js/index-motion.js"></script>
+
+    <!-- GSAP is loaded here for js/scroll-drift.js ONLY. js/motion.js is
+         deliberately absent: it sets SG_MOTION_ENGINE='gsap', which stands
+         js/marine.js and js/index-motion.js down from their scroll work — and
+         every reveal on this page comes from those two. scroll-drift.js sets
+         no such flag, so it adds the scrubbed drift without taking anything
+         away. If either request fails, the file returns at its first guard
+         and the page keeps exactly the motion it has today. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script src="js/scroll-drift.js"></script>
 </body>
 
 </html>
