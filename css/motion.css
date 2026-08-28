@@ -1,0 +1,261 @@
+/* ==========================================================================
+   SACHDEVA GROUP — MOTION LAYER
+   Tokens, base states and will-change policy for js/motion.js
+   ==========================================================================
+   Scope  : index.html only. Loaded LAST, after css/index-theme.css.
+   Engine : GSAP 3 + ScrollTrigger, driven by the single Lenis instance that
+            js/main.js creates.
+
+   WHAT THIS FILE IS FOR
+     js/motion.js animates transform / opacity / clip-path and nothing else.
+     Anything that needs a *base* state for it to animate from — an overscan,
+     a transform-origin, a will-change, a squared-off starting clip — lives
+     here, so the JS never writes layout properties and never has to inject a
+     style tag at runtime.
+
+   WHAT IT DELIBERATELY DOES NOT TOUCH
+     The reveal vocabulary. `[data-anim]` and its `.in` / `.settled` states
+     stay entirely in css/index-theme.css section "SG REVEAL" (lines
+     7628-7748), gated on `html.sg-anim`. motion.js reimplements only the
+     JavaScript half of js/sg-reveal.js; the CSS half is unchanged and must
+     stay that way, because that gate is what keeps the page readable with no
+     JS at all.
+   ========================================================================== */
+
+/* ==========================================================================
+   1. TOKENS
+   ========================================================================== */
+
+:root {
+    --mo-dur-fast: .55s;
+    --mo-dur: .9s;
+    --mo-dur-slow: 1.3s;
+    /* expo-out — the house ease, same curve as --e-out in index-theme.css */
+    --mo-ease: cubic-bezier(.16, 1, .3, 1);
+    --mo-rise: 44px;
+    --mo-stagger: .085s;
+    --mo-frame-inset: 8% 12%;
+    --mo-radius: 14px;
+
+    /* the sticky header height motion.js offsets anchor scrolling by */
+    --mo-head: 75px;
+}
+
+/* ==========================================================================
+   2. SCROLL CHROME
+   ========================================================================== */
+
+/* --- 2.1 reading progress -------------------------------------------------
+   Was driven by js/marine.js initScrollChrome() writing `style.width` on every
+   scroll frame — a layout property, on a fixed-position bar, 60 times a second.
+   It is now a scaleX from one ScrollTrigger. The bar is laid out once at full
+   width and only ever transformed.
+
+   The `width: 0` in css/marine.css:.mrn-progress has to be answered explicitly:
+   scaling a zero-width box by any factor is still zero. */
+#mrnProgress {
+    width: 100%;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    transition: none;
+    will-change: transform;
+}
+
+/* --- 2.2 sticky header ----------------------------------------------------
+   js/main.js already owns `.sticky_menu` at scrollTop 80 (its own handler, on
+   all 13 pages). These two classes are additive and belong to motion.js, so
+   the two never write the same class. */
+.sgh-header {
+    transition:
+        transform .35s var(--mo-ease),
+        background-color .35s var(--mo-ease),
+        box-shadow .35s var(--mo-ease),
+        backdrop-filter .35s var(--mo-ease);
+}
+
+.sgh-header.is-stuck {
+    -webkit-backdrop-filter: blur(14px) saturate(1.15);
+    backdrop-filter: blur(14px) saturate(1.15);
+    box-shadow: 0 1px 0 rgba(53, 198, 244, .22), 0 18px 40px -34px rgba(4, 18, 31, .9);
+}
+
+/* Hidden only while scrolling DOWN past 400px. Never while the mobile menu is
+   open — motion.js checks that before toggling, because a menu anchored to a
+   header that has translated off-screen goes with it. */
+.sgh-header.is-hidden {
+    transform: translate3d(0, -105%, 0);
+}
+
+/* ==========================================================================
+   3. PRIMITIVE 3 — the contained-frame clip
+   The reference's signature move: a full-bleed panel contracts into a framed
+   one (`close`), or a framed one opens out to full bleed (`open`), while the
+   media inside keeps its own separate parallax. Frame and contents moving at
+   different rates is the whole trick.
+   ========================================================================== */
+
+[data-sg-frame] {
+    position: relative;
+    overflow: hidden;
+    will-change: clip-path;
+}
+
+/* The media is oversized so the inner counter-parallax never pulls an edge
+   into frame. 1.12 against a +/-6% drift leaves a comfortable margin. */
+[data-sg-frame] > img,
+[data-sg-frame] > video,
+[data-sg-frame] > picture > img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.12);
+}
+
+/* `open` starts contained, so it must not inherit the squared corners of the
+   full-bleed end state. The radius is animated with the clip in motion.js
+   via `inset(... round Npx)`. */
+[data-sg-frame="open"] {
+    -webkit-clip-path: inset(12% 18% round 20px);
+    clip-path: inset(12% 18% round 20px);
+}
+
+[data-sg-frame="close"] {
+    -webkit-clip-path: inset(0%);
+    clip-path: inset(0%);
+}
+
+/* .mrn-figure__frame carries a data-mrn-tilt hover transform from
+   js/marine.js, which writes `style.transform` on the frame itself. clip-path
+   is a different property, so the two compose — but the frame must not also
+   carry the `clip-up` reveal, which animates clip-path from the other side.
+   The markup drops data-anim on that element; this is the belt to that brace. */
+[data-sg-frame][data-anim] {
+    -webkit-clip-path: none;
+    clip-path: none;
+}
+
+/* ==========================================================================
+   4. FAR-TIER OVERSCAN
+   Every layer motion.js parallaxes on the `far` tier must be oversized enough
+   that the drift can never expose an edge. motion.js measures the real
+   overhang at refresh and clamps its own amplitude to fit, so these values are
+   the budget it spends — not a promise it blindly trusts.
+   ========================================================================== */
+
+/* index-theme.css gives the plate a fixed +/-140px overhang against a section
+   that is ~1700px tall, which is only ~8% — the tightest budget on the page
+   and the one place the tier's amplitude had to be clamped hard. Widening it
+   here buys the drift room without changing where the mask sits. */
+#journey .mrn-journey__plate {
+    top: -210px;
+    bottom: -210px;
+}
+
+/* ==========================================================================
+   5. TIMELINE PROGRESS
+   Was `style.height` from a raw scroll listener in js/marine.js initTimeline().
+
+   It is now a full-height bar revealed with clip-path. Note this is NOT
+   scaleY: scaling would stretch the gradient and the glow with it, so the
+   cyan-to-bright ramp would compress into the first few pixels and the
+   box-shadow blur would grow as the line advanced. Clipping paints the bar at
+   its true size and simply shows less of it.
+   ========================================================================== */
+
+#mrnTimelineProgress {
+    height: 100%;
+    transition: none;
+    will-change: clip-path;
+    -webkit-clip-path: inset(0 0 100% 0);
+    clip-path: inset(0 0 100% 0);
+}
+
+/* ==========================================================================
+   6. HERO
+   ========================================================================== */
+
+/* The video is parallaxed AND scaled. The scale is here so the tween only ever
+   writes yPercent and the two never fight over `transform`. */
+.mrn-hero__media video,
+.mrn-hero__media img {
+    transform: scale(1.15);
+    transform-origin: 50% 50%;
+}
+
+/* motion.js scrubs this between .55 and .85 so the headline keeps its contrast
+   as the footage drifts underneath it. The start value belongs here so there is
+   no first-frame jump. */
+.mrn-hero__scrim {
+    opacity: .55;
+}
+
+/* ==========================================================================
+   7. WILL-CHANGE POLICY
+   will-change is added by motion.js on enter and removed on leave — never
+   parked on a selector for the life of the page. The only standing hints are
+   the three above (#mrnProgress, [data-sg-frame], #mrnTimelineProgress), which
+   are single elements animating continuously for as long as they are on
+   screen, which is exactly the case the property is for.
+
+   This class is what motion.js toggles.
+   ========================================================================== */
+
+.mo-active {
+    will-change: transform, opacity;
+}
+
+/* ==========================================================================
+   8. REDUCED MOTION
+   No scrub, no parallax, no marquee autoplay, nothing hidden.
+
+   css/index-theme.css already carries a large reduced-motion block that
+   rescues the [data-anim] states and, at lines 3560+, the #process step
+   choreography. This adds only what this file introduced.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sgh-header,
+    .sgh-header.is-hidden {
+        transform: none !important;
+        transition: none !important;
+    }
+
+    /* the progress bar still works — it is information, not decoration */
+    #mrnProgress {
+        transition: none !important;
+    }
+
+    [data-sg-frame],
+    [data-sg-frame="open"],
+    [data-sg-frame="close"] {
+        -webkit-clip-path: none !important;
+        clip-path: none !important;
+        will-change: auto !important;
+    }
+
+    [data-sg-frame] > img,
+    [data-sg-frame] > video,
+    [data-sg-frame] > picture > img {
+        transform: none !important;
+    }
+
+    #mrnTimelineProgress {
+        -webkit-clip-path: none !important;
+        clip-path: none !important;
+        will-change: auto !important;
+    }
+
+    .mrn-hero__media video,
+    .mrn-hero__media img {
+        transform: none !important;
+    }
+
+    .mrn-hero__scrim {
+        opacity: .8;
+    }
+
+    .mo-active {
+        will-change: auto !important;
+    }
+}

@@ -29,3 +29,10 @@ Thumbs.db
 
 # Claude Code local tooling (preview server config, worktrees)
 .claude/
+
+# throwaway motion test harness
+_mtest.html
+tools-mktest.js
+_mtest/
+_itest-*.html
+tools-mkinner.js

@@ -1152,14 +1152,41 @@ var i = class {
 // Lenis End
 
 // lenis insilition
+  /* Option names are the Lenis 1.3.17 ones — the build inlined above.
+     The previous config passed `smooth: true` and `smoothTouch: false`, which
+     are Lenis 0.x spellings this version does not read at all (see the option
+     destructuring around line 583: smoothWheel, syncTouch, lerp,
+     wheelMultiplier, autoRaf). They happened to match the 1.x defaults, so the
+     behaviour was right by accident; it is now stated properly.
+
+     `duration` + `easing` are deliberately absent. Animate.advance() at line
+     373 branches `if (this.duration && this.easing)` FIRST and only falls
+     through to the lerp path otherwise — so setting lerp while duration is
+     present is silently ignored. Dropping them is what actually enables
+     lerp-based smoothing.
+
+     lerp 0.085 is slightly heavier than the 0.1 default: this is a yard that
+     cuts ships apart, and the scroll should read as mass. */
   const lenis = new Lenis({
-    duration: 1.2,
-    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-    smooth: true,
-    smoothTouch: false
+    lerp: 0.085,
+    wheelMultiplier: 0.9,
+    smoothWheel: true,
+    syncTouch: false      // native momentum on touch — better, and free
   });
 
+  /* Published so a single engine can own the frame loop.
+     js/motion.js (index.html only) sets window.__sgLenisExternal before it
+     starts driving lenis.raf from gsap.ticker, and this loop retires on its
+     next frame. Driving lenis.raf from both would advance the eased scroll
+     position twice per frame — double scroll speed, and the easing sampled at
+     the wrong times.
+     The other 12 pages never set the flag, so this loop keeps them running.
+     If motion.js or GSAP fails to load, the flag is never set and this stays
+     the driver — the failure mode is "no GSAP", never "no scrolling". */
+  window.lenis = lenis;
+
   function raf(time) {
+    if (window.__sgLenisExternal) return;
     lenis.raf(time);
     requestAnimationFrame(raf);
   }

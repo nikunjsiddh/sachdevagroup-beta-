@@ -44,6 +44,30 @@
     var html = doc.documentElement;
     if (!html || win.SGMotion) return;
 
+    /* GSAP STAND-DOWN
+       index.html sets window.SG_MOTION_ENGINE='gsap' in its head shim and loads
+       js/motion.js, which owns that page's scroll motion outright: one rAF loop
+       (gsap.ticker driving Lenis), one scroll subscriber, one entrance engine
+       and one parallax system. Everything this file provides would be a second
+       copy of each, so it stands down whole.
+
+       Standing down here also disarms the SG PARALLAX module at the foot of
+       this file without a second flag: its boot() opens with
+       `if (!SG || typeof SG.track !== 'function') return;` and window.SGMotion
+       is never published on that path.
+
+       Nothing is deleted, because this file is loaded by 12 inner pages that do
+       depend on it — 39 [data-sg-split] and 12 [data-sg-in] elements, plus
+       js/page-fx.js, which rides window.SGMotion.track / onScroll / onResize.
+       None of those pages set the flag.
+
+       The head shim's failsafe handles the rest: with this file standing down,
+       html[data-sg-ready] is never stamped, so `sg-motion` is pulled after 4s.
+       On index.html that class gates only the [data-sg-in] armed states, of
+       which the page has none. js/motion.js adds `sg-scroll-auto` itself, so
+       css/marine.css:37's html{scroll-behavior:smooth} still gets killed. */
+    if (win.SG_MOTION_ENGINE === 'gsap') return;
+
     /* ------------------------------------------------------------------
        0. Environment
     ------------------------------------------------------------------ */

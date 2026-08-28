@@ -7,6 +7,21 @@
 
     var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
+    /* GSAP STAND-DOWN
+       index.html sets window.SG_MOTION_ENGINE='gsap' in its head shim and loads
+       js/motion.js, which owns the scroll-driven work on that page: the reading
+       progress bar, the parallax layers, the timeline fill, the counters and
+       the #credentials marquee. Everything else here — tilt, magnetic buttons,
+       the hero particle canvas, nav-active, and the [data-mrn-reveal] /
+       [data-mrn-stagger] reveal engine — keeps running everywhere.
+
+       This is a flag rather than a deletion because the 12 inner pages still
+       depend on all of it: 70 [data-mrn-reveal] and 25 [data-mrn-stagger]
+       elements live there, and index.html has none of either. Removing those
+       observers as "dead code" would leave 95 elements on 12 pages stuck at
+       opacity 0 for good. */
+    var gsapOwns = window.SG_MOTION_ENGINE === 'gsap';
+
     /* ------------------------------------------------------------------
        1. Scroll reveal
     ------------------------------------------------------------------ */
@@ -57,6 +72,12 @@
     function initCounters() {
         var nums = document.querySelectorAll('[data-count]');
         if (!nums.length) return;
+
+        /* On index.html ScrollTrigger fires these from the same trigger that
+           reveals the stat row, so the numbers start with the row rather than
+           on their own threshold. The animation itself is unchanged — only who
+           starts it. window.MRN.startCount is published below. */
+        if (gsapOwns) return;
 
         // reduced motion / no observer: just print the final figures right away
         if (reduced || !('IntersectionObserver' in window)) {
@@ -193,6 +214,7 @@
        (sticky header + back-to-top stay owned by js/main.js — don't double up)
     ------------------------------------------------------------------ */
     function initScrollChrome() {
+        if (gsapOwns) return;      /* motion.js drives #mrnProgress with scaleX */
         var bar = document.getElementById('mrnProgress');
         if (!bar) return;
         var ticking = false;
@@ -241,6 +263,10 @@
     ------------------------------------------------------------------ */
     function initParallax() {
         if (reduced) return;
+        /* index.html's four layers are migrated to data-sg-parallax tiers and
+           driven by motion.js. This handler stays for any page that still uses
+           the numeric attribute. */
+        if (gsapOwns) return;
         var layers = document.querySelectorAll('[data-mrn-parallax]');
         if (!layers.length) return;
         var ticking = false;
@@ -268,6 +294,7 @@
        7. Timeline progress line
     ------------------------------------------------------------------ */
     function initTimeline() {
+        if (gsapOwns) return;      /* motion.js fills it with clip-path */
         var line = document.getElementById('mrnTimelineProgress');
         var list = document.getElementById('mrnTimeline');
         if (!line || !list) return;
@@ -314,6 +341,11 @@
     function initMarquees() {
         var tracks = document.querySelectorAll('[data-mrn-marquee]');
         Array.prototype.forEach.call(tracks, function (track) {
+            /* the #credentials track becomes velocity-linked under motion.js,
+               which does its own doubling — doubling it twice would leave the
+               -50% loop landing mid-sequence. The .mrn-ticker track above the
+               stats band is untouched and still belongs here. */
+            if (gsapOwns && track.closest && track.closest('#credentials')) return;
             track.innerHTML += track.innerHTML;
         });
     }
@@ -368,6 +400,17 @@
         initMagnetic();
         initNavActive();
     }
+
+    /* Published so js/motion.js can start a counter from the same ScrollTrigger
+       that reveals the row it sits in, instead of each number waiting on its own
+       IntersectionObserver threshold. The animation is animateCount() above,
+       unchanged — this only hands over the trigger. */
+    window.MRN = window.MRN || {};
+    window.MRN.startCount = function (el) {
+        if (!el || el.__mrnCounted) return;
+        el.__mrnCounted = true;
+        animateCount(el);
+    };
 
     if (document.readyState === 'loading') {
         document.addEventListener('DOMContentLoaded', boot);
