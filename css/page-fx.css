@@ -1256,12 +1256,32 @@
     vertical-align: super;
 }
 
-.mrnp-strip span {
+/* THE LABEL IS A DIRECT CHILD, and the selector has to say so.
+   The animated figures use the pattern the design system specifies —
+   `<strong><span data-count="1983">0</span></strong>` — so a bare
+   `.mrnp-strip span` catches the COUNTER as well as the label and renders the
+   number at 11px in muted grey while its plain-text neighbours sit at 42px in
+   cyan. Visible on about_us, jjsb and sspsb: every strip figure that counts
+   was the one figure you could not read. */
+.mrnp-strip > div > span {
     font-family: var(--font-display, "Oswald", sans-serif);
     font-size: 11px;
     letter-spacing: 2.6px;
     text-transform: uppercase;
     color: rgba(167, 187, 207, .86);
+}
+
+/* and the counter takes the numeral's type, not the label's. `display` and
+   `margin-top` matter as much as the type here: the label rule in
+   marine-pages.css blocks the counter and pushes it down 8px, which drops the
+   animated figure out of line with its plain-text neighbours in the strip. */
+.mrnp-strip strong span {
+    display: inline;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-transform: none;
 }
 
 /* --- 5.12 sticky page nav ----------------------------------------------- */

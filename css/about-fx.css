@@ -311,7 +311,7 @@
 
 #profile .mrnp-strip {
     margin-top: 76px;
-    padding: 40px 20px;
+    padding: 30px 16px;
     border-radius: var(--ab-r-panel);
     border: var(--ab-ring);
     background:
@@ -319,25 +319,75 @@
         radial-gradient(600px 280px at 96% 100%, rgba(255, 201, 77, .09), transparent 72%),
         linear-gradient(180deg, #ffffff 0%, #f5fafd 100%);
     box-shadow: var(--ab-soft);
+
+    /* the 3D room the four cells stand in */
+    perspective: 1100px;
+    perspective-origin: 50% 40%;
 }
 
 #profile .mrnp-strip::before {
     display: none;
 }
 
-#profile .mrnp-strip div {
+/* --- 6.1 the cells ------------------------------------------------------ */
+
+#profile .mrnp-strip > div {
+    position: relative;
+    padding: 24px 16px;
     border-right: 1px solid rgba(11, 31, 51, .09);
+    border-radius: 14px;
+    transform-style: preserve-3d;
+    transition: transform .55s var(--ab-ease);
 }
 
-#profile .mrnp-strip div:last-child {
+#profile .mrnp-strip > div:last-child {
     border-right: 0;
 }
 
+/* the plate that rises behind the figures on hover. It sits BEHIND them in Z
+   rather than above them in z-index, so the numerals genuinely stand off it. */
+#profile .mrnp-strip > div::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: 14px;
+    background: linear-gradient(180deg, #ffffff 0%, #edf7fd 100%);
+    border: 1px solid rgba(34, 179, 230, .28);
+    box-shadow: 0 30px 48px -22px rgba(16, 42, 67, .42);
+    opacity: 0;
+    transform: translateZ(-28px) scale(.96);
+    transition: opacity .5s var(--ab-ease), transform .55s var(--ab-ease);
+}
+
+/* --- 6.2 the figures ---------------------------------------------------- */
+
 #profile .mrnp-strip strong {
-    font-weight: 200;
-    font-size: 42px;
-    letter-spacing: 1px;
-    color: var(--cyan-deep);
+    display: block;
+    font-weight: 500;
+    font-size: clamp(38px, 3.1vw, 50px);
+    line-height: 1;
+    letter-spacing: .5px;
+    /* --cyan-deep (#1195cf) measures 3.4:1 against this near-white panel. That
+       clears AA for large text on a technicality and still reads washed out,
+       which is the complaint. This is 5.6:1 and stays in the cyan family. */
+    color: #0b6d97;
+    transform: translateZ(0);
+    transition: transform .55s var(--ab-ease), color .45s var(--ab-ease);
+}
+
+/* THE FIGURE THAT COUNTS IS A SPAN, and it must not be read as a label.
+   `1983` is written `<strong><span data-count="1983">0</span></strong>` so the
+   counter has something to animate. A `.mrnp-strip span` rule therefore lands
+   on it as well as on the caption underneath, and 1983 was rendering at 11px
+   in grey — as a block, on its own line — while 4,950 and 100,000+ sat at
+   50px in cyan beside it. It inherits the numeral now. */
+#profile .mrnp-strip strong span {
+    display: inline;
+    margin: 0;
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-transform: none;
 }
 
 #profile .mrnp-strip strong i,
@@ -348,10 +398,71 @@
     color: #d99000;
 }
 
-#profile .mrnp-strip span {
-    color: #6b8299;
-    font-size: 10.5px;
+/* the caption — a DIRECT child of the cell, which is the whole point */
+#profile .mrnp-strip > div > span {
+    display: block;
+    margin-top: 12px;
+    color: #4d6a86;
+    font-size: 11px;
     letter-spacing: 2.4px;
+    transform: translateZ(0);
+    transition: transform .55s var(--ab-ease), color .45s var(--ab-ease);
+}
+
+/* --- 6.3 the 3D hover --------------------------------------------------- */
+
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+
+    #profile .mrnp-strip > div:hover {
+        transform: translateY(-10px) rotateX(9deg) scale(1.03);
+    }
+
+    #profile .mrnp-strip > div:hover::after {
+        opacity: 1;
+        transform: translateZ(-28px) scale(1);
+    }
+
+    #profile .mrnp-strip > div:hover strong {
+        transform: translateZ(46px);
+    }
+
+    #profile .mrnp-strip > div:hover > span {
+        transform: translateZ(24px);
+        color: var(--ab-ink);
+    }
+
+    /* the divider would otherwise cut straight through the raised plate — on
+       the hovered cell and on the one to its left */
+    #profile .mrnp-strip > div:hover,
+    #profile .mrnp-strip > div:has(+ div:hover) {
+        border-right-color: transparent;
+    }
+}
+
+/* MOTION OFF, AFFORDANCE ON.
+   A hover built only out of transforms disappears completely for anyone who
+   has asked for reduced motion — they get four figures that look clickable
+   and answer to nothing. The plate and the ink still respond here; the cell
+   simply does not travel. */
+@media (hover: hover) and (prefers-reduced-motion: reduce) {
+
+    #profile .mrnp-strip > div:hover::after {
+        opacity: 1;
+        transform: none;
+    }
+
+    #profile .mrnp-strip > div:hover strong {
+        color: #08587a;
+    }
+
+    #profile .mrnp-strip > div:hover > span {
+        color: var(--ab-ink);
+    }
+
+    #profile .mrnp-strip > div:hover,
+    #profile .mrnp-strip > div:has(+ div:hover) {
+        border-right-color: transparent;
+    }
 }
 
 /* ==========================================================================
@@ -736,7 +847,7 @@
     }
 
     #profile .mrnp-strip strong {
-        font-size: 34px;
+        font-size: clamp(32px, 4.4vw, 42px);
     }
 }
 
@@ -751,8 +862,20 @@
         padding: 28px 16px;
     }
 
-    #profile .mrnp-strip div {
+    /* two-up on a phone, so only the left column keeps a divider */
+    #profile .mrnp-strip {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+    }
+
+    #profile .mrnp-strip > div,
+    #profile .mrnp-strip > div:nth-child(2n) {
         border-right: 0;
+        padding: 18px 10px;
+    }
+
+    #profile .mrnp-strip > div:nth-child(odd) {
+        border-right: 1px solid rgba(11, 31, 51, .09);
     }
 
     /* a 21:9 band is a 40px sliver on a phone */
