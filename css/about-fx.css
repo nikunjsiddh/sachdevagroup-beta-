@@ -1148,17 +1148,22 @@
 }
 
 /* --- #testimonials — the remarks, set as inspection records --------------
-   Before: four white boxes of italic 15.5px grey, each with a cyan disc whose
-   initials were #fff on #1195cf — 3.4:1, which is why they read as empty
-   circles. The quote mark sat at the very top of the card and pushed the text
-   down with 44px of padding that did nothing else.
+   Before: four white boxes of italic 15.5px grey. The avatar disc was the
+   worst of it — #fff on #1195cf is 3.4:1, so at 17px the initials read as
+   empty circles.
 
-   Now each remark is a logged record: an index, the remark set at reading
-   size in ink rather than italic grey, a rule, and the visitor's monogram on
-   a dark tile where the letters actually have contrast (#6fd3f7 on #0a2440,
-   9.4:1). The quote mark becomes a watermark behind the index instead of a
-   spacer above the text. Depth is real — perspective on the plate, contents
-   off its face on hover. */
+   The first rebuild put the quote first and pinned the attribution to the
+   bottom with `margin: 0 0 auto`. With equal-height plates and remarks of 3
+   and 4 lines that opened a hole in the MIDDLE of the short cards, between
+   the text and the rule, and left the index and the quote mark floating in
+   opposite corners with nothing tying them to anything. Measured: 111px of
+   text in a 280px plate.
+
+   So the record now reads top-down the way a log entry does — who said it,
+   a rule, then what they said. The quote mark stops being a corner ornament
+   and becomes a hanging mark against the remark it belongs to, and any
+   slack from a short remark falls at the foot of the plate where it reads
+   as margin rather than as a gap. */
 
 #testimonials .tst-grid {
     display: grid;
@@ -1173,7 +1178,7 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    padding: 34px 32px 30px;
+    padding: 28px 32px 30px;
     border-radius: var(--ab-r);
     background: linear-gradient(178deg, #ffffff 0%, #f4fafd 100%);
     border: var(--ab-ring);
@@ -1188,59 +1193,15 @@
     transform-style: preserve-3d;
 }
 
-/* the watermark: a mark, not a character that shoves the text down */
-#testimonials .tst__mark {
-    position: absolute;
-    top: 6px;
-    right: 26px;
-    font-family: Georgia, "Times New Roman", serif;
-    font-size: 92px;
-    line-height: 1;
-    color: rgba(34, 179, 230, .16);
-    pointer-events: none;
-    transform: translateZ(2px);
-    transition: color .5s var(--ab-ease), transform .5s var(--ab-ease);
-}
+/* --- the head: who recorded it ------------------------------------------ */
 
-#testimonials .tst__no {
-    font-family: var(--font-display, "Oswald", sans-serif);
-    font-weight: 200;
-    font-size: 20px;
-    line-height: 1;
-    letter-spacing: 1px;
-    color: rgba(11, 31, 51, .22);
-    margin-bottom: 16px;
-    transform: translateZ(10px);
-    transition: transform .5s var(--ab-ease), color .5s var(--ab-ease);
-}
-
-#testimonials .tst__text {
-    position: relative;
-    margin: 0 0 auto;
-    padding-bottom: 24px;
-    /* reading size, upright, in ink — the italic light grey was the problem */
-    font-size: 16.5px;
-    line-height: 1.72;
-    font-style: normal;
-    color: var(--ab-ink);
-    transform: translateZ(16px);
-    transition: transform .5s var(--ab-ease);
-}
-
-#testimonials .tst__rule {
-    display: block;
-    width: 100%;
-    height: 1px;
-    margin-bottom: 20px;
-    background: linear-gradient(90deg, rgba(34, 179, 230, .38), rgba(11, 31, 51, .07) 60%, transparent);
-    transform: translateZ(8px);
-}
-
-#testimonials .tst__by {
+#testimonials .tst__head {
     display: flex;
     align-items: center;
     gap: 14px;
-    transform: translateZ(26px);
+    width: 100%;
+    margin-bottom: 18px;
+    transform: translateZ(24px);
     transition: transform .5s var(--ab-ease);
 }
 
@@ -1249,8 +1210,8 @@
     align-items: center;
     justify-content: center;
     flex: 0 0 auto;
-    width: 48px;
-    height: 48px;
+    width: 46px;
+    height: 46px;
     border-radius: 13px;
     background: var(--ab-card-dark);
     border: 1px solid rgba(53, 198, 244, .28);
@@ -1264,7 +1225,8 @@
         border-color .5s var(--ab-ease), color .5s var(--ab-ease);
 }
 
-#testimonials .tst__by strong {
+#testimonials .tst__who {
+    flex: 1 1 auto;
     font-family: var(--font-display, "Oswald", sans-serif);
     font-weight: 500;
     font-size: 14.5px;
@@ -1272,6 +1234,55 @@
     text-transform: uppercase;
     line-height: 1.35;
     color: var(--ab-ink);
+}
+
+#testimonials .tst__no {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-weight: 200;
+    font-size: 20px;
+    line-height: 1;
+    letter-spacing: 1px;
+    color: rgba(11, 31, 51, .3);
+    transition: color .5s var(--ab-ease);
+}
+
+#testimonials .tst__rule {
+    display: block;
+    width: 100%;
+    height: 1px;
+    margin-bottom: 20px;
+    background: linear-gradient(90deg, rgba(34, 179, 230, .38), rgba(11, 31, 51, .07) 60%, transparent);
+    transform: translateZ(10px);
+}
+
+/* --- the remark --------------------------------------------------------- */
+
+#testimonials .tst__text {
+    position: relative;
+    margin: 0;
+    padding-left: 34px;
+    /* reading size, upright, in ink — the italic light grey was the problem */
+    font-size: 16.5px;
+    line-height: 1.72;
+    font-style: normal;
+    color: var(--ab-ink);
+    transform: translateZ(14px);
+    transition: transform .5s var(--ab-ease);
+}
+
+/* the mark hangs against the remark instead of floating in a corner */
+#testimonials .tst__text::before {
+    content: "\201C";
+    position: absolute;
+    left: -2px;
+    top: -14px;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 58px;
+    line-height: 1;
+    color: rgba(34, 179, 230, .28);
+    transition: color .5s var(--ab-ease);
 }
 
 /* --- hover -------------------------------------------------------------- */
@@ -1283,12 +1294,12 @@
 }
 
 /* the affordance that survives reduced motion */
-#testimonials .tst:hover .tst__mark {
-    color: rgba(240, 165, 0, .34);
+#testimonials .tst:hover .tst__text::before {
+    color: rgba(240, 165, 0, .55);
 }
 
 #testimonials .tst:hover .tst__no {
-    color: rgba(240, 165, 0, .62);
+    color: rgba(240, 165, 0, .72);
 }
 
 #testimonials .tst:hover .tst__mono {
@@ -1298,27 +1309,18 @@
 }
 
 /* the plate itself never transforms — data-mrnp-tilt writes an inline
-   transform and a CSS one here would fight it every frame */
+   transform and a CSS one here would fight it every frame. The head sits
+   nearest the plate's perspective origin, so it carries the deepest lift
+   without overrunning the edge; the remark, which reaches the corners, does
+   not. */
 @media (hover: hover) and (prefers-reduced-motion: no-preference) {
 
+    #testimonials .tst:hover .tst__head {
+        transform: translateZ(46px);
+    }
+
     #testimonials .tst:hover .tst__text {
-        transform: translateZ(22px);
-    }
-
-    /* the attribution sits bottom-left, the farthest point from the plate's
-       perspective origin, so it travels outward fastest as it rises. At
-       translateZ(52) under perspective:900 it cleared the plate's own edge by
-       4.7px. This is the limit that stays in. */
-    #testimonials .tst:hover .tst__by {
-        transform: translateZ(38px);
-    }
-
-    #testimonials .tst:hover .tst__no {
-        transform: translateZ(26px);
-    }
-
-    #testimonials .tst:hover .tst__mark {
-        transform: translateZ(12px) scale(1.06);
+        transform: translateZ(24px);
     }
 
     #testimonials .tst:hover .tst__mono {
@@ -1514,9 +1516,14 @@
         padding: 26px 22px 24px;
     }
 
-    #testimonials .tst__mark {
-        font-size: 72px;
-        right: 18px;
+    #testimonials .tst__text {
+        padding-left: 28px;
+        font-size: 15.5px;
+    }
+
+    #testimonials .tst__text::before {
+        font-size: 48px;
+        top: -10px;
     }
 
     #compliance .cmp {
@@ -1544,11 +1551,9 @@
     #compliance .cmp__k,
     #compliance .cmp__tag,
     #compliance .cmp__v,
-    #testimonials .tst__no,
+    #testimonials .tst__head,
     #testimonials .tst__text,
     #testimonials .tst__rule,
-    #testimonials .tst__by,
-    #testimonials .tst__mark,
     #creds .mrnp-certcard__bar,
     #profile .abt-frame__cap,
     #vision .viz-card__no,
