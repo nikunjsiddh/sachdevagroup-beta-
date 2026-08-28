@@ -880,56 +880,197 @@
 }
 
 /* ==========================================================================
-   9. #compliance — the five standards
+   9. #compliance — five standards, set as compliance plates
+   ==========================================================================
+   Before: five identical white boxes, each an acronym over its full name.
+   Nothing told you IMO was a UN agency and Basel a treaty, the acronyms sat
+   at font-weight 200 in --cyan-deep (#1195cf, 3.4:1 on this ground — the same
+   washed-out value the stat strip had), and the plate carried `overflow:
+   hidden`, which flattens transform-style outright. So the tilt on each item
+   had no depth to reveal.
+
+   Now each plate carries a seal, an index, and what kind of instrument it is
+   — the one piece of information that makes the five distinguishable rather
+   than interchangeable. Depth is real: perspective on the plate itself, and
+   the contents rise off its face on hover.
    ========================================================================== */
 
 #compliance .abt-comply {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
     gap: 18px;
+    margin-top: 54px;
+    padding: 0;
+    list-style: none;
 }
 
-#compliance .abt-comply li {
+#compliance .cmp {
     position: relative;
-    overflow: hidden;
-    padding: 24px 22px 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 22px 20px 24px;
     border-radius: var(--ab-r-panel);
-    background: #fff;
+    background: linear-gradient(178deg, #ffffff 0%, #f4fafd 100%);
     border: var(--ab-ring);
     box-shadow: var(--ab-soft);
-    transition: transform .45s var(--ab-ease), box-shadow .45s var(--ab-ease);
+    transition: box-shadow .5s var(--ab-ease), border-color .5s var(--ab-ease),
+        background .5s var(--ab-ease);
+
+    /* the 3D room is the plate. NOTE the absence of `overflow: hidden` — it
+       is a grouping property and would flatten every translateZ below. The
+       top rule is inset instead of clipped, which is why none is needed. */
+    perspective: 800px;
+    perspective-origin: 50% 40%;
+    transform-style: preserve-3d;
 }
 
-#compliance .abt-comply li::before {
-    content: "";
+/* the rule that draws in on approach — inset and self-rounded so the plate
+   never needs to clip it */
+#compliance .cmp__rule {
     position: absolute;
     top: 0;
-    left: 0;
-    right: 0;
+    left: 14px;
+    right: 14px;
     height: 3px;
-    background: linear-gradient(90deg, var(--cyan-bright), rgba(34, 179, 230, .1));
+    border-radius: 0 0 3px 3px;
+    background: linear-gradient(90deg, var(--cyan-bright, #35c6f4), rgba(34, 179, 230, .12));
     transform: scaleX(0);
     transform-origin: left center;
-    transition: transform .6s var(--ab-ease);
+    transition: transform .6s var(--ab-ease), background .5s var(--ab-ease);
 }
 
-#compliance .abt-comply li.sg-shown::before,
-#compliance .abt-comply li:hover::before {
+#compliance .cmp.sg-shown .cmp__rule,
+#compliance .cmp:hover .cmp__rule {
     transform: scaleX(1);
 }
 
-#compliance .abt-comply li:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--ab-lift);
+/* --- 9.1 the head row: seal + index ------------------------------------- */
+
+#compliance .cmp__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 18px;
+    transform: translateZ(16px);
 }
 
-#compliance .abt-comply__k {
+#compliance .cmp__seal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 34px;
+    height: 34px;
+    border-radius: 50%;
+    background: rgba(34, 179, 230, .12);
+    border: 1px solid rgba(34, 179, 230, .3);
+    color: #0b6d97;
+    transition: transform .5s var(--ab-ease), background .5s var(--ab-ease),
+        color .5s var(--ab-ease), box-shadow .5s var(--ab-ease);
+}
+
+#compliance .cmp__seal svg {
+    width: 16px;
+    height: 16px;
+}
+
+#compliance .cmp__no {
+    font-family: var(--font-display, "Oswald", sans-serif);
     font-weight: 200;
-    font-size: 30px;
-    letter-spacing: -.2px;
-    color: var(--cyan-deep);
+    font-size: 22px;
+    line-height: 1;
+    color: rgba(11, 31, 51, .16);
+    transition: color .5s var(--ab-ease);
 }
 
-#compliance .abt-comply__v {
-    color: #6b8299;
+/* --- 9.2 the standard --------------------------------------------------- */
+
+#compliance .cmp__k {
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-weight: 500;
+    font-size: 28px;
+    line-height: 1.05;
+    letter-spacing: .2px;
+    /* #1195cf measures 3.4:1 here; this is 5.6:1 */
+    color: #0b6d97;
+    transform: translateZ(26px);
+    transition: transform .5s var(--ab-ease), color .5s var(--ab-ease);
+}
+
+#compliance .cmp__tag {
+    margin: 10px 0 12px;
+    padding: 4px 10px;
+    border-radius: 999px;
+    background: rgba(34, 179, 230, .1);
+    border: 1px solid rgba(34, 179, 230, .2);
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 9.5px;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #12496b;
+    transform: translateZ(18px);
+    transition: transform .5s var(--ab-ease), background .5s var(--ab-ease),
+        border-color .5s var(--ab-ease), color .5s var(--ab-ease);
+}
+
+#compliance .cmp__v {
+    font-size: 13px;
+    line-height: 1.62;
+    color: var(--ab-body);
+    transform: translateZ(8px);
+    transition: transform .5s var(--ab-ease);
+}
+
+/* --- 9.3 hover ---------------------------------------------------------- */
+
+#compliance .cmp:hover {
+    border-color: rgba(34, 179, 230, .42);
+    box-shadow: var(--ab-lift);
+    background: linear-gradient(178deg, #ffffff 0%, #eef8fd 100%);
+}
+
+#compliance .cmp:hover .cmp__no {
+    color: rgba(240, 165, 0, .5);
+}
+
+/* the plate stays put — data-mrnp-tilt owns its movement and writes an inline
+   transform a CSS one here would fight — and the contents come off its face */
+@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+
+    #compliance .cmp:hover .cmp__head {
+        transform: translateZ(40px);
+    }
+
+    #compliance .cmp:hover .cmp__k {
+        transform: translateZ(56px);
+    }
+
+    #compliance .cmp:hover .cmp__tag {
+        transform: translateZ(38px);
+    }
+
+    #compliance .cmp:hover .cmp__v {
+        transform: translateZ(18px);
+    }
+
+    #compliance .cmp:hover .cmp__seal {
+        transform: scale(1.08);
+    }
+}
+
+/* the seal and the tag are the affordance, and they answer without moving */
+#compliance .cmp:hover .cmp__seal {
+    background: var(--ab-gold);
+    border-color: rgba(240, 165, 0, .55);
+    color: #07182e;
+    box-shadow: 0 12px 22px -10px rgba(240, 165, 0, .6);
+}
+
+#compliance .cmp:hover .cmp__tag {
+    background: rgba(34, 179, 230, .18);
+    border-color: rgba(34, 179, 230, .42);
+    color: #0b4a6d;
 }
 
 /* ==========================================================================
@@ -1063,7 +1204,7 @@
    ========================================================================== */
 
 #heritage .abt-time__item,
-#compliance .abt-comply li,
+#compliance .cmp,
 #testimonials .mrnp-quote {
     transform-style: preserve-3d;
     will-change: transform;
@@ -1071,7 +1212,7 @@
 
 /* hover keeps the material change; the tilt owns the movement */
 #heritage .abt-time__item:hover,
-#compliance .abt-comply li:hover,
+#compliance .cmp:hover,
 #testimonials .mrnp-quote:hover {
     transform: none;
 }
@@ -1081,8 +1222,6 @@
 #heritage .abt-time__item h4 { transform: translateZ(16px); }
 #heritage .abt-time__item p { transform: translateZ(6px); }
 
-#compliance .abt-comply__k { transform: translateZ(22px); }
-#compliance .abt-comply__v { transform: translateZ(8px); }
 
 #testimonials .mrnp-quote p { transform: translateZ(14px); }
 #testimonials .mrnp-quote__by { transform: translateZ(24px); }
@@ -1126,6 +1265,12 @@
     #vision .viz__stage {
         margin-top: -96px;
         gap: 22px;
+    }
+
+    /* the #compliance id outranks index-theme.css:7584's own breakpoints, so
+       this file has to restate every step down */
+    #compliance .abt-comply {
+        grid-template-columns: repeat(3, 1fr);
     }
 
     #vision .viz-card {
@@ -1192,6 +1337,19 @@
         gap: 20px;
     }
 
+    #compliance .abt-comply {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 12px;
+    }
+
+    #compliance .cmp {
+        padding: 18px 16px 20px;
+    }
+
+    #compliance .cmp__k {
+        font-size: 24px;
+    }
+
     #units .abt-units {
         gap: 30px;
     }
@@ -1205,8 +1363,10 @@
     #heritage .abt-time__year,
     #heritage .abt-time__item h4,
     #heritage .abt-time__item p,
-    #compliance .abt-comply__k,
-    #compliance .abt-comply__v,
+    #compliance .cmp__head,
+    #compliance .cmp__k,
+    #compliance .cmp__tag,
+    #compliance .cmp__v,
     #testimonials .mrnp-quote p,
     #testimonials .mrnp-quote__by,
     #creds .mrnp-certcard__bar,
@@ -1236,7 +1396,7 @@
     #profile .abt-split__body .mrn-btn,
     #heritage .abt-time__item,
     #vision .viz-card,
-    #compliance .abt-comply li,
+    #compliance .cmp,
     #units .abt-unit,
     #units .abt-unit__media img,
     #testimonials .mrnp-quote,
@@ -1247,8 +1407,7 @@
 
     #heritage .abt-time__item::before,
     #heritage .abt-time__item.sg-shown::before,
-    #compliance .abt-comply li::before,
-    #compliance .abt-comply li.sg-shown::before {
+    #compliance .cmp__rule {
         transform: none !important;
         transition: none !important;
     }
