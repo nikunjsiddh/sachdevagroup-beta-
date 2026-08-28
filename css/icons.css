@@ -1,0 +1,117 @@
+/* ==========================================================================
+   SACHDEVA GROUP — ICON SYSTEM
+   ==========================================================================
+   Loaded on all 13 pages, after index-theme.css / page-fx.css.
+
+   WHY THIS FILE EXISTS
+     The site was carrying Font Awesome 4.7 — 30 KB of CSS plus a 98 KB WOFF —
+     to draw FIVE glyphs, 49 instances in total: a long right arrow (27), a
+     back-to-top chevron (13), a ticker separator (6), a scroll-down chevron (2)
+     and one telephone. It also fetched a 77 KB WOFF2 on every page load that
+     could never be used: the site was pulled down with HTTrack, which renamed
+     fontawesome-webfont.woff2 to .html, so the browser downloads it, fails to
+     parse it ("OTS parsing error: Failed to convert WOFF 2.0 font to SFNT") and
+     silently falls back to the WOFF. Every page paid for that twice.
+
+     Those five glyphs are now inline SVG, drawn in the same language as the 163
+     icons the site already had. Font Awesome is gone from all 13 pages.
+
+   THE CONVENTION — two tiers, and the difference is deliberate
+     Content icons  24x24, stroke-width 1.7, round caps and joins, optional
+                    duotone underlay at opacity .16. These render at 24-34px
+                    inside cards, where 1.7 reads as precise engineered
+                    line-work rather than a soft consumer glyph.
+     UI glyphs      24x24, stroke-width 2. Arrows and chevrons that sit inside
+                    buttons at 12-15px. At that size 1.7 goes to under one
+                    device pixel on a 1x screen and the stroke greys out, so
+                    they carry the heavier weight. This is the one place the
+                    site should NOT be uniform.
+
+   SIZING
+     Font Awesome glyphs were inline text sized by font-size, so the icons
+     inherited it for free. `width: 1.15em` reproduces that: every existing
+     button, link and badge keeps its own type scale and the icon follows.
+     1.15 rather than 1 because a 24x24 artboard carries ~1.5 units of optical
+     padding that a tightly-fitted font glyph does not.
+   ========================================================================== */
+
+.sg-ico {
+    width: 1.15em;
+    height: 1.15em;
+    display: inline-block;
+    flex: 0 0 auto;
+    vertical-align: -.18em;
+    /* the stroke is drawn on the artboard edge in a couple of glyphs; do not
+       let the viewBox clip it */
+    overflow: visible;
+    pointer-events: none;
+}
+
+/* ==========================================================================
+   COMPATIBILITY — what <i> used to get, <svg> now gets too
+   ==========================================================================
+   Four rules in three legacy stylesheets animate the icon inside a button by
+   element name. css/marine.css:249 already reads `.mrn-btn i, .mrn-btn svg`,
+   so the main button was covered; these three were not. Restating them here
+   rather than editing marine/footer-modern/style keeps the icon change in one
+   file and leaves those stylesheets shared cleanly with the inner pages.
+   ========================================================================== */
+
+/* answers css/footer-modern.css:191 `.sgf-yard__btn i` */
+.sgf-yard__btn svg {
+    transition: transform .35s var(--sgf-ease, cubic-bezier(.16, 1, .3, 1));
+}
+
+.sgf-yard__btn:hover svg {
+    transform: translateX(5px);
+}
+
+/* answers css/index-theme.css:6499 `.mrn-cta .mrn-btn i` */
+.mrn-cta .mrn-btn svg {
+    transition: transform .45s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+/* answers css/style.css:348 `#toTopBtn i`.
+   #toTopBtn is a 40px circle centring its glyph with line-height, which works
+   on an inline box — so the icon stays inline-block and is nudged onto the
+   optical centre rather than the baseline. It is NOT switched to flex: the
+   button is display:none until JS shows it, and a display rule here would
+   fight that. */
+#toTopBtn svg {
+    transition: transform .6s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+    vertical-align: -.28em;
+}
+
+#toTopBtn:hover svg {
+    transform: translateY(-2px);
+}
+
+/* SlickNav injects its open/close symbol from js/main.js. The mobile menu sets
+   its own type scale, so the symbol is pinned rather than inherited. */
+.slicknav_nav .sg-ico,
+.slicknav_menu .sg-ico {
+    width: 14px;
+    height: 14px;
+    vertical-align: -.2em;
+    opacity: .75;
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sgf-yard__btn svg,
+    .mrn-cta .mrn-btn svg,
+    #toTopBtn svg,
+    .mrn-btn svg {
+        transition: none !important;
+    }
+
+    .sgf-yard__btn:hover svg,
+    #toTopBtn:hover svg,
+    .mrn-btn:hover svg {
+        transform: none !important;
+    }
+}

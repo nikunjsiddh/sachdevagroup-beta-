@@ -82,8 +82,17 @@
       appendTo: ".mobile-menu",
       removeClasses: true,
       label: "",
-      closedSymbol: '<i class="fa fa-angle-right"><i/>',
-      openedSymbol: '<i class="fa fa-angle-down"><i/>',
+      /* Inline SVG, not Font Awesome. These two strings were the last thing on
+         the site pulling in the icon font — the markup carries none now.
+         They were also malformed: `<i class="..."><i/>` closes with a second
+         OPENING tag, so every menu row shipped a stray empty <i> that the
+         parser had to recover from. Same 24x24 artboard and stroke-width 2 as
+         the rest of the UI glyphs; sized by .slicknav_nav .sg-ico in
+         css/icons.css because the mobile menu sets its own type scale. */
+      closedSymbol:
+        '<svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m9 5.5 6.5 6.5-6.5 6.5"/></svg>',
+      openedSymbol:
+        '<svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5.5 9 6.5 6.5 6.5-6.5"/></svg>',
       brand: '<img src="' + logo_path + '" class="img-responsive" alt="logo">',
     });
     /*====================================
@@ -128,8 +137,8 @@
         dots: dots ? true : false,
         nav: nav ? true : false,
         navText: [
-          "<i class='fa fa-angle-left' aria-hidden='true'></i>",
-          "<i class='fa fa-angle-right' aria-hidden='true'></i>",
+          "<svg class=\"sg-ico\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m15 5.5-6.5 6.5 6.5 6.5\"/></svg>",
+          "<svg class=\"sg-ico\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m9 5.5 6.5 6.5-6.5 6.5\"/></svg>",
         ],
         navSpeed: navSpeed ? true : false,
         center: center ? true : false,
@@ -231,8 +240,8 @@
       autoplay: true,
       dots: true,
       navText: [
-        '<i class="fa fa-angle-left"></i>',
-        '<i class="fa fa-angle-right"></i>',
+        "<svg class=\"sg-ico\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m15 5.5-6.5 6.5 6.5 6.5\"/></svg>",
+        "<svg class=\"sg-ico\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m9 5.5 6.5 6.5-6.5 6.5\"/></svg>",
       ],
       autoplayTimeout: 5000,
       autoplaySpeed: 500,
