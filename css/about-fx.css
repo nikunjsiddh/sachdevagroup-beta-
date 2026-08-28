@@ -70,7 +70,43 @@
 }
 
 /* ==========================================================================
-   2. GROUNDS — near-white with a wash, never flat
+   2. FILL — the page was not using the screen
+   ==========================================================================
+   marine.css caps .mrn-container at 1240px. On a 1440 display that leaves
+   200px unused; on a 1920 display it leaves 680px, and the page reads as a
+   column floating in the middle of the window rather than as a layout. Every
+   section measured 96% of a 1240 container — the content was not thin, the
+   container was.
+
+   Widened to 1440 on this page only, and the vertical padding comes down from
+   118px to a fluid 82-104px. Measured before: each section carried 236px of
+   padding around 470-1148px of content, so the shorter blocks were half air.
+   ========================================================================== */
+
+#profile > .mrn-container,
+#heritage > .mrn-container,
+#vision > .mrn-container,
+#compliance > .mrn-container,
+#units > .mrn-container,
+#testimonials > .mrn-container,
+#creds > .mrn-container {
+    max-width: 1440px;
+    padding-left: clamp(24px, 3.4vw, 48px);
+    padding-right: clamp(24px, 3.4vw, 48px);
+}
+
+#profile,
+#heritage,
+#vision,
+#compliance,
+#units,
+#testimonials,
+#creds {
+    padding: clamp(82px, 6.4vw, 104px) 0;
+}
+
+/* ==========================================================================
+   3. GROUNDS — near-white with a wash, never flat
    ========================================================================== */
 
 #profile,
@@ -90,7 +126,7 @@
 }
 
 /* ==========================================================================
-   3. SHARED TYPE — eyebrow pill, two-tone heading, prose
+   4. SHARED TYPE — eyebrow pill, two-tone heading, prose
    ========================================================================== */
 
 #profile .mrn-eyebrow,
@@ -192,7 +228,7 @@
 }
 
 /* ==========================================================================
-   4. #profile — photograph, story, evidence strip
+   5. #profile — photograph, story, evidence strip
    ========================================================================== */
 
 #profile .abt-split {
@@ -267,7 +303,7 @@
 }
 
 /* ==========================================================================
-   5. THE EVIDENCE STRIP — 1983 / 4,950 / 100,000+ / 37 + 36
+   6. THE EVIDENCE STRIP — 1983 / 4,950 / 100,000+ / 37 + 36
    ==========================================================================
    marine-pages.css paints this as a solid navy band. On this ground it should
    read as a light panel of figures, with the numerals doing the work.
@@ -319,7 +355,7 @@
 }
 
 /* ==========================================================================
-   6. #heritage — the four dates, in the same rounded key
+   7. #heritage — the four dates, in the same rounded key
    ========================================================================== */
 
 #heritage .abt-time {
@@ -366,7 +402,7 @@
 }
 
 /* ==========================================================================
-   7. #vision — a full-width band, then the two statements side by side
+   8. #vision — a full-width band, then the two statements side by side
    ==========================================================================
    Measured before this: the media column rendered 526x329 against 604x752 of
    cards — a 423px gap that `align-items: center` filled with dead space — and
@@ -455,7 +491,7 @@
 }
 
 /* ==========================================================================
-   8. #compliance — the five standards
+   9. #compliance — the five standards
    ========================================================================== */
 
 #compliance .abt-comply {
@@ -508,7 +544,7 @@
 }
 
 /* ==========================================================================
-   9. #units, #testimonials, #creds
+   10. #units, #testimonials, #creds
    ========================================================================== */
 
 #units .abt-units {
@@ -614,7 +650,64 @@
 }
 
 /* ==========================================================================
-   10. WHICH CLASS THE SCROLL STATES HANG OFF
+   11. 3D ON EVERY SECTION
+   ==========================================================================
+   js/marine-pages.js initTilt3d() drives [data-mrnp-tilt]: on mousemove it
+   writes `perspective(1000px) rotateY() rotateX() translateY(-6px)` inline
+   from the pointer position, and clears it on mouseleave. It opts out on
+   coarse pointers and under reduced motion by itself, so there is nothing to
+   guard here.
+
+   Six card groups already carried it. The heritage dates, the compliance
+   stamps and the auditors' quotes did not, which is why only part of the page
+   answered the pointer. They carry it now — 21 tilt-enabled cards.
+
+   TWO THINGS THAT MATTER:
+
+   - The inline transform beats any CSS `transform`, so a `:hover { transform:
+      translateY(...) }` on a tilted card is dead the moment the pointer moves
+      and fights it on the way out. Those are removed below; the tilt's own
+      translateY(-6px) is the lift, and hover keeps only shadow and border.
+   - A rotation reveals nothing unless the contents stand off the face. Each
+      tilted card gets preserve-3d and its children get translateZ, so the
+      numeral, the heading and the body sit on three different planes.
+   ========================================================================== */
+
+#heritage .abt-time__item,
+#compliance .abt-comply li,
+#testimonials .mrnp-quote {
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+/* hover keeps the material change; the tilt owns the movement */
+#heritage .abt-time__item:hover,
+#compliance .abt-comply li:hover,
+#testimonials .mrnp-quote:hover,
+#vision .mrnp-icard:hover {
+    transform: none;
+}
+
+/* --- depth for the tilt to reveal --------------------------------------- */
+#heritage .abt-time__year { transform: translateZ(26px); }
+#heritage .abt-time__item h4 { transform: translateZ(16px); }
+#heritage .abt-time__item p { transform: translateZ(6px); }
+
+#compliance .abt-comply__k { transform: translateZ(22px); }
+#compliance .abt-comply__v { transform: translateZ(8px); }
+
+#testimonials .mrnp-quote p { transform: translateZ(14px); }
+#testimonials .mrnp-quote__by { transform: translateZ(24px); }
+
+#creds .mrnp-certcard { transform-style: preserve-3d; }
+#creds .mrnp-certcard__bar { transform: translateZ(18px); }
+
+/* the profile photograph and its caption sit on different planes too */
+#profile .abt-split__media { transform-style: preserve-3d; }
+#profile .abt-frame__cap { transform: translateZ(30px); }
+
+/* ==========================================================================
+   12. WHICH CLASS THE SCROLL STATES HANG OFF
    ==========================================================================
    These blocks carry data-mrn-reveal + data-mrn-stagger in the markup, so
    `.mrn-in` looks like the hook. It never arrives. js/page-fx.js runs an
@@ -633,7 +726,7 @@
    ========================================================================== */
 
 /* ==========================================================================
-   11. RESPONSIVE
+   13. RESPONSIVE
    ========================================================================== */
 
 @media (max-width: 1100px) {
@@ -682,13 +775,22 @@
     #units .abt-unit__body h3,
     #units .abt-unit__body p,
     #units .abt-unit__body .mrn-btn,
-    #units .abt-unit__meta {
+    #units .abt-unit__meta,
+    #heritage .abt-time__year,
+    #heritage .abt-time__item h4,
+    #heritage .abt-time__item p,
+    #compliance .abt-comply__k,
+    #compliance .abt-comply__v,
+    #testimonials .mrnp-quote p,
+    #testimonials .mrnp-quote__by,
+    #creds .mrnp-certcard__bar,
+    #profile .abt-frame__cap {
         transform: none;
     }
 }
 
 /* ==========================================================================
-   12. REDUCED MOTION
+   14. REDUCED MOTION
    Material stays, movement goes. The second rule matters most: the heading
    rules and stamp bars are authored at scaleX(0), so switching the transition
    off is not enough — without forcing them to `none`, which is identity, they
