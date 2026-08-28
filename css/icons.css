@@ -97,6 +97,79 @@
 }
 
 /* ==========================================================================
+   HERO BADGE — .mrn-hero__badge
+   ==========================================================================
+   Callers: index.html, about_us.html.
+
+   The mark in the cyan block used to be the literal character U+2693 (an
+   anchor emoji). Three problems, all measured:
+
+     - Oswald has no glyph for it, so the browser fell through to whatever
+       emoji font the OS happens to ship. It rendered as a different anchor on
+       every machine, in a weight and colour the stylesheet could not reach —
+       the one element on the page that was not under design control.
+     - The ink filled 59% x 55% of its 40px block at proportions set by that
+       fallback font, not by us, and the badge's 3.2px letter-spacing was
+       applied to the glyph as if it were text, nudging it off the horizontal
+       centre of the block.
+     - It was in the accessibility tree, so screen readers announced "anchor"
+       before "Alang Ship Recycling Yard".
+
+   It is now an inline SVG on the site's 24x24 artboard, inheriting
+   currentColor, and the block is retuned around it.
+
+   LAYOUT
+   The badge was 42px tall to carry an 11.5px label — the block alone set the
+   height, so the pill read as a big cyan square with a lot of dead air beside
+   it. The block comes down to 34px and the mark sits at 18px inside it, which
+   is 53% of the block: the optical size a 24-artboard icon wants, rather than
+   whatever the emoji font decided.
+   ========================================================================== */
+
+.mrn-hero__badge b {
+    width: 34px;
+    height: 34px;
+    /* the badge sets 3.2px tracking for the label; an icon must not inherit it
+       or it is pushed off the block's centre by half a letter-space */
+    letter-spacing: 0;
+    flex: 0 0 auto;
+}
+
+.mrn-hero__badge b .sg-ico {
+    width: 18px;
+    height: 18px;
+    vertical-align: 0;
+}
+
+.mrn-hero__badge span {
+    padding: 0 18px 0 30px;
+}
+
+.mrn-hero__badge span::before {
+    left: 18px;
+}
+
+@media (max-width: 767px) {
+    .mrn-hero__badge b {
+        width: 30px;
+        height: 30px;
+    }
+
+    .mrn-hero__badge b .sg-ico {
+        width: 16px;
+        height: 16px;
+    }
+
+    .mrn-hero__badge span {
+        padding: 0 14px 0 26px;
+    }
+
+    .mrn-hero__badge span::before {
+        left: 14px;
+    }
+}
+
+/* ==========================================================================
    REDUCED MOTION
    ========================================================================== */
 
