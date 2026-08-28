@@ -720,12 +720,20 @@
 
 /* --------------------------------------------------------------------------
    6. Buttons — gold stays the one amber moment, ghost turns cyan
+   Scoped to BOTH hero components. index.html's fold is .mrn-hero; the inner
+   page banner is .mrnp-hero, and about_us.html puts the same two buttons in
+   it. Without the second selector those fell back to the plain .mrn-btn--gold
+   / --ghost at lines 255 and 276, which are a different colour and a different
+   height — the fold and the About banner did not match.
+   about_us.html is the only inner page with buttons in its banner today; any
+   that gains them inherits the same treatment.
    -------------------------------------------------------------------------- */
 
 /* the foundation gives --ghost a 1px border and --gold none, so the two
    buttons in the fold were 2px different in height. Equalise with a
    transparent border. */
-.mrn-hero .mrn-btn {
+.mrn-hero .mrn-btn,
+.mrnp-hero .mrn-btn {
     border: 1px solid transparent;
     padding: 16px 34px;
     font-size: 13px;
@@ -734,24 +742,29 @@
 
 /* marine.css 215-227 slides --grad-brand (navy) up over the gold button on
    hover, which threw away the fold's only amber. Keep it amber, brighten it. */
-.mrn-hero .mrn-btn--gold {
+.mrn-hero .mrn-btn--gold,
+.mrnp-hero .mrn-btn--gold {
     color: #2a1a00;
     border-color: rgba(255, 194, 71, .55);
     box-shadow: 0 18px 40px -18px rgba(255, 173, 24, .95);
 }
 
-.mrn-hero .mrn-btn--gold::before {
+.mrn-hero .mrn-btn--gold::before,
+.mrnp-hero .mrn-btn--gold::before {
     background: linear-gradient(135deg, var(--gold-light) 0%, var(--gold) 100%);
 }
 
 .mrn-hero .mrn-btn--gold:hover,
-.mrn-hero .mrn-btn--gold:focus {
+.mrnp-hero .mrn-btn--gold:hover,
+.mrn-hero .mrn-btn--gold:focus,
+.mrnp-hero .mrn-btn--gold:focus {
     color: #2a1a00;
     border-color: rgba(255, 194, 71, .9);
     box-shadow: 0 26px 54px -20px rgba(255, 173, 24, 1);
 }
 
-.mrn-hero .mrn-btn--ghost {
+.mrn-hero .mrn-btn--ghost,
+.mrnp-hero .mrn-btn--ghost {
     color: #dff4ff;
     border-color: rgba(53, 198, 244, .5);
     background: rgba(34, 179, 230, .07);
@@ -761,12 +774,15 @@
 }
 
 /* marine.css 229 fills the ghost button with gold on hover — cyan instead */
-.mrn-hero .mrn-btn--ghost::before {
+.mrn-hero .mrn-btn--ghost::before,
+.mrnp-hero .mrn-btn--ghost::before {
     background: linear-gradient(135deg, var(--cyan-bright) 0%, var(--cyan-deep) 100%);
 }
 
 .mrn-hero .mrn-btn--ghost:hover,
-.mrn-hero .mrn-btn--ghost:focus {
+.mrnp-hero .mrn-btn--ghost:hover,
+.mrn-hero .mrn-btn--ghost:focus,
+.mrnp-hero .mrn-btn--ghost:focus {
     color: #04263f;
     border-color: var(--cyan-bright);
     background: rgba(34, 179, 230, .07);
@@ -776,12 +792,14 @@
 /* css/style.css kills outlines globally (a:focus{outline:0}); marine.css 233
    also hands a -4px lift to plain :focus, so a mouse click left the button
    parked mid-air with no ring. Ring for keyboards, nothing for mice. */
-.mrn-hero .mrn-btn:focus-visible {
+.mrn-hero .mrn-btn:focus-visible,
+.mrnp-hero .mrn-btn:focus-visible {
     outline: 2px solid var(--cyan-bright);
     outline-offset: 4px;
 }
 
-.mrn-hero .mrn-btn:focus:not(:focus-visible):not(:hover) {
+.mrn-hero .mrn-btn:focus:not(:focus-visible):not(:hover),
+.mrnp-hero .mrn-btn:focus:not(:focus-visible):not(:hover) {
     transform: none;
 }
 
