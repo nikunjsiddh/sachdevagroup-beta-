@@ -169,6 +169,12 @@
         { sel: '.mrnp-acc__item', dir: 'up', cols: 1, step: 1 },
         { sel: '.pfx-step', dir: 'left', cols: 1, step: 1 },
 
+        /* the fact rows are a spec sheet, so they arrive like plates being
+           laid down: `tilt` is the one direction in the vocabulary that is
+           actually 3D (perspective + rotateX), and one row at a time is what
+           makes a list read as a list rather than as a block */
+        { sel: '.pfx-fact', dir: 'tilt', cols: 1, step: 1 },
+
         /* the rail sweeps cell by cell — the plate itself is the ground and
            should already be there when the figures start counting */
         { sel: '.mrnp-strip > div', dir: 'up', cols: 4 },

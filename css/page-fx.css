@@ -1121,6 +1121,71 @@
     color: var(--cyan-deep, #1195cf);
 }
 
+/* On a dark ground the plate inverts, exactly as .mrnp-icard does in 5.2.
+   Without this, news.html #enquiries renders three bright white cards on the
+   deep navy band — the one place on the site where a dark section's cards do
+   not invert with their ground. */
+.mrn-dark .mrnp-infocard {
+    background: var(--pfx-plate-dark);
+    border: var(--pfx-ring-dark);
+    box-shadow: 0 26px 56px -34px rgba(0, 0, 0, .8);
+}
+
+.mrn-dark .mrnp-infocard:hover {
+    background: linear-gradient(165deg, #0d2b4e 0%, #08203a 60%, #051829 100%);
+    border-color: rgba(53, 198, 244, .45);
+}
+
+.mrn-dark .mrnp-infocard strong {
+    color: var(--cyan-bright, #35c6f4);
+}
+
+.mrn-dark .mrnp-infocard p,
+.mrn-dark .mrnp-infocard a {
+    color: var(--body-on-dark, #a7bbcf);
+}
+
+.mrn-dark .mrnp-infocard a:hover {
+    color: var(--cyan-bright, #35c6f4);
+}
+
+.mrn-dark .mrnp-infocard__icon {
+    background: linear-gradient(150deg, rgba(53, 198, 244, .18), rgba(53, 198, 244, .04));
+    border-color: rgba(53, 198, 244, .32);
+    color: var(--cyan-bright, #35c6f4);
+}
+
+.mrn-dark .mrnp-infocard:hover .mrnp-infocard__icon {
+    background: linear-gradient(150deg, var(--cyan-bright, #35c6f4), var(--cyan-deep, #1195cf));
+    color: #041724;
+}
+
+/* --- the infocard as a 3D surface ---------------------------------------
+   Caller: news.html #enquiries, where each card carries data-mrnp-tilt.
+   js/marine-pages.js writes `perspective(1000px) rotateY() rotateX()
+   translateY(-6px)` inline on mousemove; preserve-3d is what turns that into
+   a real surface, and the icon then rides out of it on Z the way the icard's
+   does in 5.2. Scoped to [data-mrnp-tilt] so the stacked contact column on
+   contact_us.html — which has no tilt and no perspective — is untouched: a
+   translateZ with no perspective ancestor renders as nothing at all. */
+.mrnp-infocard[data-mrnp-tilt] {
+    transform-style: preserve-3d;
+    will-change: transform;
+}
+
+.mrnp-infocard[data-mrnp-tilt] > div:last-child {
+    transition: transform .45s var(--e-out);
+}
+
+.mrnp-infocard[data-mrnp-tilt]:hover .mrnp-infocard__icon {
+    transform: translateZ(44px) rotate(-6deg);
+    box-shadow: var(--glow-cyan, 0 22px 50px -26px rgba(34, 179, 230, .85));
+}
+
+.mrnp-infocard[data-mrnp-tilt]:hover > div:last-child {
+    transform: translateZ(18px);
+}
+
 .mrnp-form {
     background: var(--pfx-plate-dark);
     border: var(--pfx-ring-dark);
@@ -1421,6 +1486,135 @@
     color: var(--body-on-dark, #a7bbcf);
 }
 
+/* --- 6.1a live status plate — .pfx-note--live ---------------------------
+   Caller: news.html #latest.
+
+   The note above says the newsroom is empty. Set as flat prose that reads as
+   a paragraph somebody forgot to finish; the modifier makes it read as an
+   instrument reading instead — a status flag with a live LED, corner brackets
+   that draw on hover (the engineering-drawing cue the icards already use),
+   and a preserve-3d surface so the data-mrnp-tilt on the plate has something
+   to tilt and the flag can stand proud of it on translateZ.
+
+   The brackets are on the RIGHT corners only. .pfx-note carries a 3px cyan
+   left border and a second cyan mark 1px away from it reads as a rendering
+   fault, not as a bracket. */
+
+.pfx-note--live {
+    position: relative;
+    padding-top: 26px;
+    transform-style: preserve-3d;
+    will-change: transform;
+    box-shadow: var(--lift-1, 0 10px 28px -18px rgba(4, 18, 31, .55));
+    transition: transform .5s var(--e-out), box-shadow .5s var(--e-out),
+        border-top-color .5s var(--e-out), border-right-color .5s var(--e-out),
+        border-bottom-color .5s var(--e-out);
+}
+
+/* border-COLOR would take the 3px cyan left rule with it */
+.pfx-note--live:hover {
+    border-top-color: rgba(34, 179, 230, .45);
+    border-right-color: rgba(34, 179, 230, .45);
+    border-bottom-color: rgba(34, 179, 230, .45);
+    box-shadow: var(--lift-2, 0 22px 48px -26px rgba(4, 18, 31, .65));
+}
+
+/* They sit OUTSIDE the plate edge, not on it. Flush with the border they read
+   as a thicker corner of the border itself — measured against the .45 cyan the
+   hover state puts on that border, a 2px mark on top of it is barely a mark.
+   Standing them off by 7px makes them the drawing's registration corners,
+   which is the cue being borrowed. */
+.pfx-note--live::before,
+.pfx-note--live::after {
+    content: "";
+    position: absolute;
+    right: -7px;
+    width: 20px;
+    height: 20px;
+    border: 2px solid var(--cyan, #22b3e6);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .45s var(--e-out), transform .55s var(--e-out);
+}
+
+.pfx-note--live::before {
+    top: -7px;
+    border-left: 0;
+    border-bottom: 0;
+    transform: translate3d(-10px, 10px, 0);
+}
+
+.pfx-note--live::after {
+    bottom: -7px;
+    border-left: 0;
+    border-top: 0;
+    transform: translate3d(-10px, -10px, 0);
+}
+
+.pfx-note--live:hover::before,
+.pfx-note--live:hover::after {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+}
+
+.pfx-note__flag {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 18px;
+    padding: 8px 14px;
+    border: 1px solid rgba(34, 179, 230, .3);
+    border-radius: var(--pfx-radius, 3px);
+    background: rgba(255, 255, 255, .8);
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: var(--cyan-deep, #1195cf);
+    transition: transform .5s var(--e-out), border-color .5s var(--e-out),
+        box-shadow .5s var(--e-out);
+}
+
+.pfx-note--live:hover .pfx-note__flag {
+    transform: translateZ(40px);
+    border-color: rgba(34, 179, 230, .58);
+    box-shadow: var(--glow-cyan, 0 22px 50px -26px rgba(34, 179, 230, .85));
+}
+
+.pfx-note__flag i {
+    display: block;
+    flex: 0 0 auto;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--cyan, #22b3e6);
+    animation: pfxLed 2.8s ease-out infinite;
+}
+
+/* the LED is the one thing on the page that repeats forever, so it is a ring
+   expanding out of the dot rather than the dot itself pulsing — nothing moves
+   in the layout and the eye can rest on it */
+@keyframes pfxLed {
+    0% {
+        box-shadow: 0 0 0 0 rgba(34, 179, 230, .55);
+    }
+
+    70% {
+        box-shadow: 0 0 0 10px rgba(34, 179, 230, 0);
+    }
+
+    100% {
+        box-shadow: 0 0 0 0 rgba(34, 179, 230, 0);
+    }
+}
+
+.mrn-dark .pfx-note__flag {
+    background: rgba(4, 18, 31, .5);
+    border-color: rgba(53, 198, 244, .34);
+    color: var(--cyan-bright, #35c6f4);
+}
+
 /* --- 6.2 numbered process spine ---------------------------------------
    Caller: waste_management.html #procedure. Nine chain-of-custody steps that
    were set as a 3-up card grid, which throws away the one thing that matters
@@ -1656,6 +1850,22 @@
 
 .mrnp-hero .mrn-hero__badge {
     margin-bottom: 22px;
+}
+
+/* Both the crumb and the badge are inline-flex, so they set on ONE line as a
+   chip row — which is the intent, and is what about_us.html has always done.
+   What they did not have is a gap: the only thing between them was the 4px
+   word-space of the newline in the markup, so at any crumb length the two
+   chips read as having collided rather than as a pair.
+
+   The gap goes on the TRAILING edge of the crumb, not the leading edge of the
+   badge. They are inline boxes and they wrap — at 375px the news crumb is
+   294px and the badge drops to its own line — and a leading margin then
+   indents that line by 14px against every other element in the banner. A
+   trailing one is simply the end of the previous line and disappears.
+   Scoped to the adjacency, so a crumb with no badge after it is untouched. */
+.mrnp-crumb:has(+ .mrn-hero__badge) {
+    margin-right: 14px;
 }
 
 .mrnp-hero .mrn-hero__actions {
@@ -1922,6 +2132,189 @@
     background-color: rgba(53, 198, 244, .12);
 }
 
+/* --- 6.8 fact file — the media briefing spec sheet ----------------------
+   Caller: news.html #briefing.
+
+   A newsroom page has to answer what a journalist asks before it can answer
+   anything else: who the group is, which companies operate, where the yard
+   is, what it holds. Every value in these rows already appears somewhere on
+   this site — this is a spec sheet drawn from the existing record, not new
+   editorial, and it is the one thing a page with no articles can honestly
+   offer the press.
+
+   Set as engineering rows: label left, value right, a cyan tick that grows
+   into a gold one on hover, and the row itself lifting toward the reader on
+   Z rather than merely up on Y. The perspective lives on the LIST, not on
+   each row: one shared vanishing point means the rows tilt as a stack rather
+   than each one having its own private camera. */
+
+.pfx-facts {
+    margin: 46px 0 0;
+    padding: 0;
+    display: grid;
+    gap: 12px;
+    perspective: 1500px;
+}
+
+.pfx-fact {
+    position: relative;
+    display: grid;
+    grid-template-columns: 230px 1fr;
+    gap: 26px;
+    align-items: baseline;
+    padding: 22px 30px;
+    background: var(--pfx-plate);
+    border: var(--pfx-ring);
+    box-shadow: var(--lift-1, 0 10px 28px -18px rgba(4, 18, 31, .55));
+    transform-style: preserve-3d;
+    transition: transform .5s var(--e-out), box-shadow .5s var(--e-out),
+        border-color .5s var(--e-out), background .5s var(--e-out);
+}
+
+.pfx-fact::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 50%;
+    width: 3px;
+    height: 18px;
+    background: var(--cyan, #22b3e6);
+    transform: translateY(-50%) scaleY(.5);
+    transition: transform .5s var(--e-out), background .5s var(--e-out);
+}
+
+.pfx-fact:hover {
+    transform: translate3d(0, -4px, 34px);
+    border-color: rgba(34, 179, 230, .4);
+    box-shadow: var(--lift-3, 0 34px 70px -30px rgba(4, 18, 31, .78));
+    background: linear-gradient(180deg, #ffffff 0%, #f4fbff 100%);
+    z-index: 2;
+}
+
+.pfx-fact:hover::before {
+    transform: translateY(-50%) scaleY(2.5);
+    background: var(--gold, #ffad18);
+}
+
+.pfx-fact dt {
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    color: var(--cyan-deep, #1195cf);
+    transition: transform .5s var(--e-out);
+}
+
+.pfx-fact:hover dt {
+    transform: translateZ(22px);
+}
+
+.pfx-fact dd {
+    margin: 0;
+    font-size: 15.5px;
+    line-height: 1.72;
+    color: var(--heading-on-light, #071a2e);
+}
+
+.pfx-fact dd a {
+    color: var(--heading-on-light, #071a2e);
+    border-bottom: 1px solid rgba(34, 179, 230, .34);
+    transition: color .35s var(--e-out), border-color .35s var(--e-out);
+}
+
+.pfx-fact dd a:hover {
+    color: var(--cyan-deep, #1195cf);
+    border-color: var(--cyan, #22b3e6);
+}
+
+.pfx-fact__sep {
+    color: rgba(7, 26, 46, .28);
+    padding: 0 9px;
+}
+
+.pfx-fact__chip {
+    display: inline-block;
+    margin: 4px 8px 4px 0;
+    padding: 6px 13px;
+    border: 1px solid rgba(34, 179, 230, .28);
+    border-radius: var(--pfx-radius, 3px);
+    background: rgba(34, 179, 230, .06);
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 12px;
+    letter-spacing: 1.7px;
+    color: var(--cyan-deep, #1195cf);
+    transition: transform .45s var(--e-out), background .45s var(--e-out),
+        border-color .45s var(--e-out);
+}
+
+.pfx-fact:hover .pfx-fact__chip {
+    transform: translateZ(16px);
+    border-color: rgba(34, 179, 230, .5);
+    background: rgba(34, 179, 230, .12);
+}
+
+/* --- 6.9 the card as a link — .pfx-icard--link + .pfx-go ----------------
+   Caller: news.html #resources.
+
+   Those three cards are navigation, not copy, so the whole plate is the hit
+   area: an <a> carrying .mrnp-icard. marine-pages.css wrote that component
+   for an <article>, so `display` and `text-decoration` have to be unwound —
+   an inline <a> would collapse the padding and drop the ::before sheen.
+   .pfx-go is the affordance that says the plate is a link, and it rides out
+   on Z under the tilt like the icon above it. */
+
+.pfx-icard--link,
+.pfx-icard--link:hover,
+.pfx-icard--link:focus {
+    display: flex;
+    flex-direction: column;
+    color: inherit;
+    text-decoration: none;
+}
+
+/* the plate is the hit area, so the plate is what takes the focus ring */
+.pfx-icard--link:focus-visible {
+    outline: 2px solid var(--cyan, #22b3e6);
+    outline-offset: 3px;
+}
+
+/* the plate is a column flex box, so the affordance is pushed to the floor
+   of the card with `auto` — three cards whose paragraphs run to two, three
+   and two lines otherwise put their "view" line at three different heights,
+   and a row of cards that agree on nothing reads as a mistake */
+.pfx-go {
+    display: inline-flex;
+    align-self: flex-start;
+    align-items: center;
+    gap: 9px;
+    margin-top: auto;
+    padding-top: 24px;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: var(--cyan-deep, #1195cf);
+    transition: transform .5s var(--e-out), color .5s var(--e-out);
+}
+
+.pfx-go .sg-ico {
+    transition: transform .5s var(--e-out);
+}
+
+.pfx-icard--link:hover .pfx-go {
+    transform: translateZ(28px);
+}
+
+.pfx-icard--link:hover .pfx-go .sg-ico {
+    transform: translateX(6px);
+}
+
+.mrn-dark .pfx-go {
+    color: var(--cyan-bright, #35c6f4);
+}
+
 /* ==========================================================================
    7. MOTION — extensions to the index-theme.css section 9 entrance vocabulary
    Adding a direction is one --sg-from line, because `[data-sg-in].sg-in`
@@ -2085,6 +2478,56 @@ html.sg-motion [data-sg-delay="10"] {
     .mrnp-icard {
         padding: 32px 24px 28px;
     }
+
+    /* the label column is 230px against a 1fr value; below this the value has
+       nowhere left to wrap to, so the row becomes two stacked lines */
+    .pfx-fact {
+        grid-template-columns: 1fr;
+        gap: 8px;
+        padding: 20px 22px;
+    }
+
+    .pfx-fact dd {
+        font-size: 15px;
+    }
+
+    /* 4 counters across 375px is 80px a cell — the figures collide with their
+       own labels — but stacking all four, which marine-pages.css:1524 does
+       below 620px, makes the plate 500px tall for four numbers. Two up is the
+       readable middle.
+
+       Holding that column count means owning the rules that go with it. That
+       620px block also swaps every cell's border-right for a border-bottom,
+       and page-fx.css loads later, so the 2-up grid landed here while the
+       1-up borders landed there: measured at 375px, three cells drew a
+       horizontal rule under themselves and the column divider was gone. A
+       2x2 grid takes a crosshair — right border down the left column, bottom
+       border across the top row, nothing on the outer edges. */
+    .mrnp-strip {
+        grid-template-columns: repeat(2, 1fr);
+        padding: 26px 18px;
+        gap: 22px 12px;
+    }
+
+    .mrnp-strip div {
+        border-right: none;
+        border-bottom: none;
+        padding-bottom: 0;
+    }
+
+    .mrnp-strip div:nth-child(odd) {
+        border-right: 1px solid rgba(53, 198, 244, .16);
+    }
+
+    .mrnp-strip div:nth-child(-n+2) {
+        border-bottom: 1px solid rgba(53, 198, 244, .16);
+        padding-bottom: 20px;
+    }
+
+    .pfx-note--live {
+        padding-left: 24px;
+        padding-right: 24px;
+    }
 }
 
 @media (max-width: 620px) {
@@ -2157,9 +2600,42 @@ html.sg-motion [data-sg-delay="10"] {
     .mrnp-infocard,
     .mrnp-gal__item,
     .mrnp-checks li,
-    .pfx-step {
+    .pfx-step,
+    .pfx-fact,
+    .pfx-fact dt,
+    .pfx-fact__chip,
+    .pfx-go,
+    .pfx-go .sg-ico,
+    .pfx-note--live,
+    .pfx-note__flag {
         transition: none !important;
         transform: none !important;
+    }
+
+    /* the tick is a transform, and `transform: none` above would drop the
+       translateY that centres it — restate the resting state rather than
+       letting the row lose its mark */
+    .pfx-fact::before {
+        transform: translateY(-50%) scaleY(.5) !important;
+        transition: none !important;
+    }
+
+    /* the brackets are drawn by opacity, which is not motion, but they arrive
+       from a transform — hand them their resting offset back */
+    .pfx-note--live::before {
+        transform: translate3d(-10px, 10px, 0) !important;
+        transition: none !important;
+    }
+
+    .pfx-note--live::after {
+        transform: translate3d(-10px, -10px, 0) !important;
+        transition: none !important;
+    }
+
+    /* the one thing on this page that repeats forever */
+    .pfx-note__flag i {
+        animation: none !important;
+        box-shadow: 0 0 0 3px rgba(34, 179, 230, .28) !important;
     }
 
     .mrnp-hero__bg {
