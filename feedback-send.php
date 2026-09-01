@@ -46,12 +46,42 @@ if (!$originHost || strcasecmp($originHost, $hostOnly) !== 0) {
 
 /* --- 2. config ---------------------------------------------------------- */
 
+/* Whether the person posting is at the machine running the server. It decides
+   how much a failure is allowed to say: a visitor gets "not configured" and
+   nothing else, while whoever is setting the site up on localhost is told
+   which file is missing and what to do about it. Setup instructions on a
+   public endpoint are a description of the server to anybody probing it. */
+$devHost = in_array($_SERVER['REMOTE_ADDR'] ?? '', array('127.0.0.1', '::1'), true);
+
 $configFile = __DIR__ . '/mail-config.php';
+
 if (!is_file($configFile)) {
-    error_log('feedback: mail-config.php is missing');
-    fail('Mail is not configured on this server.', 500);
+    /* This is the one setup step that cannot be shipped, and it catches
+       everyone who deploys with git: mail-config.php is in .gitignore because
+       it holds a live password, so a pull brings feedback-send.php and the
+       sample but never the real file. The error used to say only "not
+       configured", which is true and useless. */
+    error_log('feedback: mail-config.php is missing — copy mail-config.sample.php to '
+        . 'mail-config.php in ' . __DIR__ . ' and fill in the Gmail address and app password');
+
+    fail('Mail is not configured on this server.' . ($devHost
+        ? ' Copy mail-config.sample.php to mail-config.php in the site folder and'
+          . ' fill in the Gmail address and app password — .gitignore keeps that'
+          . ' file out of the repository, so git never delivers it.'
+        : ''), 500);
 }
+
 $cfg = require $configFile;
+
+/* A config that is present but still holds the sample values fails at AUTH
+   with nothing to explain it. Say so here instead. */
+if (!is_array($cfg) || empty($cfg['user']) || empty($cfg['pass'])
+        || strpos((string) $cfg['user'], 'you@') === 0
+        || strpos((string) $cfg['pass'], 'xxxx') === 0) {
+    error_log('feedback: mail-config.php still holds the sample values');
+    fail('Mail is not configured on this server.' . ($devHost
+        ? ' mail-config.php is still filled with the sample placeholders.' : ''), 500);
+}
 
 /* --- 3. the fields, re-checked ------------------------------------------ */
 
