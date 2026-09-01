@@ -1285,6 +1285,27 @@ a.sgf-contact__value:focus {
             #06182a 46%);
 }
 
+/* The server said no. Sits above the actions, full width, and is the one
+   place in the dialog that reports a failure the visitor cannot fix by
+   correcting a field. */
+.sgfb__alert {
+    grid-column: 1 / -1;
+    margin: 0 0 4px;
+    padding: 13px 15px;
+    border: 1px solid rgba(255, 122, 105, .38);
+    border-left: 3px solid #ff7a69;
+    background: rgba(255, 122, 105, .1);
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: #ffb3a8;
+}
+
+.sgfb__send.is-sending {
+    opacity: .72;
+    cursor: progress;
+}
+
+
 /* --- the sent state ------------------------------------------------------ */
 
 .sgfb__done {

@@ -1,0 +1,211 @@
+<?php
+/* ==========================================================================
+   FEEDBACK — receive the form, mail it out
+   ==========================================================================
+   Posted to by js/feedback.js. Returns JSON: {ok:true} or {ok:false,error:"…"}.
+
+   The credentials live in mail-config.php, which .gitignore excludes. Copy
+   mail-config.sample.php over it and fill that copy in — never this file.
+
+   The client validates too. That is for the person filling the form in; it is
+   not a check, because anyone can post here directly. Everything below is
+   re-validated, and nothing typed by a visitor reaches a mail header.
+   ========================================================================== */
+
+header('Content-Type: application/json; charset=utf-8');
+header('X-Content-Type-Options: nosniff');
+
+function fail($msg, $code = 400) {
+    http_response_code($code);
+    echo json_encode(array('ok' => false, 'error' => $msg));
+    exit;
+}
+
+/* --- 1. only a POST from this site ------------------------------------- */
+
+if (($_SERVER['REQUEST_METHOD'] ?? '') !== 'POST') {
+    fail('Method not allowed.', 405);
+}
+
+/* A form posted from another origin is either a mistake or someone using this
+   endpoint as a free mailer. Compare hosts, not full URLs: the site is served
+   from localhost in development and a domain in production, and hard-coding
+   either one breaks the other. */
+$origin = $_SERVER['HTTP_ORIGIN'] ?? $_SERVER['HTTP_REFERER'] ?? '';
+$originHost = $origin ? (string) parse_url($origin, PHP_URL_HOST) : '';
+
+/* HTTP_HOST carries the port whenever it is not 80 or 443, and parse_url's
+   host never does — so "localhost" from the Origin header would not match
+   "localhost:8080" from HTTP_HOST, and every post would be rejected on any
+   XAMPP moved off port 80. Compare hosts only. */
+$hostOnly = preg_replace('/:\d+$/', '', (string) ($_SERVER['HTTP_HOST'] ?? ''));
+
+if (!$originHost || strcasecmp($originHost, $hostOnly) !== 0) {
+    fail('Request blocked.', 403);
+}
+
+/* --- 2. config ---------------------------------------------------------- */
+
+$configFile = __DIR__ . '/mail-config.php';
+if (!is_file($configFile)) {
+    error_log('feedback: mail-config.php is missing');
+    fail('Mail is not configured on this server.', 500);
+}
+$cfg = require $configFile;
+
+/* --- 3. the fields, re-checked ------------------------------------------ */
+
+function field($k, $max) {
+    $v = isset($_POST[$k]) ? trim((string) $_POST[$k]) : '';
+    /* strip control characters, CR and LF included. Nothing here is ever put
+       in a header, but a newline in a value has no legitimate use either. */
+    $v = preg_replace('/[\x00-\x1F\x7F]/u', ' ', $v);
+    return mb_substr($v, 0, $max);
+}
+
+$type = field('feedbackType', 20);
+$name = field('name', 60);
+$role = field('designation', 60);
+$tel  = field('mobile', 18);
+$note = trim(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '',
+        (string) ($_POST['note'] ?? '')));           /* newlines survive here */
+$note = mb_substr($note, 0, 500);
+
+$allowedTypes = array('Workers', 'Visitors', 'Customers');
+if (!in_array($type, $allowedTypes, true))  fail('Please choose who this feedback is from.');
+if (mb_strlen($name) < 2)                   fail('Please enter your name.');
+if (!preg_match('/^[\p{L}\p{M} .\'\-]+$/u', $name))
+                                            fail('Name may contain letters, spaces, . \' and - only.');
+if (mb_strlen($role) < 2)                   fail('Please enter your designation.');
+if (mb_strlen($note) < 5)                   fail('Please write your feedback.');
+
+/* the same rule js/feedback.js applies: a country prefix comes off only when
+   there is more than ten digits to take it from, so a real ten-digit number
+   in the 91 series is not mangled into eight */
+$digits = preg_replace('/[^0-9+]/', '', $tel);
+$digits = ltrim($digits, '+');
+if (strlen($digits) > 10) $digits = preg_replace('/^(0091|091|91|0)/', '', $digits);
+if (!preg_match('/^[6-9][0-9]{9}$/', $digits)) fail('Enter a valid 10-digit mobile number.');
+
+/* --- 4. one IP may not use this as a mailer ----------------------------- */
+
+$limit = (int) ($cfg['limit_per_hour'] ?? 5);
+$ip    = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
+$store = sys_get_temp_dir() . '/sgfb_' . sha1($ip) . '.json';
+$now   = time();
+$hits  = is_file($store) ? (array) json_decode((string) file_get_contents($store), true) : array();
+$hits  = array_values(array_filter($hits, function ($t) use ($now) { return $t > $now - 3600; }));
+if (count($hits) >= $limit) {
+    fail('Too many messages from this connection. Please try again later.', 429);
+}
+$hits[] = $now;
+@file_put_contents($store, json_encode($hits), LOCK_EX);
+
+/* --- 5. the message ------------------------------------------------------ */
+
+require __DIR__ . '/feedback-template.php';
+
+$sentAt = date('j M Y, g:i a');
+$html   = sgfb_email_html($type, $name, $role, '+91 ' . $digits, $note, $sentAt);
+$text   = sgfb_email_text($type, $name, $role, '+91 ' . $digits, $note, $sentAt);
+
+/* --- 6. send ------------------------------------------------------------- */
+
+function smtp_send($cfg, $subject, $html, $text) {
+    $user = (string) $cfg['user'];
+    $pass = str_replace(' ', '', (string) $cfg['pass']);   /* Google prints it in fours */
+    $to   = (string) $cfg['to'];
+    $host = $cfg['host'] ?? 'smtp.gmail.com';
+    $port = (int) ($cfg['port'] ?? 465);
+
+    /* 'secure' exists so a local test relay (MailHog, Papercut, smtp4dev on
+       127.0.0.1) can be pointed at without TLS. It is guarded rather than
+       trusted: turning it off for anything but a loopback host would put the
+       app password on the wire in clear, so that combination is refused
+       outright instead of being left to whoever edits the config. */
+    $secure = ($cfg['secure'] ?? 'ssl') !== '';
+    $local  = in_array($host, array('127.0.0.1', 'localhost', '::1'), true);
+
+    if (!$secure && !$local) {
+        error_log('feedback: refusing to send to ' . $host . ' without TLS');
+        return 'insecure';
+    }
+
+    if ($secure && !extension_loaded('openssl')) {
+        error_log('feedback: the openssl extension is off; enable it in php.ini');
+        return 'openssl';
+    }
+
+    $scheme = $secure ? 'ssl' : 'tcp';
+    $fp = @stream_socket_client("$scheme://$host:$port", $errno, $errstr, 20);
+    if (!$fp) { error_log("feedback: connect failed — $errno $errstr"); return 'connect'; }
+    stream_set_timeout($fp, 20);
+
+    /* SMTP replies can run to several lines; only the one with a space in the
+       fourth column is the last. Reading a single line reads AUTH and EHLO
+       wrong every time. */
+    $read = function () use ($fp) {
+        $out = '';
+        while (($line = fgets($fp, 1024)) !== false) {
+            $out .= $line;
+            if (strlen($line) < 4 || $line[3] !== '-') break;
+        }
+        return $out;
+    };
+    $say = function ($cmd) use ($fp, $read) { fwrite($fp, $cmd . "\r\n"); return $read(); };
+    $ok  = function ($reply, $code) { return strncmp($reply, (string) $code, 3) === 0; };
+
+    $step = 'greeting';
+    do {
+        if (!$ok($read(), 220)) break;
+        $step = 'ehlo';   if (!$ok($say('EHLO ' . ($_SERVER['HTTP_HOST'] ?? 'localhost')), 250)) break;
+        $step = 'auth';   if (!$ok($say('AUTH LOGIN'), 334)) break;
+        $step = 'user';   if (!$ok($say(base64_encode($user)), 334)) break;
+        $step = 'pass';   if (!$ok($say(base64_encode($pass)), 235)) break;
+        $step = 'from';   if (!$ok($say('MAIL FROM:<' . $user . '>'), 250)) break;
+        $step = 'rcpt';   if (!$ok($say('RCPT TO:<' . $to . '>'), 250)) break;
+        $step = 'data';   if (!$ok($say('DATA'), 354)) break;
+
+        $b = '=_sgfb_' . bin2hex(random_bytes(8));
+        $fromName = preg_replace('/[^\x20-\x7E]/', '', (string) ($cfg['from_name'] ?? 'Website'));
+        $headers = array(
+            'From: "' . $fromName . '" <' . $user . '>',
+            'To: <' . $to . '>',
+            'Subject: ' . $subject,
+            'Date: ' . date('r'),
+            'MIME-Version: 1.0',
+            'Content-Type: multipart/alternative; boundary="' . $b . '"'
+        );
+        $body = implode("\r\n", $headers) . "\r\n\r\n"
+              . "--$b\r\nContent-Type: text/plain; charset=UTF-8\r\n"
+              . "Content-Transfer-Encoding: base64\r\n\r\n" . chunk_split(base64_encode($text)) . "\r\n"
+              . "--$b\r\nContent-Type: text/html; charset=UTF-8\r\n"
+              . "Content-Transfer-Encoding: base64\r\n\r\n" . chunk_split(base64_encode($html)) . "\r\n"
+              . "--$b--\r\n";
+
+        /* a line that is a single dot ends DATA — double any leading dot */
+        $body = preg_replace('/^\./m', '..', $body);
+
+        fwrite($fp, $body . "\r\n.\r\n");
+        $step = 'send';   if (!$ok($read(), 250)) break;
+        $step = '';
+    } while (false);
+
+    @fwrite($fp, "QUIT\r\n");
+    @fclose($fp);
+
+    if ($step !== '') { error_log('feedback: SMTP failed at step "' . $step . '"'); return $step; }
+    return true;
+}
+
+$subject = 'Website feedback — ' . $type . ' — ' . $name;
+$result  = smtp_send($cfg, $subject, $html, $text);
+
+if ($result !== true) {
+    /* The visitor is told it did not send and nothing more. Which SMTP step
+       failed, and whether the password was rejected, belongs in the server
+       log — it is a map of the mail setup to anybody probing this endpoint. */
+    fail('Could not send just now. Please call or email us instead.', 502);
+}
+
+echo json_encode(array('ok' => true));

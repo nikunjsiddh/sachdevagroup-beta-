@@ -6,3 +6,21 @@
         Header set Cache-Control "no-cache, must-revalidate"
     </FilesMatch>
 </IfModule>
+
+# ---------------------------------------------------------------------------
+# The mail credentials are never served, whatever happens to PHP.
+# mail-config.php only returns an array, so a normal request for it already
+# prints nothing — but that depends on PHP being alive to run it. If the
+# handler is ever disabled or misconfigured, Apache falls back to serving the
+# file as plain text and hands the Gmail app password to anyone who asks for
+# it by name. This makes the answer 403 either way.
+# ---------------------------------------------------------------------------
+<FilesMatch "^mail-config(\.sample)?\.php$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>

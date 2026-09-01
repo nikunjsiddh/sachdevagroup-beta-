@@ -5,15 +5,14 @@
    page-fx.js, but it shares that file's guard, so the two switch on and off
    together.
 
-   FRONT END ONLY — READ THIS BEFORE SHIPPING
-   submit() validates, then shows the success panel. It sends NOTHING. There
-   is no endpoint, no fetch, no mail handler: the form was specified as a
-   design, and inventing a destination for a stranger's name and phone number
-   is not a decision this file gets to make.
-   That means the success panel currently tells the visitor their feedback has
-   been received when it has not. Before this goes near production, either
-   wire submit() to a real endpoint (FormToEmail.php is what contact_us.html
-   posts to) or take the widget off the page. Do not leave it as it is.
+   WHERE IT SENDS
+   POSTs to feedback-send.php, which validates everything again server-side
+   and mails it out over Gmail SMTP. The credentials live in mail-config.php,
+   which .gitignore excludes — see mail-config.sample.php.
+
+   The client-side validation below is for the person filling the form in. It
+   is not a security check and must never be treated as one: anyone can post
+   to that endpoint directly with curl, so every rule here is restated there.
 
    WHERE THE STYLES LIVE
    css/footer-modern.css, not css/page-fx.css. page-fx.css is the inner-page
@@ -252,6 +251,7 @@
                         '<span class="sgfb-err" id="sgfbTypeErr" role="alert"></span>' +
                     '</fieldset>' +
                     fields +
+                    '<p class="sgfb__alert" role="alert" hidden></p>' +
                     '<div class="sgfb__actions">' +
                         '<button type="submit" class="mrn-btn mrn-btn--gold sgfb__send">Send Feedback' +
                             '<svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" ' +
@@ -381,21 +381,83 @@
                 return;
             }
 
-            /* ------------------------------------------------------------
-               NOTHING IS SENT HERE. See the header of this file. Wire this
-               to an endpoint before the widget goes live, or take it down —
-               the panel below tells the visitor otherwise.
-               ------------------------------------------------------------ */
             var who = '';
             for (k = 0; k < radios.length; k++) if (radios[k].checked) who = radios[k].value;
-            doneMsg.textContent = 'Your feedback has been recorded under ' + who +
-                '. The Sachdeva Group office will be in touch if a reply is needed.';
-
-            form.hidden = true;
-            wrap.querySelector('.sgfb__head').hidden = true;
-            done.hidden = false;
-            done.querySelector('.mrn-btn').focus();
+            send(who);
         });
+
+        /* ------------------------------------------------------------------
+           Sending. XMLHttpRequest rather than fetch: the rest of this site is
+           written to an ES5 target and jQuery 1.12 is on every page, so the
+           browsers it is built for are the ones without fetch.
+        ------------------------------------------------------------------ */
+        function send(who) {
+            var sendBtn = wrap.querySelector('.sgfb__send');
+            var alertBox = wrap.querySelector('.sgfb__alert');
+
+            alertBox.hidden = true;
+            sendBtn.disabled = true;
+            sendBtn.className += ' is-sending';
+            var label = sendBtn.innerHTML;
+            sendBtn.innerHTML = 'Sending\u2026';
+
+            function done_(msg) {
+                sendBtn.disabled = false;
+                sendBtn.className = sendBtn.className.replace(/\s*is-sending/g, '');
+                sendBtn.innerHTML = label;
+                if (msg) {
+                    alertBox.textContent = msg;
+                    alertBox.hidden = false;
+                    alertBox.scrollIntoView({ block: 'nearest' });
+                }
+            }
+
+            var body = [];
+            var pairs = [['feedbackType', who]];
+            for (var k = 0; k < FIELDS.length; k++) {
+                pairs.push([FIELDS[k].name, doc.getElementById(FIELDS[k].id).value]);
+            }
+            for (k = 0; k < pairs.length; k++) {
+                body.push(encodeURIComponent(pairs[k][0]) + '=' + encodeURIComponent(pairs[k][1]));
+            }
+
+            var xhr = new win.XMLHttpRequest();
+            xhr.open('POST', 'feedback-send.php', true);
+            xhr.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded');
+            xhr.timeout = 25000;
+
+            xhr.onload = function () {
+                var res = null;
+                try { res = JSON.parse(xhr.responseText); } catch (e) {}
+
+                if (res && res.ok) {
+                    done_('');
+                    doneMsg.textContent = 'Your feedback has been sent to the Sachdeva Group ' +
+                        'office under ' + who + '. We will be in touch if a reply is needed.';
+                    form.hidden = true;
+                    wrap.querySelector('.sgfb__head').hidden = true;
+                    done.hidden = false;
+                    done.querySelector('.mrn-btn').focus();
+                    return;
+                }
+
+                /* The server's message is shown as-is when it sent one: it is
+                   the field-level reason the post was rejected, and it is more
+                   use than a generic failure. It is set with textContent, so
+                   it is text on arrival and cannot be markup. */
+                done_((res && res.error) ? res.error :
+                    'Could not send just now. Please call +91 278 2429573 or email info@sachdevagroup.in.');
+            };
+
+            xhr.onerror = function () {
+                done_('No connection. Please check your network and try again.');
+            };
+            xhr.ontimeout = function () {
+                done_('That took too long. Please try again, or call +91 278 2429573.');
+            };
+
+            xhr.send(body.join('&'));
+        }
 
         function reset() {
             form.reset();
@@ -404,6 +466,7 @@
             wrap.querySelector('.sgfb__head').hidden = false;
             done.hidden = true;
             err(wrap.querySelector('.sgfb-types'), '');
+            wrap.querySelector('.sgfb__alert').hidden = true;
             for (var k = 0; k < FIELDS.length; k++) {
                 err(doc.getElementById(FIELDS[k].id).parentNode, '');
                 if (FIELDS[k].area) {

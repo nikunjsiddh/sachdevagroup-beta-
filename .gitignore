@@ -37,3 +37,11 @@ _mtest.html
 _mtest/
 _itest-*.html
 tools-*.js
+
+# ---------------------------------------------------------------------------
+# Live mail credentials. mail-config.php holds a Gmail app password, which
+# grants full send rights on that account — committing it publishes it.
+# mail-config.sample.php is the version that belongs in the repo; copy it and
+# fill the copy in. Never remove this line.
+# ---------------------------------------------------------------------------
+mail-config.php
