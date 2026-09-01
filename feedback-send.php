@@ -121,15 +121,52 @@ if (!preg_match('/^[6-9][0-9]{9}$/', $digits)) fail('Enter a valid 10-digit mobi
 
 $limit = (int) ($cfg['limit_per_hour'] ?? 5);
 $ip    = $_SERVER['REMOTE_ADDR'] ?? '0.0.0.0';
-$store = sys_get_temp_dir() . '/sgfb_' . sha1($ip) . '.json';
 $now   = time();
-$hits  = is_file($store) ? (array) json_decode((string) file_get_contents($store), true) : array();
-$hits  = array_values(array_filter($hits, function ($t) use ($now) { return $t > $now - 3600; }));
-if (count($hits) >= $limit) {
-    fail('Too many messages from this connection. Please try again later.', 429);
+
+/* Shared hosting is where this used to quietly stop working. The counter went
+   into sys_get_temp_dir() with an @ on the write, so on any host where that
+   directory is not writable — open_basedir, a locked-down tmp, a read-only
+   container — the write failed, nothing was recorded, and the endpoint served
+   unlimited sends while looking exactly like a working rate limit.
+
+   Now the directory is chosen by testing it, the site folder is the fallback,
+   and a host where neither works says so in the error log instead of pretending.
+   It still fails open: a form that refuses everyone because a counter file
+   cannot be written is worse than one that is briefly unthrottled. */
+$dir = '';
+foreach (array(sys_get_temp_dir(), __DIR__) as $cand) {
+    if ($cand && is_dir($cand) && is_writable($cand)) { $dir = $cand; break; }
 }
-$hits[] = $now;
-@file_put_contents($store, json_encode($hits), LOCK_EX);
+
+if ($dir === '') {
+    error_log('feedback: no writable directory for the throttle — RATE LIMITING IS OFF');
+} else {
+    /* one file for every caller rather than one per IP: a busy site leaves
+       thousands of files in tmp otherwise, and nothing ever cleans them up */
+    $store = $dir . '/.sgfb-throttle.json';
+    $all   = is_file($store) ? (array) json_decode((string) file_get_contents($store), true) : array();
+    $key   = sha1($ip);
+
+    /* drop every caller whose last hour has expired, so the file self-trims */
+    foreach ($all as $k => $times) {
+        $kept = array_values(array_filter((array) $times, function ($t) use ($now) {
+            return $t > $now - 3600;
+        }));
+        if ($kept) $all[$k] = $kept; else unset($all[$k]);
+    }
+
+    $hits = isset($all[$key]) ? (array) $all[$key] : array();
+    if (count($hits) >= $limit) {
+        fail('Too many messages from this connection. Please try again later.', 429);
+    }
+
+    $hits[] = $now;
+    $all[$key] = $hits;
+
+    if (@file_put_contents($store, json_encode($all), LOCK_EX) === false) {
+        error_log('feedback: could not write ' . $store . ' — rate limiting is OFF');
+    }
+}
 
 /* --- 5. the message ------------------------------------------------------ */
 
@@ -168,7 +205,17 @@ function smtp_send($cfg, $subject, $html, $text) {
 
     $scheme = $secure ? 'ssl' : 'tcp';
     $fp = @stream_socket_client("$scheme://$host:$port", $errno, $errstr, 20);
-    if (!$fp) { error_log("feedback: connect failed — $errno $errstr"); return 'connect'; }
+    if (!$fp) {
+        /* On shared hosting this is almost always the host firewalling
+           outbound SMTP rather than anything wrong here — a lot of providers
+           block 25/465/587 to everything but their own mail server. Say so in
+           the log, because "connect failed" on its own sends people looking
+           at the password. */
+        error_log('feedback: could not reach ' . $host . ':' . $port . ' — ' . $errno . ' ' . $errstr
+            . '. If this is a live shared host, check whether it allows outbound SMTP on that port;'
+            . ' many block it and require their own relay instead.');
+        return 'connect';
+    }
     stream_set_timeout($fp, 20);
 
     /* SMTP replies can run to several lines; only the one with a space in the

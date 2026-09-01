@@ -24,3 +24,14 @@
         Deny from all
     </IfModule>
 </FilesMatch>
+
+# The throttle counter, if it ever lands beside the site rather than in tmp.
+<FilesMatch "^\.sgfb-throttle\.json$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
