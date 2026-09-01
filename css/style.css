@@ -4701,11 +4701,11 @@ a:hover {
   transition: all 0.3s linear;
 }
 
-select#country_code {
-  padding: 0px;
-  height: inherit;
-  color: #555;
-}
+/* select#country_code lived here to patch the enquiry dropdown for the old
+   light theme. The form is .mrnp-form now and marine-pages.css owns the
+   control; this rule only ever matched that one select, and its #id beat the
+   component rule, so the dropdown stayed grey and 34px tall inside a dark
+   form. Removed rather than out-specified. */
 
 .full-width {
   width: 100%;

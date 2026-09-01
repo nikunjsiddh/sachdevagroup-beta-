@@ -305,7 +305,7 @@
                     </div>
 
                     <!-- Enquiry form -->
-                    <form class="mrnp-form" action="" data-mrn-reveal="right">
+                    <form class="mrnp-form" id="enquiry" action="" data-mrn-reveal="right">
                         <h3>Send Message</h3>
 
                         <div class="mrnp-field">
@@ -322,11 +322,11 @@
 
                         <div class="mrnp-field">
                             <input type="email" id="email" name="email" placeholder=" ">
-                            <label for="email">Enter Email Adress</label>
+                            <label for="email">Enter Email Address</label>
                             <span class="mrnp-field__line"></span>
                         </div>
 
-                        <div class="mrnp-field">
+                        <div class="mrnp-field mrnp-field--select">
                             <select name="country_code" id="country_code" class="form-control"
                                 aria-label="Country dialling code">
                                 <option value="+91" selected="">India (+91)</option>
@@ -494,6 +494,7 @@
                                 <option value="+996">Kyrgyzstan (+996)</option>
                                 <option value="+998">Uzbekistan (+998)</option>
                             </select>
+                            <span class="mrnp-field__line"></span>
                         </div>
 
                         <div class="mrnp-field">
@@ -522,6 +523,11 @@
         <!-- ============================ LOCATION MAP ============================ -->
         <section class="mrnp-section mrn-soft">
             <div class="mrn-container">
+                <div class="mrn-center">
+                    <span class="mrn-eyebrow" data-sg-in="up">Find Us</span>
+                    <h2 class="mrn-title" data-sg-split>The yard at <em>Alang</em></h2>
+                </div>
+
                 <div class="mrnp-map" data-mrn-reveal="zoom">
                     <iframe
                         src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d59433.45202182445!2d72.15204138662449!3d21.40601296345263!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3be1ef1754ecc115%3A0x4e05dda2308e9b78!2sAlang%2C%20Gujarat!5e0!3m2!1sen!2sin!4v1599382468743!5m2!1sen!2sin"
@@ -557,8 +563,8 @@
                         </p>
                     </div>
 
-                    <a class="sgf-yard__btn" href="contact_us.html">
-                        Discuss a Vessel <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                    <a class="sgf-yard__btn" href="#enquiry">
+                        Send an Enquiry <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
                     </a>
                 </div>
             </div>

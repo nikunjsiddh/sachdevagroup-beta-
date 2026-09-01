@@ -1304,6 +1304,72 @@
     transform: scaleX(1);
 }
 
+/* Country-code select.
+
+   Bootstrap's .form-control claims this control and drops a white box into
+   the dark form, 25px tall against 51px siblings. There is no .mrnp- select
+   rule anywhere, so it was never restated after the form went dark. Match the
+   inputs exactly: transparent, underlined, Oswald, and draw our own chevron
+   because `appearance:none` takes the native one away with the box. */
+.mrnp-field select,
+.mrnp-form select.form-control {
+    width: 100%;
+    height: auto;
+    padding: 16px 34px 12px 4px;
+    background: transparent;
+    border: none;
+    border-bottom: 1.5px solid rgba(255, 255, 255, .25);
+    border-radius: 0;
+    box-shadow: none;
+    color: #fff;
+    font-family: "Oswald", sans-serif;
+    font-size: 15.5px;
+    font-weight: 300;
+    line-height: 1.4;
+    outline: none;
+    cursor: pointer;
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    transition: border-color .4s;
+}
+
+.mrnp-field--select {
+    position: relative;
+}
+
+/* chevron rides on the wrapper, so the select itself stays a bare control */
+.mrnp-field--select::after {
+    content: "";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    width: 8px;
+    height: 8px;
+    margin-top: -8px;
+    border-right: 1.5px solid rgba(255, 255, 255, .55);
+    border-bottom: 1.5px solid rgba(255, 255, 255, .55);
+    transform: rotate(45deg);
+    pointer-events: none;
+    transition: border-color .35s, transform .35s var(--ease-out);
+}
+
+.mrnp-field--select:hover::after,
+.mrnp-field--select:focus-within::after {
+    border-color: var(--gold-light);
+}
+
+/* same gold underline sweep the text fields get on focus */
+.mrnp-field select:focus ~ .mrnp-field__line {
+    transform: scaleX(1);
+}
+
+/* the native option list paints from the OS palette on Windows; name ours */
+.mrnp-field select option {
+    background: #03061c;
+    color: #fff;
+}
+
 /* map */
 .mrnp-map {
     position: relative;
