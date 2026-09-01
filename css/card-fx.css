@@ -1,0 +1,177 @@
+/* ==========================================================================
+   SACHDEVA GROUP — CARD FX
+   A cursor-tracked ring and spotlight for every card on every page
+   ==========================================================================
+   Scope : all 13 pages. Loaded LAST — after css/icons.css everywhere, and
+           after css/about-fx.css on about_us.html.
+
+   WHAT THIS ADDS
+     Two things, both drawn on ONE injected overlay element rather than on the
+     card itself:
+       RING       a 1.5px gradient border that is brightest wherever the
+                  cursor is — cyan, picking up amber on dark grounds. See
+                  GROUND below for why the amber is opt-in.
+       SPOTLIGHT  a soft cyan pool under the cursor, inside the card.
+     js/card-fx.js appends the overlay to each card and feeds it --mx / --my.
+
+   WHY AN INJECTED ELEMENT AND NOT ::before / ::after ON THE CARD
+     Both pseudo-elements are already taken on nearly every card this targets:
+       .mrnp-icard::before   page-fx.css:585   a sweep that translateX(64%)
+       .mrnp-icard::after    marine-pages.css  a rule that scaleX(1)s on hover
+       .pfx-fact::before     page-fx.css       a tick that scaleY(2.5)s
+       .mrnp-certcard, .cmp, .tst, .abt-unit   all likewise spoken for
+     Writing our own ::before/::after would have silently deleted those. A
+     real child costs one element per card and collides with nothing.
+
+     It also sidesteps the flattening trap this codebase documents twice
+     (css/about-fx.css:665). `overflow:hidden` and `isolation:isolate` force
+     `transform-style` to flat, so translateZ() on a card's children renders
+     nothing — which is already true of .mrnp-icard, .mrnp-certcard, .cmp,
+     .mrn-card, .viz-card and .abt-unit. A child element does not care: it is
+     painted, not projected, so the ring and the spotlight work on a flattened
+     card and an unflattened one alike.
+
+   WHAT THIS DELIBERATELY DOES NOT TOUCH
+     transform, box-shadow, border-color, background and transition on the
+     cards themselves. Every family here already declares its own hover
+     material and its own transition list, and this file loads last — so any
+     of those properties stated here would REPLACE the card's own rather than
+     add to it, across all ~76 cards. The lift stays where it already lives:
+     in the tilt handler (js/marine.js initTilt, js/marine-pages.js
+     initTilt3d), which writes an inline transform that a CSS :hover transform
+     could not beat anyway. That is the same conclusion css/about-fx.css:1690
+     reaches for the About cards.
+
+   REDUCED MOTION
+     Kept. This is material, not movement — an opacity fade and a colour that
+     tracks the pointer, with nothing travelling. The house rule in
+     css/about-fx.css section 15 is "material stays, movement goes". The
+     pointer gate that does apply is coarse pointers, and js/card-fx.js makes
+     that call rather than a media query, so no overlay is built at all on a
+     touch device.
+
+   THE SELECTOR LIST
+     Mirrored in js/card-fx.js. If a card family is added to one, add it to
+     the other — the JS builds the overlay, this file draws it, and neither
+     does anything on its own.
+   ========================================================================== */
+
+:root {
+    /* channels, because rgba() cannot take the hex tokens directly */
+    --sgfx-lead: 53, 198, 244;
+    /* --cyan-bright #35c6f4 */
+    --sgfx-warm: 255, 173, 24;
+    /* --gold        #ffad18 */
+    --sgfx-ease: cubic-bezier(.16, 1, .3, 1);
+}
+
+/* --------------------------------------------------------------------------
+   The overlay
+   --------------------------------------------------------------------------
+   The doubled class is load-bearing, not a typo. page-fx.css:592 and
+   marine-pages.css:342 both declare `.mrnp-icard > * { position: relative }`,
+   which matches this element and would drop it out of the corner it is pinned
+   to. `.sg-cardfx.sg-cardfx` scores 0,2,0 and outranks them without needing
+   !important or a parent-qualified copy of the rule for every family.
+
+   border-radius:inherit is what makes one rule fit cards whose radii run from
+   3px (.pfx-fact) to 18px (.abt-unit).
+   -------------------------------------------------------------------------- */
+
+.sg-cardfx.sg-cardfx {
+    position: absolute;
+    inset: 0;
+    z-index: 6;
+    display: block;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .45s var(--sgfx-ease);
+}
+
+.sg-has-cardfx:hover > .sg-cardfx,
+.sg-has-cardfx:focus-within > .sg-cardfx {
+    opacity: 1;
+}
+
+/* --- the ring ---------------------------------------------------------- */
+
+/* Border-as-gradient: paint the gradient over the whole box, then mask out
+   everything except a 1.5px frame. mask-composite:exclude subtracts the
+   content box from the padding box, which leaves exactly the border strip.
+   The radial is anchored to the cursor, so the ring is lit where the pointer
+   is and falls away around the card. */
+.sg-cardfx::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    padding: 1.5px;
+    background:
+        radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%),
+            rgba(var(--sgfx-lead), .88) 0%,
+            rgba(var(--sgfx-lead), .34) 38%,
+            rgba(var(--sgfx-lead), 0) 72%);
+    -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+}
+
+/* --- the spotlight ------------------------------------------------------ */
+
+/* Low alpha on purpose: this one declaration covers white cards (.tst, .cmp,
+   .mrnp-certcard) and near-black ones (.abt-unit, .viz-card) alike. Anything
+   heavier reads as a stain on the light ones. .mrn-dark lifts it below. */
+.sg-cardfx::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background:
+        radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%),
+            rgba(var(--sgfx-lead), .11) 0%,
+            rgba(var(--sgfx-lead), .04) 34%,
+            rgba(var(--sgfx-lead), 0) 62%);
+}
+
+/* --------------------------------------------------------------------------
+   Ground
+   --------------------------------------------------------------------------
+   The amber stop is the risk in this whole file. Against the near-black
+   plates it is the site's own punctuation and it reads as warmth in the
+   ring; against a white card it goes muddy, like a smudge on the border.
+
+   So the safe half is the default and the rich half is opt-in, keyed off
+   .mrn-dark — the marker the sections already carry. Doing it the other way
+   round, with the amber as the base and .mrn-light subtracting it, would put
+   the muddy version on every card in a section that carries NEITHER marker,
+   and there are several. This way an unmarked section gets the cyan-only
+   ring, which is correct on any ground.
+   -------------------------------------------------------------------------- */
+
+.mrn-dark .sg-cardfx::before {
+    background:
+        radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%),
+            rgba(var(--sgfx-lead), .95) 0%,
+            rgba(var(--sgfx-warm), .48) 34%,
+            rgba(var(--sgfx-lead), 0) 70%);
+}
+
+.mrn-dark .sg-cardfx::after {
+    background:
+        radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%),
+            rgba(var(--sgfx-lead), .17) 0%,
+            rgba(var(--sgfx-lead), .07) 32%,
+            rgba(var(--sgfx-lead), 0) 62%);
+}
+
+/* --------------------------------------------------------------------------
+   Print — the overlay is screen furniture
+   -------------------------------------------------------------------------- */
+
+@media print {
+    .sg-cardfx.sg-cardfx {
+        display: none;
+    }
+}

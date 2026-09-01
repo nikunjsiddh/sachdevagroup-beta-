@@ -238,22 +238,65 @@
     ------------------------------------------------------------------ */
     function initTilt() {
         if (reduced) return;
+        /* :hover latches after a tap on touch, which would leave a card stuck
+           mid-rotation. marine-pages.js initTilt3d already gates this way. */
+        if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
+
         var nodes = document.querySelectorAll('[data-mrn-tilt]');
 
         Array.prototype.forEach.call(nodes, function (el) {
             var max = parseFloat(el.getAttribute('data-mrn-tilt')) || 8;
             var target = el.querySelector('.mrn-figure__frame') || el;
 
+            /* A rotateX/rotateY with no perspective anywhere in the chain is
+               an orthographic rotation: the card squashes very slightly and
+               reads as nothing at all. Only .d3-stage (index-theme.css:299)
+               and a handful of about-fx grids supply one, so on
+               environment_management, health_safety, news, our_credentials,
+               testimonials and vision_mission this handler has been rotating
+               cards flat. Inline one where the chain has none — and only
+               there, so a stage that already projects is not projected twice.
+
+               Measured once at bind time: the perspective owner is an
+               ancestor and a card cannot change ancestors mid-hover. */
+            var projected = false;
+            for (var a = target.parentNode; a && a.nodeType === 1; a = a.parentNode) {
+                if (window.getComputedStyle(a).perspective !== 'none') { projected = true; break; }
+            }
+            var lens = projected ? '' : 'perspective(1000px) ';
+
+            /* The card itself gets the lift; a nested .mrn-figure__frame does
+               not, because it is a photo inside a figure and raising it opens
+               a gap against its own caption.
+
+               This is also the lift those cards were always meant to have.
+               .mrnp-icard:hover, .mrnp-certcard:hover and .mrn-card:hover all
+               declare a translateY, and all three are dead on a tilted card:
+               the inline transform written below outranks them the moment the
+               pointer moves. css/about-fx.css:1690 reaches the same
+               conclusion and strips those rules for the About cards. */
+            var lift = (target === el) ? ' translateY(-6px)' : '';
+
+            var raf = null, ev = null;
+
             el.addEventListener('mousemove', function (e) {
-                var r = el.getBoundingClientRect();
-                var px = (e.clientX - r.left) / r.width - 0.5;
-                var py = (e.clientY - r.top) / r.height - 0.5;
-                target.style.transform =
-                    'rotateY(' + (px * max) + 'deg) rotateX(' + (-py * max) + 'deg) translateZ(0)';
-            });
+                ev = e;
+                if (raf) return;
+                raf = requestAnimationFrame(function () {
+                    raf = null;
+                    var r = el.getBoundingClientRect();
+                    if (!r.width || !r.height) return;
+                    var px = (ev.clientX - r.left) / r.width - 0.5;
+                    var py = (ev.clientY - r.top) / r.height - 0.5;
+                    target.style.transform =
+                        lens + 'rotateY(' + (px * max).toFixed(2) + 'deg) rotateX(' +
+                        (-py * max).toFixed(2) + 'deg)' + lift;
+                });
+            }, { passive: true });
 
             el.addEventListener('mouseleave', function () {
-                target.style.transform = 'rotateY(0) rotateX(0)';
+                if (raf) { cancelAnimationFrame(raf); raf = null; }
+                target.style.transform = '';
             });
         });
     }
