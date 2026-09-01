@@ -37,7 +37,7 @@
      SG_MOTION_ENGINE='gsap', standing marine.js and index-motion.js down —
      and this page needs both. Every transition here is CSS, fired by classes
      those engines already set. Where a state has to appear on scroll it hangs
-     off `.sg-shown`, not `.mrn-in`; see section 10 for why.
+     off `.sg-shown`, not `.mrn-in`; see section 11 for why.
    ========================================================================== */
 
 /* ==========================================================================
@@ -227,7 +227,142 @@
 }
 
 /* ==========================================================================
-   5. #profile — photograph, story, evidence strip
+   5. #banner — the night-yard photograph
+   ==========================================================================
+   The banner is .mrnp-hero, shared with every inner page, and css/page-fx.css
+   grades its photograph for the stock daylight yard shots the other pages
+   carry: saturate(.42) brightness(.62). That grade is a rescue — it duotones
+   a warm image down into the cyan chrome so the two stop arguing.
+
+   images/about/about-banner-night-yard.webp does not need rescuing. It is
+   already the palette: a teal night sky over amber sodium lamps, the same two
+   hues this page runs everywhere else. Put the shared grade on it and the
+   lamps go grey, the sky goes slate, and the one thing worth looking at —
+   light on a working quay — flattens into haze. So About opts out and grades
+   for itself. None of this is a nudge of the shared rule; it is a different
+   intent, which is why it re-states rather than adjusts.
+
+   Only About moves. our_credentials.html, testimonials.html and
+   vision_mission.html still run about-head-bg1.png through the shared grade,
+   and it still suits them.
+
+   WHAT IS DELIBERATELY LEFT ALONE
+     transform          js/page-fx.js heroScrub() writes it inline every frame
+                        for the scroll parallax and would beat anything stated
+                        here anyway, and the 8% overscan it draws its travel
+                        budget from (marine-pages.css:26) has to stay exactly
+                        as it is.
+     .mrnp-hero__grid   the survey grid already sits over the darkest part of
+                        the frame, which is where it was working before.
+
+   Width breakpoints for this section live in section 14 with the rest.
+   ========================================================================== */
+
+/* --- the photograph ---------------------------------------------------- */
+
+.abt-hero .mrnp-hero__bg {
+    /* Colour kept, exposure pulled. .72 is where the sky holds its teal and
+       the lamps still burn, without the frame getting bright enough to fight
+       white type — the scrim below takes the copy column much further down
+       than this on its own. */
+    filter: saturate(1.06) contrast(1.08) brightness(.72);
+
+    /* The frame is 3:2; the banner strip is nearer 2.3:1, so `cover` throws
+       away a third of the height. Centred, it spends that budget cutting off
+       the crane tops — the silhouette the picture is built on — and keeps the
+       stacked-plate foreground, which at this size is a dark smudge. Biasing
+       the crop upward trades the smudge for the cranes. */
+    background-position: 50% 24%;
+}
+
+/* --- the light shafts, turned down ------------------------------------- */
+
+/* page-fx.css:168 lays three diagonal shafts over the banner. On the other
+   inner pages they are the only light in the frame and they earn their keep.
+   Here the photograph brought its own — twenty-odd sodium lamps — and a
+   straight pale diagonal drawn across them stops reading as light and starts
+   reading as a smear on the lens. Turned down far enough to keep the depth
+   and lose the streak; removing the layer outright flattens the sky. */
+.abt-hero::after {
+    opacity: .34;
+}
+
+/* --- the scrim: asymmetric, because the picture is ---------------------- */
+
+/* The copy sits left inside a 640px measure (page-fx.css:238). The lit quay
+   runs from the middle of the frame to the right edge. An even wash therefore
+   spends its darkness in the wrong place: enough of it to seat the text
+   flattens the lamps, and enough to keep the lamps leaves the sub-heading
+   sitting on a floodlit superstructure.
+
+   So the scrim is graded along the same axis the photograph is — near-opaque
+   under the words, barely there over the lights. The vertical pass keeps its
+   original job: dark under the sticky header, dark again at the foot so the
+   frame has reached the ink before .pfx-wave hands over to white. The third
+   stop is an edge vignette, which is what stops a wide dark photograph from
+   drifting off at the corners. */
+.abt-hero .mrnp-hero__scrim {
+    background:
+        linear-gradient(96deg,
+            rgba(4, 18, 31, .94) 0%,
+            rgba(5, 22, 37, .80) 27%,
+            rgba(5, 22, 37, .38) 55%,
+            rgba(5, 22, 37, .10) 79%,
+            rgba(5, 22, 37, .02) 100%),
+        linear-gradient(180deg,
+            rgba(4, 18, 31, .72) 0%,
+            rgba(4, 18, 31, .12) 33%,
+            rgba(4, 18, 31, .30) 66%,
+            rgba(4, 18, 31, .94) 100%),
+        radial-gradient(118% 104% at 46% 44%,
+            transparent 40%,
+            rgba(2, 11, 20, .42) 100%);
+}
+
+/* --- the lamps, carried past the crop ---------------------------------- */
+
+/* One warm layer, screened, sitting where the sodium lamps already are, so
+   the amber in the photograph bleeds into the chrome instead of stopping dead
+   at the frame edge. .mrnp-hero sets `isolation: isolate` (page-fx.css:121),
+   so the blend cannot reach past the banner into the header above it.
+   z-index 2 is over the scrim (1) and under .mrnp-hero__inner (4). */
+.abt-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    background:
+        radial-gradient(44% 32% at 66% 55%, rgba(255, 166, 46, .22), transparent 70%),
+        radial-gradient(16% 13% at 85% 53%, rgba(255, 200, 110, .18), transparent 72%),
+        radial-gradient(30% 26% at 12% 58%, rgba(255, 176, 70, .08), transparent 72%);
+}
+
+/* --- the drifting orbs ------------------------------------------------- */
+
+/* page-fx.css recolours these for a frame with no light of its own — cyan
+   top-left, amber parked off the bottom-right corner. Here the amber one is
+   the only thing on the layer that can move, so it is worth moving: sat over
+   the lamp cluster it reads as the glow breathing, rather than as a blob in
+   a corner. marine.css:1687 mrnOrb carries it +70/+50 and up to scale 1.22,
+   which is the room left on the right. */
+.abt-hero .mrnp-hero__orb--b {
+    width: 380px;
+    height: 300px;
+    right: 12%;
+    bottom: 26%;
+    background: radial-gradient(circle, rgba(255, 171, 46, .26), transparent 68%);
+}
+
+/* The sky is already this colour. At page-fx.css's .40 the cyan orb doubled
+   it into a bruise behind the breadcrumb. */
+.abt-hero .mrnp-hero__orb--a {
+    background: radial-gradient(circle, rgba(34, 179, 230, .26), transparent 66%);
+}
+
+/* ==========================================================================
+   6. #profile — photograph, story, evidence strip
    ========================================================================== */
 
 #profile .abt-split {
@@ -302,7 +437,7 @@
 }
 
 /* ==========================================================================
-   6. THE EVIDENCE STRIP — 1983 / 4,950 / 100,000+ / 37 + 36
+   7. THE EVIDENCE STRIP — 1983 / 4,950 / 100,000+ / 37 + 36
    ==========================================================================
    marine-pages.css paints this as a solid navy band. On this ground it should
    read as a light panel of figures, with the numerals doing the work.
@@ -472,7 +607,7 @@
 }
 
 /* ==========================================================================
-   7. #heritage — the four dates, in the same rounded key
+   8. #heritage — the four dates, in the same rounded key
    ========================================================================== */
 
 #heritage .abt-time {
@@ -519,7 +654,7 @@
 }
 
 /* ==========================================================================
-   8. #vision — a tideline band, and two plates floating over it
+   9. #vision — a tideline band, and two plates floating over it
    ==========================================================================
    WHAT WAS WRONG
      Two identical white rectangles side by side, each with a chip icon, a
@@ -880,7 +1015,7 @@
 }
 
 /* ==========================================================================
-   9. #compliance — five standards, set as compliance plates
+   10. #compliance — five standards, set as compliance plates
    ==========================================================================
    Before: five identical white boxes, each an acronym over its full name.
    Nothing told you IMO was a UN agency and Basel a treaty, the acronyms sat
@@ -1074,21 +1209,70 @@
 }
 
 /* ==========================================================================
-   10. #units, #testimonials, #creds
+   11. #units, #testimonials, #creds
    ========================================================================== */
 
+/* --- #units — the two companies, set as berth plates ---------------------
+   BEFORE
+     Two identical stacked cards: a 210px photo band, a 62px ghost numeral in
+     the seam, three paragraphs, a gold pill, a two-cell stat footer. Four
+     things were wrong with it, and only one of them was taste.
+
+     1. THE PHOTOGRAPH WAS MUD. index-theme.css:7541 lays a flat navy wash
+        over it from 32% down to solid #0a2340, on top of a
+        saturate(.72) brightness(.92) grade. Two aerials of a working yard
+        came out as brown gravel — present, but carrying no information.
+
+     2. THE STAT BAND WAS BROKEN, not merely plain. index-theme.css:7612
+        sizes every span in the band as an 11px uppercase grey label. The
+        ships figure is `<strong><span data-count="37">`, so that rule reached
+        inside the strong and drew the number as a label: 37 and 36 rendered
+        11px and grey beside a 30px white 1994. The two halves of one band
+        were set in two different type sizes, which is why the row read as a
+        mistake rather than as data.
+
+     3. THE BUTTONS DID NOT LINE UP. Card 02's copy is three lines shorter
+        than card 01's, and the grid stretches both cards to the same height,
+        so the slack collected as a hole between 02's button and its stat
+        band.
+
+     4. THE 3D WAS DEAD. The markup carried `d3-card edge-sweep` on one
+        element. .edge-sweep sets `isolation: isolate` and .abt-unit sets
+        `overflow: hidden` — both grouping properties, so the used
+        transform-style was flat and every translateZ() this section declared
+        moved nothing. Section 9 documents that exact trap and says not to put
+        .edge-sweep on a .d3-card; this section was doing it anyway.
+
+   AFTER
+     `d3-card` came off the markup and the translateZ() rules came out with
+     it. The sweep is the one of the two that was actually rendering, and a
+     card that has to clip a photograph cannot hold a 3D context anyway. The
+     tilt is unaffected: data-mrn-tilt writes an inline transform on the card
+     itself and only needs `perspective` on .abt-units, which .d3-stage
+     supplies.
+
+     What replaces it is flatter and louder — the photograph graded to read
+     instead of veiled, the ghost numeral promoted to a machined UNIT chip on
+     the image, the name given the banner's cyan-into-amber rule, the buttons
+     bottom-aligned, and the stat band rebuilt as two readouts with the ships
+     figure in cyan and the year in white.
+   ------------------------------------------------------------------------ */
+
 #units .abt-units {
-    gap: 46px;
+    gap: 40px;
     perspective: 1500px;
+    align-items: stretch;
 }
 
 #units .abt-unit {
+    position: relative;
+    display: flex;
+    flex-direction: column;
     border-radius: var(--ab-r);
     overflow: hidden;
     background: var(--ab-card-dark);
     border: var(--ab-ring-dark);
     box-shadow: var(--ab-lift-dark);
-    transform-style: preserve-3d;
     transition: box-shadow .6s var(--ab-ease), border-color .6s var(--ab-ease);
 }
 
@@ -1097,19 +1281,47 @@
     box-shadow: 0 44px 80px -30px rgba(34, 179, 230, .48);
 }
 
+/* --- the photograph ---------------------------------------------------- */
+
+#units .abt-unit__media {
+    height: 250px;
+}
+
+/* Cooled a few degrees and handed back its contrast. These are flat, slightly
+   warm stock aerials; graded this way they read as a surveyed site, which is
+   the move the banner makes in section 5. */
 #units .abt-unit__media img {
-    filter: saturate(.72) contrast(1.04) brightness(.92);
+    filter: saturate(.92) contrast(1.16) brightness(.84) hue-rotate(-8deg);
+    transform: scale(1.06);
     transition: filter .9s var(--ab-ease), transform 1.3s var(--ab-ease);
 }
 
 #units .abt-unit:hover .abt-unit__media img {
-    filter: none;
-    transform: scale(1.05);
+    filter: saturate(1.06) contrast(1.1) brightness(1);
+    transform: scale(1.12);
+}
+
+/* Replaces the flat wash. The top two thirds stay open so the yard is
+   actually visible; it closes only at the very bottom, where the plate has to
+   take over. The survey grid is the banner's, at card scale — it is what
+   stops a soft aerial from reading as a soft aerial. */
+#units .abt-unit__media::after {
+    background:
+        repeating-linear-gradient(to right, rgba(53, 198, 244, .07) 0 1px, transparent 1px 54px),
+        repeating-linear-gradient(to bottom, rgba(53, 198, 244, .07) 0 1px, transparent 1px 54px),
+        linear-gradient(180deg,
+            rgba(4, 18, 31, .60) 0%,
+            rgba(4, 18, 31, .10) 34%,
+            rgba(5, 22, 37, .44) 74%,
+            rgba(7, 26, 46, .96) 100%),
+        radial-gradient(120% 88% at 50% 0%, rgba(34, 179, 230, .18), transparent 64%);
 }
 
 /* .abt-unit carries data-mrn-tilt, which js/page-fx.js's blocked() skips, so
    nothing ever stamps it with .sg-shown — this waterline is drawn at rest and
-   brightens on approach rather than growing from zero and never arriving */
+   brightens on approach rather than growing from zero and never arriving.
+   Cyan into amber, so the seam quotes the banner rule rather than inventing a
+   third accent. */
 #units .abt-unit__media::before {
     content: "";
     position: absolute;
@@ -1118,8 +1330,11 @@
     bottom: 0;
     z-index: 3;
     height: 3px;
-    background: linear-gradient(90deg, var(--cyan-bright), rgba(34, 179, 230, .12));
-    opacity: .5;
+    background: linear-gradient(90deg,
+        var(--cyan-bright) 0%,
+        rgba(53, 198, 244, .38) 58%,
+        var(--gold, #ffad18) 100%);
+    opacity: .55;
     transition: opacity .7s var(--ab-ease);
 }
 
@@ -1127,24 +1342,138 @@
     opacity: 1;
 }
 
+/* --- the index, as a chip rather than a ghost -------------------------- */
+
+/* index-theme.css:7555 draws this as a 62px numeral at 10% white sitting in
+   the seam between the photograph and the copy — too faint to read as a label
+   and too large to ignore. Same element, same aria-hidden, promoted to a
+   machined chip in the corner of the image and built to match .mrnp-crumb in
+   the banner. */
 #units .abt-unit__no {
-    font-weight: 200;
-    letter-spacing: -1px;
-    transform: translateZ(36px);
+    position: absolute;
+    top: 16px;
+    left: 16px;
+    z-index: 4;
+    margin: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 7px 12px;
+    border: 1px solid rgba(53, 198, 244, .30);
+    border-left: 2px solid var(--cyan-bright);
+    border-radius: 2px;
+    background: rgba(6, 22, 38, .58);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    font-size: 11.5px;
+    font-weight: 500;
+    line-height: 1;
+    letter-spacing: 2.4px;
+    color: #e2eef9;
+    transition: border-color .5s var(--ab-ease), background .5s var(--ab-ease);
 }
 
-#units .abt-unit__body h3 { transform: translateZ(22px); }
-#units .abt-unit__body p { transform: translateZ(10px); }
-#units .abt-unit__body .mrn-btn { transform: translateZ(30px); border-radius: 999px; }
+#units .abt-unit__no::before {
+    content: "UNIT";
+    color: rgba(167, 187, 207, .72);
+}
+
+#units .abt-unit:hover .abt-unit__no {
+    border-color: rgba(53, 198, 244, .5);
+    border-left-color: var(--gold, #ffad18);
+    background: rgba(6, 22, 38, .72);
+}
+
+/* --- the copy ---------------------------------------------------------- */
+
+/* flex:1 is what lets the button bottom-align. The body has to be the thing
+   that absorbs the grid's slack, or the slack collects between the body and
+   the stat band instead and shows up as a hole in the shorter card. The
+   -46px pull index-theme.css:7551 sets is gone along with the ghost numeral
+   it was tucking under the photograph. */
+#units .abt-unit__body {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    /* index-theme.css:7548 makes this relative so the -46px pull could sit
+       above the media scrim on z-index 2. Both are gone, and while it stayed
+       relative it was the containing block for the absolutely positioned UNIT
+       chip below — which put the chip 16px inside the copy, on top of the
+       company name, instead of 16px inside the card, on the photograph. */
+    position: static;
+    margin-top: 0;
+    padding: 26px 30px 28px;
+}
+
+#units .abt-unit__body h3 {
+    margin-bottom: 0;
+    font-weight: 600;
+    letter-spacing: .2px;
+}
+
+#units .abt-unit__body h3::after {
+    content: "";
+    display: block;
+    width: 78px;
+    height: 3px;
+    margin: 16px 0 18px;
+    background: linear-gradient(90deg, var(--cyan-bright), var(--gold, #ffad18));
+    transition: width .6s var(--ab-ease);
+}
+
+#units .abt-unit:hover .abt-unit__body h3::after {
+    width: 118px;
+}
+
+#units .abt-unit__body p {
+    color: #b6cadd;
+}
+
+#units .abt-unit__body .mrn-btn {
+    align-self: flex-start;
+    margin-top: auto;
+    border-radius: 999px;
+}
+
+/* --- the stat band ----------------------------------------------------- */
 
 #units .abt-unit__meta {
-    transform: translateZ(16px);
     border-top: 1px solid rgba(53, 198, 244, .16);
+    background: linear-gradient(180deg, rgba(53, 198, 244, .055), transparent 72%);
+}
+
+#units .abt-unit__meta > div {
+    padding: 18px 30px 20px;
+    gap: 6px;
+}
+
+#units .abt-unit__meta > div:first-child {
+    border-right: 1px solid rgba(53, 198, 244, .16);
 }
 
 #units .abt-unit__meta strong {
+    font-size: 34px;
     font-weight: 200;
     color: #fff;
+}
+
+/* index-theme.css:7612 sizes every span in this band as an 11px uppercase
+   grey label — and the ships figure is a `<span data-count>` nested inside
+   its own <strong>, so the label rule reached in and drew the number as a
+   label. 37 and 36 came out 11px and grey next to a 30px white 1994, which is
+   why one half of the band looked broken. Put back, one level deeper. */
+#units .abt-unit__meta strong span {
+    font: inherit;
+    color: inherit;
+    letter-spacing: inherit;
+    text-transform: none;
+}
+
+/* the count is the figure that moves; the year is a constant. Colouring them
+   apart is what makes the pair read as two kinds of fact rather than two
+   numbers. */
+#units .abt-unit__meta > div:first-child strong {
+    color: var(--cyan-bright);
 }
 
 /* --- #testimonials — the remarks, set as inspection records --------------
@@ -1344,7 +1673,7 @@
 }
 
 /* ==========================================================================
-   11. 3D ON EVERY SECTION
+   12. 3D ON EVERY SECTION
    ==========================================================================
    js/marine-pages.js initTilt3d() drives [data-mrnp-tilt]: on mousemove it
    writes `perspective(1000px) rotateY() rotateX() translateY(-6px)` inline
@@ -1397,7 +1726,7 @@
 #profile .abt-frame__cap { transform: translateZ(30px); }
 
 /* ==========================================================================
-   12. WHICH CLASS THE SCROLL STATES HANG OFF
+   13. WHICH CLASS THE SCROLL STATES HANG OFF
    ==========================================================================
    These blocks carry data-mrn-reveal + data-mrn-stagger in the markup, so
    `.mrn-in` looks like the hook. It never arrives. js/page-fx.js runs an
@@ -1416,7 +1745,7 @@
    ========================================================================== */
 
 /* ==========================================================================
-   13. RESPONSIVE
+   14. RESPONSIVE
    ========================================================================== */
 
 @media (max-width: 1100px) {
@@ -1446,6 +1775,47 @@
 }
 
 @media (max-width: 860px) {
+
+    /* --- the banner (section 5) ---------------------------------------- */
+
+    /* The crop inverts here. A 3:2 frame inside a box that is taller than it
+       is wide keeps roughly the middle third of the width and nothing else,
+       so the choice is which third — and the lit one is worth more than the
+       geometric centre. */
+    .abt-hero .mrnp-hero__bg {
+        background-position: 58% 38%;
+    }
+
+    /* Section 5's horizontal grade assumes the copy holds the left third of
+       the frame. Below 860 it holds all of it, so the wash goes back to being
+       broadly even — but no heavier than it has to be. Matching the desktop
+       weight across the whole width buried the photograph: at this size the
+       lit quay is a strip a finger wide, and darkening it to seat the text
+       leaves a navy rectangle where the picture was. */
+    .abt-hero .mrnp-hero__scrim {
+        background:
+            linear-gradient(180deg,
+                rgba(4, 18, 31, .78) 0%,
+                rgba(4, 18, 31, .34) 30%,
+                rgba(4, 18, 31, .54) 62%,
+                rgba(4, 18, 31, .94) 100%),
+            linear-gradient(96deg,
+                rgba(5, 22, 37, .44) 0%,
+                rgba(5, 22, 37, .20) 100%);
+    }
+
+    /* the bloom is pulled back to match — it was sized against a frame with
+       three times this much width showing */
+    .abt-hero::before {
+        opacity: .66;
+    }
+
+    .abt-hero .mrnp-hero__orb--b {
+        width: 240px;
+        height: 200px;
+        right: 4%;
+        bottom: 30%;
+    }
 
     #profile .abt-split {
         gap: 44px;
@@ -1538,12 +1908,36 @@
         gap: 30px;
     }
 
-    /* real 3D only ever shows the first frame of a hover that never arrives */
-    #units .abt-unit__no,
-    #units .abt-unit__body h3,
-    #units .abt-unit__body p,
-    #units .abt-unit__body .mrn-btn,
-    #units .abt-unit__meta,
+    /* Section 11 sets these with an id, so index-theme.css's own phone steps
+       (7666, 7670) can no longer reach them — they have to be restated here
+       or the card keeps its 30px desktop gutters on a 375px screen. The photo
+       comes down with them: at one card per row a 250px band is most of the
+       first screenful and the name gets pushed under the fold. */
+    #units .abt-unit__media {
+        height: 200px;
+    }
+
+    #units .abt-unit__body {
+        padding: 22px 22px 24px;
+    }
+
+    #units .abt-unit__meta > div {
+        padding: 15px 22px 17px;
+    }
+
+    #units .abt-unit__meta strong {
+        font-size: 29px;
+    }
+
+    #units .abt-unit__no {
+        top: 13px;
+        left: 13px;
+    }
+
+    /* real 3D only ever shows the first frame of a hover that never arrives.
+       #units is no longer in this list: section 11 stopped declaring
+       translateZ() altogether once it came out that .edge-sweep and
+       overflow:hidden were flattening the card anyway. */
     #heritage .abt-time__year,
     #heritage .abt-time__item h4,
     #heritage .abt-time__item p,
@@ -1567,7 +1961,7 @@
 }
 
 /* ==========================================================================
-   14. REDUCED MOTION
+   15. REDUCED MOTION
    Material stays, movement goes. The second rule matters most: the heading
    rules and stamp bars are authored at scaleX(0), so switching the transition
    off is not enough — without forcing them to `none`, which is identity, they

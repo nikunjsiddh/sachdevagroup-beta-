@@ -58,6 +58,13 @@
     <meta name="description" content="">
 
     <!-- Place favicon.ico in the root directory -->
+
+    <!-- The banner photograph is the LCP element on this page, and it is set
+         as a CSS background on an inline style — so the preload scanner
+         cannot see it. Without this the browser only starts the request after
+         nine stylesheets have resolved and the hero has been laid out. -->
+    <link rel="preload" as="image" href="images/about/about-banner-night-yard.webp" fetchpriority="high">
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/animate.min.css">
@@ -172,9 +179,17 @@
 
         <!-- ============================ PAGE HERO ============================ -->
         <!-- ============================ PAGE BANNER ============================
-             Still photograph, not footage: images/about/about-head-bg1.png is
-             the About banner this page shipped with originally (2050x688,
-             the only asset in images/about/ shaped as a banner strip).
+             Still photograph, not footage: images/about/about-banner-night-yard.webp,
+             the Alang berth after dark — cranes in silhouette against a teal
+             sky, sodium lamps burning down the quay. 1536x1024, 118 KB.
+
+             It replaced about-head-bg1.png, which is still the banner on
+             our_credentials, testimonials and vision_mission — so that file
+             stays where it is; only About moves.
+
+             The photograph is already the site's palette rather than merely
+             compatible with it, which is why About takes a grade of its own.
+             css/about-fx.css section 5 has the whole argument.
 
              This is .mrnp-hero, the shared page-banner component — so it comes
              with the wave foot, the survey grid and the drifting orbs the rest
@@ -187,7 +202,7 @@
              white curve above a dark bar would read as a mistake. Order is:
              banner -> rail -> wave -> first section. -->
         <section class="mrnp-hero abt-hero" id="banner">
-            <div class="mrnp-hero__bg" style="background-image:url('images/about/about-head-bg1.png')"></div>
+            <div class="mrnp-hero__bg" style="background-image:url('images/about/about-banner-night-yard.webp')"></div>
             <div class="mrnp-hero__scrim"></div>
             <div class="mrnp-hero__grid"></div>
             <span class="mrnp-hero__orb mrnp-hero__orb--a" aria-hidden="true"></span>
@@ -496,7 +511,7 @@
                 </div>
 
                 <div class="abt-units d3-stage" data-mrn-stagger="160" data-mrn-reveal>
-                    <article class="abt-unit d3-card edge-sweep" data-mrn-tilt="6">
+                    <article class="abt-unit edge-sweep" data-mrn-tilt="6">
                         <div class="abt-unit__media">
                             <img src="images/gallery/6.jpg"
                                 alt="Aerial view of the plot showing segregated plate stacks, cranes and machinery rows">
@@ -518,7 +533,7 @@
                         </div>
                     </article>
 
-                    <article class="abt-unit d3-card edge-sweep" data-mrn-tilt="6">
+                    <article class="abt-unit edge-sweep" data-mrn-tilt="6">
                         <div class="abt-unit__media">
                             <img src="images/ship_recycling.jpg"
                                 alt="Aerial view of the Sachdeva Group yard at Alang with plate stacks and cranes">
