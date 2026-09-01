@@ -44,12 +44,46 @@
 
     win.SGFeedback = true;
 
+    /* The content icons follow css/icons.css: a 24x24 artboard, stroke 1.7,
+       round caps and joins, and the duotone underlay index.html uses on its
+       stat row — a silhouette filled at 16% under the linework. That underlay
+       is what stops a glyph reading as a wireframe at 22px; the site draws 12
+       of its icons this way and these were the odd ones out.
+
+       Two of them were also just wrong. `worker` was a dome on a bar, which
+       renders as a serving cloche rather than a safety helmet — it now has
+       the brim and the two crown ridges that make a hard hat read as one.
+       `visitor` was a generic person flanked by two stray ticks; it is now a
+       visitor badge on a lanyard, which says "signed in at the gate" rather
+       than "somebody". `customer` borrows index.html's vessel outright: the
+       customers of a ship recycler are the owners and cash buyers who bring
+       the ship, and a briefcase said nothing about that. */
     var ICON = {
-        chat: '<path d="M20.4 15.2a2 2 0 0 1-2 2H8.6L4 20.8V5.4a2 2 0 0 1 2-2h12.4a2 2 0 0 1 2 2z"/><path d="M8 8.8h8"/><path d="M8 12.4h5.2"/>',
+        chat: '<path opacity=".16" fill="currentColor" stroke="none" d="M6 4.4h12.4a1.6 1.6 0 0 1 1.6 1.6v9a1.6 1.6 0 0 1-1.6 1.6H8.9L4.4 20V6a1.6 1.6 0 0 1 1.6-1.6z"/>' +
+              '<path d="M20.4 15.2a2 2 0 0 1-2 2H8.6L4 20.8V5.4a2 2 0 0 1 2-2h12.4a2 2 0 0 1 2 2z"/>' +
+              '<path d="M8 8.8h8"/><path d="M8 12.4h5.2"/>',
+
         close: '<path d="M6.4 6.4 17.6 17.6"/><path d="M17.6 6.4 6.4 17.6"/>',
-        worker: '<path d="M4.6 15.4a7.4 7.4 0 0 1 14.8 0"/><path d="M9.4 8.6V5.8a1.2 1.2 0 0 1 1.2-1.2h2.8a1.2 1.2 0 0 1 1.2 1.2v2.8"/><path d="M3.4 15.4h17.2a1 1 0 0 1 1 1v1.1a1 1 0 0 1-1 1H3.4a1 1 0 0 1-1-1v-1.1a1 1 0 0 1 1-1z"/>',
-        visitor: '<circle cx="12" cy="8" r="3.5"/><path d="M5 20.1a7 7 0 0 1 14 0"/><path d="M2.6 4.4v3.2"/><path d="M21.4 4.4v3.2"/>',
-        customer: '<rect x="2.8" y="7.6" width="18.4" height="11.8" rx="2"/><path d="M8.6 7.6V6a1.6 1.6 0 0 1 1.6-1.6h3.6A1.6 1.6 0 0 1 15.4 6v1.6"/><path d="M2.8 12.6h18.4"/><path d="M11 12.6h2"/>',
+
+        /* hard hat — crown, two ridges, brim */
+        worker: '<path opacity=".16" fill="currentColor" stroke="none" d="M12 5.6a6.4 6.4 0 0 1 6.4 6.4v3.4H5.6V12A6.4 6.4 0 0 1 12 5.6z"/>' +
+                '<path d="M5.6 15.4V12a6.4 6.4 0 0 1 12.8 0v3.4"/>' +
+                '<path d="M9.5 15.4V6.6"/><path d="M14.5 15.4V6.6"/>' +
+                '<rect x="1.9" y="15.4" width="20.2" height="3.4" rx="1.5"/>',
+
+        /* visitor badge on a lanyard */
+        visitor: '<path opacity=".16" fill="currentColor" stroke="none" d="M7.4 9.6h9.2a1.4 1.4 0 0 1 1.4 1.4v8.2a1.4 1.4 0 0 1-1.4 1.4H7.4A1.4 1.4 0 0 1 6 19.2V11a1.4 1.4 0 0 1 1.4-1.4z"/>' +
+                 '<path d="m9.2 2.8 2.8 5.8 2.8-5.8"/>' +
+                 '<rect x="5.8" y="8.6" width="12.4" height="12.2" rx="1.8"/>' +
+                 '<circle cx="12" cy="13" r="1.9"/>' +
+                 '<path d="M8.7 18.4a3.5 3.5 0 0 1 6.6 0"/>',
+
+        /* index.html's vessel, reused verbatim so the card speaks the same
+           language as the home page stat row */
+        customer: '<path opacity=".16" fill="currentColor" stroke="none" d="M4 16.8h16l-1.7 3a1.9 1.9 0 0 1-1.6.9H7.3a1.9 1.9 0 0 1-1.6-.9z"/>' +
+                  '<path d="M4.3 16.8h15.4l-1.7-5a1.4 1.4 0 0 0-1.3-.9H7.3a1.4 1.4 0 0 0-1.3.9z"/>' +
+                  '<path d="M12 10.9V3.7"/><path d="M8.8 5.7h6.4"/>',
+
         check: '<path d="M4.8 12.6 9.9 17.7 19.2 7.4"/>'
     };
 

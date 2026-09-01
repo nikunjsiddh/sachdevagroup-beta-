@@ -1034,13 +1034,15 @@ a.sgf-contact__value:focus {
     background: linear-gradient(150deg, rgba(53, 198, 244, .18), rgba(53, 198, 244, .04));
     border: 1px solid rgba(53, 198, 244, .26);
     color: var(--cyan-bright, #35c6f4);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .07);
     transition: background .4s var(--e-out), color .4s var(--e-out),
-        border-color .4s var(--e-out), transform .4s var(--e-out);
+        border-color .4s var(--e-out), transform .4s var(--e-out),
+        box-shadow .4s var(--e-out);
 }
 
 .sgfb-type__ico svg {
-    width: 22px;
-    height: 22px;
+    width: 23px;
+    height: 23px;
 }
 
 .sgfb-type__box b {
@@ -1099,6 +1101,8 @@ a.sgf-contact__value:focus {
     background: linear-gradient(150deg, var(--cyan-bright, #35c6f4), var(--cyan-deep, #1195cf));
     border-color: transparent;
     color: #041724;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, .34),
+        var(--glow-cyan, 0 22px 50px -26px rgba(34, 179, 230, .85));
 }
 
 .sgfb-type input:checked + .sgfb-type__box .sgfb-type__tick {
