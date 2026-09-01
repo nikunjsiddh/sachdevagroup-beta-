@@ -695,3 +695,772 @@ a.sgf-contact__value:focus {
         transition: none;
     }
 }
+
+
+/* ==========================================================================
+   FEEDBACK WIDGET — the floating launcher and its dialog
+   ==========================================================================
+   Built entirely by js/feedback.js. Nothing in any page's markup matches a
+   selector below.
+
+   WHY IT LIVES IN THIS FILE
+   It started in css/page-fx.css, which is the inner-page override layer and
+   is deliberately never loaded on index.html — so the home page got the
+   script, built the widget, and painted it with no rules at all. This file is
+   the one stylesheet that is loaded by all 13 pages AND already owns the
+   other floating control on the site, #toTopBtn at line 540. A second
+   floating control belongs beside the first.
+
+   Nothing here may reference a --pfx-* token or a .mrnp-* class: both come
+   from files index.html does not load. The widget depends only on the :root
+   tokens index-theme.css defines, which every page has.
+
+   The launcher takes the opposite half of the palette from #toTopBtn — a gold
+   plate with ink line-work against that button's cyan disc — and stacks above
+   it. Two identical discs would read as a pair of buttons doing one job.
+
+   FRONT END ONLY. js/feedback.js sends nothing; read its header before this
+   ships.
+   ========================================================================== */
+
+/* --- 6.10 feedback widget — launcher + dialog --------------------------
+   Caller: js/feedback.js, which builds every element below. Nothing in any
+   page's markup matches these selectors.
+
+   The launcher is the second floating control on the page. #toTopBtn is a
+   46px cyan disc with a gold ring at bottom:20 right:30 (footer-modern.css
+   540), so this one takes the opposite half of the palette — a gold plate
+   with ink line-work — and stacks above it. Two identical discs would read
+   as a pair of buttons doing the same job.
+
+   It is a pill that carries its label on desktop and collapses to the disc
+   on touch, where a 150px pill parked over the content is in the way.
+
+   FRONT END ONLY. js/feedback.js sends nothing; read its header before this
+   ships. */
+
+.sgfb-launch {
+    position: fixed;
+    right: 30px;
+    bottom: 78px;
+    /* above #toTopBtn's 999 and below .mrnp-lb's 10000 */
+    z-index: 1000;
+    display: inline-flex;
+    align-items: center;
+    gap: 0;
+    height: 46px;
+    padding: 0;
+    border: 2px solid rgba(255, 255, 255, .28);
+    border-radius: 999px;
+    background: linear-gradient(135deg, var(--gold-light, #ffcc29) 0%, var(--gold, #ffad18) 100%);
+    color: var(--ink, #071a2e);
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    cursor: pointer;
+    overflow: hidden;
+    box-shadow: 0 14px 30px -12px rgba(255, 173, 24, .95);
+    transition: transform .45s var(--e-out), box-shadow .45s var(--e-out),
+        border-color .45s var(--e-out);
+}
+
+.sgfb-launch__ico {
+    display: grid;
+    place-items: center;
+    width: 42px;
+    height: 42px;
+    flex: 0 0 auto;
+}
+
+.sgfb-launch__ico svg {
+    width: 21px;
+    height: 21px;
+    transition: transform .5s var(--e-out);
+}
+
+/* The label is revealed by width, not by display: a display switch cannot be
+   transitioned and the pill would snap open. max-width is the only property
+   that animates cleanly here, because the text is a single unwrapped line. */
+.sgfb-launch__txt {
+    max-width: 0;
+    padding-right: 0;
+    white-space: nowrap;
+    opacity: 0;
+    transition: max-width .5s var(--e-out), opacity .35s var(--e-out),
+        padding-right .5s var(--e-out);
+}
+
+.sgfb-launch:hover,
+.sgfb-launch:focus-visible {
+    transform: translateY(-3px);
+    border-color: #fff;
+    box-shadow: 0 22px 44px -14px rgba(255, 173, 24, .95);
+}
+
+.sgfb-launch:hover .sgfb-launch__txt,
+.sgfb-launch:focus-visible .sgfb-launch__txt {
+    max-width: 130px;
+    padding-right: 20px;
+    opacity: 1;
+}
+
+.sgfb-launch:hover .sgfb-launch__ico svg {
+    transform: rotate(-8deg) scale(1.06);
+}
+
+.sgfb-launch:focus-visible {
+    outline: 2px solid var(--cyan-bright, #35c6f4);
+    outline-offset: 3px;
+}
+
+/* --- the dialog --------------------------------------------------------- */
+
+.sgfb {
+    position: fixed;
+    inset: 0;
+    z-index: 10001;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 32px 20px;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity .4s var(--e-out), visibility .4s var(--e-out);
+}
+
+.sgfb.is-open {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* js/feedback.js swaps the form for the sent panel with el.hidden. The UA
+   stylesheet's [hidden] { display: none } is the weakest rule there is, and
+   .sgfb__form below sets `display: grid` — which beats it, so the filled-in
+   form stayed on screen underneath the thank-you. Any author `display` on an
+   element that is ever hidden has to be answered, so it is answered once,
+   for the whole widget, rather than per element. */
+.sgfb [hidden] {
+    display: none !important;
+}
+
+.sgfb__scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(3, 6, 28, .9);
+    -webkit-backdrop-filter: blur(9px);
+    backdrop-filter: blur(9px);
+}
+
+.sgfb__panel {
+    position: relative;
+    width: 100%;
+    max-width: 640px;
+    max-height: calc(100vh - 64px);
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 36px 42px 32px;
+    background: linear-gradient(165deg, #0a2340 0%, #071a2e 60%, #04121f 100%);
+    border: 1px solid rgba(53, 198, 244, .18);
+    box-shadow: 0 50px 100px -40px rgba(0, 0, 0, .9);
+    transform: translate3d(0, 26px, 0) scale(.97);
+    transition: transform .55s var(--e-out);
+    /* the panel scrolls itself; Lenis must not take the wheel inside it */
+    overscroll-behavior: contain;
+}
+
+.sgfb.is-open .sgfb__panel {
+    transform: none;
+}
+
+/* the blueprint grid the dark sections carry, so the dialog reads as part of
+   the same system rather than as a browser chrome box */
+.sgfb__panel::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(rgba(53, 198, 244, .032) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(53, 198, 244, .032) 1px, transparent 1px);
+    background-size: 58px 58px;
+}
+
+.sgfb__glow {
+    position: absolute;
+    top: -90px;
+    right: -70px;
+    width: 320px;
+    height: 320px;
+    border-radius: 50%;
+    background: radial-gradient(circle, rgba(34, 179, 230, .3), transparent 68%);
+    pointer-events: none;
+}
+
+.sgfb__panel > * {
+    position: relative;
+    z-index: 1;
+}
+
+.sgfb__close {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
+    width: 38px;
+    height: 38px;
+    display: grid;
+    place-items: center;
+    padding: 0;
+    border: 1px solid rgba(53, 198, 244, .26);
+    border-radius: 3px;
+    background: rgba(4, 18, 31, .6);
+    color: var(--body-on-dark, #a7bbcf);
+    cursor: pointer;
+    transition: color .35s var(--e-out), border-color .35s var(--e-out),
+        background .35s var(--e-out), transform .35s var(--e-out);
+}
+
+.sgfb__close svg {
+    width: 17px;
+    height: 17px;
+}
+
+.sgfb__close:hover {
+    color: #fff;
+    border-color: var(--cyan-bright, #35c6f4);
+    background: rgba(53, 198, 244, .16);
+    transform: rotate(90deg);
+}
+
+.sgfb__head {
+    margin-bottom: 24px;
+    padding-right: 44px;
+}
+
+.sgfb__head h3 {
+    margin: 10px 0 8px;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 1.2;
+    letter-spacing: .2px;
+    color: #fff;
+}
+
+.sgfb__head h3 em {
+    font-style: normal;
+    color: var(--cyan-bright, #35c6f4);
+}
+
+.sgfb__head p {
+    margin: 0;
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--body-on-dark, #a7bbcf);
+}
+
+/* --- the three types ----------------------------------------------------- */
+
+.sgfb-types {
+    margin: 0 0 26px;
+    padding: 0;
+    border: 0;
+}
+
+.sgfb-types legend {
+    margin-bottom: 14px;
+    padding: 0;
+    border: 0;
+    width: auto;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2.4px;
+    text-transform: uppercase;
+    color: var(--cyan-bright, #35c6f4);
+}
+
+.sgfb-types__grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 12px;
+}
+
+.sgfb-type {
+    margin: 0;
+    font-weight: 400;
+    cursor: pointer;
+}
+
+/* The input is the control — it keeps focus, keyboard and the checked state.
+   It is taken out of the visual flow rather than hidden, because
+   display:none / visibility:hidden drop an input out of the tab order and the
+   three types become unreachable without a mouse. */
+.sgfb-type input {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    margin: -1px;
+    padding: 0;
+    border: 0;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+.sgfb-type__box {
+    position: relative;
+    display: block;
+    height: 100%;
+    padding: 15px 12px 13px;
+    text-align: center;
+    background: rgba(4, 18, 31, .55);
+    border: 1px solid rgba(53, 198, 244, .2);
+    border-radius: 3px;
+    transition: transform .4s var(--e-out), border-color .4s var(--e-out),
+        background .4s var(--e-out), box-shadow .4s var(--e-out);
+}
+
+.sgfb-type__ico {
+    display: grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin: 0 auto 10px;
+    border-radius: 3px;
+    background: linear-gradient(150deg, rgba(53, 198, 244, .18), rgba(53, 198, 244, .04));
+    border: 1px solid rgba(53, 198, 244, .26);
+    color: var(--cyan-bright, #35c6f4);
+    transition: background .4s var(--e-out), color .4s var(--e-out),
+        border-color .4s var(--e-out), transform .4s var(--e-out);
+}
+
+.sgfb-type__ico svg {
+    width: 22px;
+    height: 22px;
+}
+
+.sgfb-type__box b {
+    display: block;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 1.2px;
+    color: #fff;
+}
+
+.sgfb-type__box i {
+    display: block;
+    margin-top: 4px;
+    font-style: normal;
+    font-size: 11.5px;
+    line-height: 1.45;
+    color: rgba(167, 187, 207, .8);
+}
+
+.sgfb-type__tick {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    display: grid;
+    place-items: center;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--cyan-bright, #35c6f4);
+    color: #041724;
+    opacity: 0;
+    transform: scale(.5);
+    transition: opacity .35s var(--e-out), transform .35s var(--e-out);
+}
+
+.sgfb-type__tick svg {
+    width: 12px;
+    height: 12px;
+}
+
+.sgfb-type:hover .sgfb-type__box {
+    transform: translateY(-3px);
+    border-color: rgba(53, 198, 244, .42);
+    background: rgba(8, 32, 58, .8);
+}
+
+.sgfb-type input:checked + .sgfb-type__box {
+    border-color: var(--cyan-bright, #35c6f4);
+    background: linear-gradient(165deg, rgba(53, 198, 244, .18), rgba(53, 198, 244, .04));
+    box-shadow: 0 0 0 1px rgba(53, 198, 244, .35) inset,
+        var(--glow-cyan, 0 22px 50px -26px rgba(34, 179, 230, .85));
+}
+
+.sgfb-type input:checked + .sgfb-type__box .sgfb-type__ico {
+    background: linear-gradient(150deg, var(--cyan-bright, #35c6f4), var(--cyan-deep, #1195cf));
+    border-color: transparent;
+    color: #041724;
+}
+
+.sgfb-type input:checked + .sgfb-type__box .sgfb-type__tick {
+    opacity: 1;
+    transform: none;
+}
+
+/* the ring goes on the BOX — the input it belongs to is 1px and clipped, so
+   its own focus ring would be invisible */
+.sgfb-type input:focus-visible + .sgfb-type__box {
+    outline: 2px solid var(--cyan-bright, #35c6f4);
+    outline-offset: 3px;
+}
+
+/* --- fields -------------------------------------------------------------- */
+
+/* Name and Designation are short and belong side by side; the number, the
+   note and the actions run the full width. Pairing the two short fields is
+   54px of height back, which is the difference between the send button
+   sitting above the fold on a 900px laptop and below it. */
+.sgfb__form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 22px;
+}
+
+.sgfb-types,
+.sgfb-field--wide,
+.sgfb__actions {
+    grid-column: 1 / -1;
+}
+
+/* THE FIELDS ARE SELF-CONTAINED, and that is the whole reason this component
+   moved out of page-fx.css. They used to carry .mrnp-field as well and borrow
+   the floating-label behaviour from marine-pages.css — which index.html does
+   not load. On the home page the labels sat on top of the typed text and the
+   inputs drew a browser default box. Every rule that behaviour needs is
+   restated below, so the widget depends on nothing but the :root tokens in
+   index-theme.css, which all 13 pages do load. */
+.sgfb-field {
+    position: relative;
+    margin-bottom: 24px;
+    min-width: 0;
+}
+
+.sgfb-field input,
+.sgfb-field textarea {
+    display: block;
+    width: 100%;
+    padding: 16px 4px 12px;
+    background: transparent;
+    border: 0;
+    border-bottom: 1.5px solid rgba(255, 255, 255, .22);
+    border-radius: 0;
+    color: #fff;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 15.5px;
+    font-weight: 300;
+    line-height: 1.5;
+    outline: none;
+    resize: none;
+    -webkit-appearance: none;
+    appearance: none;
+    transition: border-color .4s var(--e-out);
+}
+
+.sgfb-field textarea {
+    min-height: 82px;
+}
+
+.sgfb-field input:focus,
+.sgfb-field textarea:focus {
+    border-bottom-color: rgba(53, 198, 244, .5);
+}
+
+.sgfb-field label {
+    position: absolute;
+    left: 4px;
+    top: 16px;
+    font-size: 15px;
+    font-weight: 300;
+    letter-spacing: .6px;
+    color: rgba(167, 187, 207, .78);
+    pointer-events: none;
+    transform-origin: left top;
+    transition: transform .35s var(--e-out), color .35s var(--e-out),
+        letter-spacing .35s var(--e-out);
+}
+
+/* placeholder=" " — a single space — is what makes :not(:placeholder-shown)
+   mean "this field has a value". js/feedback.js writes it on every input and
+   textarea; without it the label never lifts. */
+.sgfb-field input:focus + label,
+.sgfb-field textarea:focus + label,
+.sgfb-field input:not(:placeholder-shown) + label,
+.sgfb-field textarea:not(:placeholder-shown) + label {
+    transform: translateY(-18px) scale(.76);
+    color: var(--cyan-bright, #35c6f4);
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+}
+
+.sgfb-field__line {
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    height: 2px;
+    background: linear-gradient(90deg, var(--cyan-bright, #35c6f4), var(--gold, #ffad18));
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform .45s var(--e-out);
+}
+
+.sgfb-field input:focus ~ .sgfb-field__line,
+.sgfb-field textarea:focus ~ .sgfb-field__line {
+    transform: scaleX(1);
+}
+
+.sgfb-count {
+    position: absolute;
+    top: 0;
+    right: 0;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 11px;
+    letter-spacing: 1.4px;
+    color: rgba(167, 187, 207, .55);
+}
+
+.sgfb-err {
+    display: block;
+    min-height: 0;
+    margin-top: 7px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #ff9c8f;
+    opacity: 0;
+    transform: translateY(-4px);
+    transition: opacity .3s var(--e-out), transform .3s var(--e-out);
+}
+
+.is-bad .sgfb-err {
+    opacity: 1;
+    transform: none;
+}
+
+.sgfb-field.is-bad input,
+.sgfb-field.is-bad textarea {
+    border-bottom-color: rgba(255, 122, 105, .75);
+}
+
+.sgfb-field.is-bad label {
+    color: #ff9c8f;
+}
+
+.sgfb-types.is-bad .sgfb-type__box {
+    border-color: rgba(255, 122, 105, .55);
+}
+
+/* The panel is the scrollport, so the actions row sticks to its floor. Below
+   about 820px of viewport the form is taller than the panel and the send
+   button is off the bottom — and a button you have to discover by scrolling
+   inside a dialog is a button half the visitors never press. The negative
+   margins take the bar full-bleed so its backdrop covers the panel's own
+   42px of side padding, and the gradient tells the reader there is more
+   form underneath it. */
+.sgfb__actions {
+    position: sticky;
+    bottom: -32px;
+    z-index: 2;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 14px;
+    align-items: center;
+    margin: 10px -42px -32px;
+    padding: 18px 42px 32px;
+    background: linear-gradient(180deg,
+            rgba(7, 26, 46, 0) 0%,
+            rgba(7, 26, 46, .92) 22%,
+            #06182a 46%);
+}
+
+/* --- the sent state ------------------------------------------------------ */
+
+.sgfb__done {
+    text-align: center;
+    padding: 22px 0 8px;
+}
+
+.sgfb__done-mark {
+    display: grid;
+    place-items: center;
+    width: 74px;
+    height: 74px;
+    margin: 0 auto 22px;
+    border-radius: 50%;
+    background: linear-gradient(150deg, var(--cyan-bright, #35c6f4), var(--cyan-deep, #1195cf));
+    color: #041724;
+    box-shadow: var(--glow-cyan, 0 22px 50px -26px rgba(34, 179, 230, .85));
+}
+
+.sgfb__done-mark svg {
+    width: 34px;
+    height: 34px;
+}
+
+.sgfb__done h4 {
+    margin: 0 0 12px;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 26px;
+    font-weight: 300;
+    color: #fff;
+}
+
+.sgfb__done p {
+    max-width: 420px;
+    margin: 0 auto 26px;
+    font-size: 14.5px;
+    line-height: 1.75;
+    color: var(--body-on-dark, #a7bbcf);
+}
+
+/* The page behind the dialog must not scroll. overflow:hidden on <html> is
+   what holds on iOS, where a body-only lock still lets the document rubber
+   band; js/feedback.js also stops Lenis, which owns the wheel on this site
+   and would keep driving the page underneath regardless of overflow. */
+html.sgfb-locked,
+html.sgfb-locked body {
+    overflow: hidden;
+}
+
+
+/* --- the widget on a small screen ------------------------------------ */
+
+@media (max-width: 860px) {
+
+    .sgfb__panel {
+        padding: 34px 22px 28px;
+        max-height: calc(100vh - 40px);
+    }
+
+    .sgfb__form {
+        grid-template-columns: 1fr;
+    }
+
+    /* the bleed has to match the panel's padding, or the bar's backdrop stops
+       short of the edge and a strip of form shows through beside it */
+    .sgfb__actions {
+        margin: 8px -22px -28px;
+        padding: 16px 22px 28px;
+        bottom: -28px;
+    }
+
+    .sgfb__actions .mrn-btn {
+        flex: 1 1 100%;
+        justify-content: center;
+    }
+
+    .sgfb__head h3 {
+        font-size: 25px;
+    }
+
+    /* three type cards across 375px is 108px each, and "Customers" alone is
+       82px of that before its hint line — they stack, and the icon moves
+       beside the label so a stacked card is a row rather than a third screen
+       of vertical travel */
+    .sgfb-types__grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+
+    /* Icon left, label over hint on the right. A flat flex row puts the
+       label and the hint side by side, and "Owners & buyers" is the one hint
+       long enough to wrap there — which made the Customers card taller than
+       the two above it. A 2x2 grid with the icon spanning both rows keeps
+       all three the same height whatever the hint says. */
+    .sgfb-type__box {
+        display: grid;
+        grid-template-columns: 40px 1fr;
+        align-items: center;
+        column-gap: 14px;
+        text-align: left;
+        padding: 12px 46px 12px 12px;
+    }
+
+    .sgfb-type__ico {
+        grid-row: 1 / 3;
+        margin: 0;
+        width: 40px;
+        height: 40px;
+    }
+
+    .sgfb-type__box b {
+        grid-column: 2;
+        align-self: end;
+    }
+
+    .sgfb-type__box i {
+        grid-column: 2;
+        align-self: start;
+        margin-top: 2px;
+    }
+
+    .sgfb-type__tick {
+        top: 50%;
+        right: 12px;
+        margin-top: -10px;
+    }
+
+    /* a 150px pill parked over the content is in the way on a phone, and
+       there is no hover to open it with anyway */
+    .sgfb-launch {
+        right: 20px;
+        bottom: 74px;
+    }
+
+    .sgfb-launch__txt {
+        display: none;
+    }
+}
+
+
+/* --- the widget under prefers-reduced-motion ------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+
+    /* The dialog still FADES — an element that appears with no transition at
+       all reads as a rendering glitch, and a cross-fade is not the vestibular
+       case the preference is asking about. What goes is the travel: the panel
+       no longer rises, the launcher no longer lifts, the close button no
+       longer spins, and the type cards no longer move under the pointer. */
+    .sgfb__panel,
+    .sgfb.is-open .sgfb__panel {
+        transform: none !important;
+        transition: none !important;
+    }
+
+    .sgfb-launch,
+    .sgfb-launch:hover,
+    .sgfb-launch:focus-visible,
+    .sgfb-launch__ico svg,
+    .sgfb-launch:hover .sgfb-launch__ico svg,
+    .sgfb__close,
+    .sgfb__close:hover,
+    .sgfb-type__box,
+    .sgfb-type:hover .sgfb-type__box,
+    .sgfb-type__ico,
+    .sgfb-err {
+        transform: none !important;
+        transition: none !important;
+    }
+
+    /* the tick is the checked state, so it may not be transformed away —
+       restate it as a plain show/hide */
+    .sgfb-type__tick {
+        transition: none !important;
+        transform: none !important;
+    }
+
+    /* the label reveal is a width, not a travel, but with no transition it
+       would snap — hold it open on hover with nothing animating */
+    .sgfb-launch__txt {
+        transition: none !important;
+    }
+}
