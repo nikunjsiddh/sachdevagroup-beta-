@@ -172,9 +172,15 @@
 
         <!-- ============================ PAGE HERO ============================ -->
         <!-- ============================ PAGE BANNER ============================
-             Still photograph, not footage: images/about/about-head-bg1.png is
-             the About banner this page shipped with originally (2050x688,
-             the only asset in images/about/ shaped as a banner strip).
+             Still photograph, not footage: images/about/about-head-yard.jpg
+             is an Alang yard at blue hour — a beached vessel part-dismantled,
+             the plate stacks and the shear crane that do the actual work. It
+             replaces the container-terminal shot this page shipped with, which
+             pictured cargo being loaded rather than a ship being recycled.
+
+             The file is 1920x1088 and the strip is nearer 2.4:1, so `cover`
+             crops top and bottom. Vertical position is pulled to 38% to hold
+             the mast and the sky in frame and spend the crop on the mud.
 
              This is .mrnp-hero, the shared page-banner component — so it comes
              with the wave foot, the survey grid and the drifting orbs the rest
@@ -187,7 +193,7 @@
              white curve above a dark bar would read as a mistake. Order is:
              banner -> rail -> wave -> first section. -->
         <section class="mrnp-hero abt-hero" id="banner">
-            <div class="mrnp-hero__bg" style="background-image:url('images/about/about-head-bg1.png')"></div>
+            <div class="mrnp-hero__bg" style="background-image:url('images/about/about-head-yard.jpg');background-position:center 38%"></div>
             <div class="mrnp-hero__scrim"></div>
             <div class="mrnp-hero__grid"></div>
             <span class="mrnp-hero__orb mrnp-hero__orb--a" aria-hidden="true"></span>
