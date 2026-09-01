@@ -15,6 +15,13 @@
    wire submit() to a real endpoint (FormToEmail.php is what contact_us.html
    posts to) or take the widget off the page. Do not leave it as it is.
 
+   WHERE THE STYLES LIVE
+   css/footer-modern.css, not css/page-fx.css. page-fx.css is the inner-page
+   override layer and is never loaded on index.html, so rules kept there gave
+   the home page a widget with no styling at all. footer-modern.css is loaded
+   by all 13 pages and already owns #toTopBtn, the other floating control.
+   boot() verifies the stylesheet arrived before leaving anything on screen.
+
    WHY THE WIDGET BUILDS ITSELF
    There is no markup for any of this in the 12 pages. The launcher and the
    dialog carry no page-specific content, so authoring them by hand would be
@@ -34,11 +41,6 @@
     'use strict';
 
     if (win.SGFeedback) return;
-
-    /* Same test js/page-fx.js uses. index.html is built from .mrn-section and
-       does not load css/page-fx.css, which is where every rule below lives —
-       booting here would append an unstyled dialog to the home page. */
-    if (!doc.querySelector('.mrnp-section')) return;
 
     win.SGFeedback = true;
 
@@ -149,12 +151,12 @@
 
         /* placeholder=" " is load-bearing, not a typo: the floating label in
            marine-pages.css is driven by :not(:placeholder-shown). */
-        return '<div class="mrnp-field sgfb-field' +
+        return '<div class="sgfb-field' +
             (f.area ? ' sgfb-field--note' : '') +
             (f.wide || f.area ? ' sgfb-field--wide' : '') + '">' +
             el +
             '<label for="' + f.id + '">' + f.label + '</label>' +
-            '<span class="mrnp-field__line"></span>' +
+            '<span class="sgfb-field__line"></span>' +
             (f.area ? '<span class="sgfb-count"><b>0</b> / ' + f.max + '</span>' : '') +
             '<span class="sgfb-err" id="' + f.id + 'Err" role="alert"></span>' +
             '</div>';
@@ -246,6 +248,23 @@
     function boot() {
         var made = build();
         var btn = made.btn, wrap = made.wrap;
+
+        /* Every pixel of this widget is CSS. With no stylesheet it is a stack
+           of unstyled divs dumped across the top of the page, which is worse
+           than not being there at all.
+
+           This is the check that would have caught the widget shipping to
+           index.html while its rules sat in css/page-fx.css — a file
+           index.html deliberately does not load. Rather than test for a
+           marker class and hope it tracks the truth, ask the browser whether
+           the rules actually landed, and stand down if they did not. The
+           rules now live in css/footer-modern.css, which all 13 pages load. */
+        if (win.getComputedStyle && win.getComputedStyle(btn).position !== 'fixed') {
+            btn.parentNode.removeChild(btn);
+            wrap.parentNode.removeChild(wrap);
+            return;
+        }
+
         var panel = wrap.querySelector('.sgfb__panel');
         var form = wrap.querySelector('.sgfb__form');
         var done = wrap.querySelector('.sgfb__done');
