@@ -329,6 +329,94 @@
     height: 74px;
 }
 
+/* --- .crd-hero — our_credentials.html only -------------------------------
+   The grade above is built for a daylight yard photograph: saturate(.42) and
+   brightness(.62) duotone a warm, bright, outdoor frame down into the cyan
+   chrome. our_credentials.html now carries
+   images/about/credentials-banner-audit-desk.webp — an audit desk shot from
+   above, at night, lit by one lamp. It arrives already dark and already in
+   the palette, so the shared grade is subtraction from a frame that has
+   nothing left to give: at .62 the documents stop being legible as documents
+   and the picture reads as a black rectangle with an orange smear.
+
+   This block is scoped to a class that exists on exactly one page, so it is
+   safe to keep in the shared file — the same job css/about-fx.css section 5
+   does for the About banner, which has a page stylesheet to put it in.
+   our_credentials.html does not, and one 30-line scoped block is cheaper than
+   a tenth stylesheet on every inner page.
+
+   transform is untouched: js/page-fx.js heroScrub() writes it inline for the
+   parallax and marine-pages.css:26 supplies the overscan it travels inside.
+
+   The phone step for this block lives in section 8 with every other width
+   breakpoint in this file.
+   -------------------------------------------------------------------------- */
+
+.crd-hero .mrnp-hero__bg {
+    /* Barely touched. Contrast does the work the exposure cut used to do, so
+       the paperwork stays readable as paperwork. */
+    filter: saturate(1.02) contrast(1.1) brightness(.96);
+
+    /* The subject is the desk, and the desk is the lower half of a 3:2 frame
+       dropped into a 2.3:1 strip. Centred, `cover` keeps the empty ceiling and
+       cuts the documents; biased down it keeps the lit papers, the drawing and
+       the helmet, and spends the crop on the dark upper wall instead. */
+    background-position: 50% 64%;
+}
+
+/* The picture's own bright spots — the window and the lamp — sit top-left,
+   which is exactly where the crumb, the H1 and the ISO line go. So the wash
+   is heaviest there and lifts across to the right, where the helmet and the
+   lit drawing are worth seeing. The vertical pass keeps its usual duties:
+   dark under the sticky header, dark at the foot for the wave seam. */
+.crd-hero .mrnp-hero__scrim {
+    background:
+        linear-gradient(96deg,
+            rgba(4, 18, 31, .93) 0%,
+            rgba(5, 22, 37, .84) 30%,
+            rgba(5, 22, 37, .46) 58%,
+            rgba(5, 22, 37, .16) 80%,
+            rgba(5, 22, 37, .06) 100%),
+        linear-gradient(180deg,
+            rgba(4, 18, 31, .74) 0%,
+            rgba(4, 18, 31, .14) 32%,
+            rgba(4, 18, 31, .30) 66%,
+            rgba(4, 18, 31, .94) 100%),
+        radial-gradient(118% 104% at 46% 44%,
+            transparent 40%,
+            rgba(2, 11, 20, .44) 100%);
+}
+
+/* The lamp already throws warm light across the desk; this carries it past
+   the crop rather than letting it stop at the frame edge. Screened, so it
+   only ever adds. .mrnp-hero isolates, so the blend stays inside the banner. */
+.crd-hero::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    pointer-events: none;
+    mix-blend-mode: screen;
+    background:
+        radial-gradient(34% 30% at 78% 58%, rgba(255, 166, 46, .20), transparent 70%),
+        radial-gradient(26% 24% at 24% 30%, rgba(120, 214, 235, .12), transparent 72%);
+}
+
+/* Same call as the About banner: three straight diagonals drawn over a frame
+   that already contains a light source read as a smear on the lens, not as
+   light. Turned down, not removed — the sky-equivalent here is the dark wall,
+   and it goes flat without them. */
+.crd-hero::after {
+    opacity: .34;
+}
+
+.crd-hero .mrnp-hero__orb--b {
+    right: 14%;
+    bottom: 24%;
+    background: radial-gradient(circle, rgba(255, 171, 46, .24), transparent 68%);
+}
+
+
 /* ==========================================================================
    4. GEOMETRY RESET — plates, not pills
    One block, so the squared language cannot drift between components.
@@ -2529,6 +2617,33 @@ html.sg-motion [data-sg-delay="10"] {
         padding-right: 24px;
     }
 
+
+    /* --- .crd-hero (section 3) ----------------------------------------- */
+
+    /* One column of copy across the full width, so the left-heavy wash has to
+       even out or the ISO line ends up over the lit paperwork. The crop turns
+       from wide to tall at the same time, which keeps only the middle of the
+       desk. */
+    .crd-hero .mrnp-hero__bg {
+        background-position: 52% 62%;
+    }
+
+    .crd-hero .mrnp-hero__scrim {
+        background:
+            linear-gradient(180deg,
+                rgba(4, 18, 31, .80) 0%,
+                rgba(4, 18, 31, .40) 30%,
+                rgba(4, 18, 31, .58) 62%,
+                rgba(4, 18, 31, .94) 100%),
+            linear-gradient(96deg,
+                rgba(5, 22, 37, .46) 0%,
+                rgba(5, 22, 37, .22) 100%);
+    }
+
+    /* sized against a frame showing three times this much width */
+    .crd-hero::before {
+        opacity: .66;
+    }
 }
 
 @media (max-width: 620px) {
