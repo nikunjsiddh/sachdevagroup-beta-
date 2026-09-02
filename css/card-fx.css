@@ -20,6 +20,7 @@
        .mrnp-icard::after    marine-pages.css  a rule that scaleX(1)s on hover
        .pfx-fact::before     page-fx.css       a tick that scaleY(2.5)s
        .mrnp-certcard, .cmp, .tst, .abt-unit   all likewise spoken for
+       .mrnp-infocard::after, .pfx-step::after  corner brackets, page-fx.css
      Writing our own ::before/::after would have silently deleted those. A
      real child costs one element per card and collides with nothing.
 
@@ -36,7 +37,7 @@
      cards themselves. Every family here already declares its own hover
      material and its own transition list, and this file loads last — so any
      of those properties stated here would REPLACE the card's own rather than
-     add to it, across all ~76 cards. The lift stays where it already lives:
+     add to it, across all 138 cards. The lift stays where it already lives:
      in the tilt handler (js/marine.js initTilt, js/marine-pages.js
      initTilt3d), which writes an inline transform that a CSS :hover transform
      could not beat anyway. That is the same conclusion css/about-fx.css:1690
@@ -164,6 +165,51 @@
             rgba(var(--sgfx-lead), .17) 0%,
             rgba(var(--sgfx-lead), .07) 32%,
             rgba(var(--sgfx-lead), 0) 62%);
+}
+
+/* --------------------------------------------------------------------------
+   Depth — .mrnp-quote only
+   --------------------------------------------------------------------------
+   Every other card family on this site already carries a depth system, and an
+   audit found them all: #heritage .abt-time__item (year 26 / h4 16 / p 6),
+   #testimonials .tst (head 24 / rule 10 / text 14, lifting to 46 / 24 on
+   hover), #process .mrn-step (dot 20, lifting to 24), .pfx-fact (dt 22), and
+   dead-but-declared sets on .mrnp-icard, #vision .viz-card, #compliance .cmp
+   and #creds .mrnp-certcard, all four flattened by their own overflow or
+   filter. Nothing was missing there — it was invisible only because the tilt
+   that reveals it was switched off.
+
+   .mrnp-quote was the one real gap: no preserve-3d, no child depth, and no
+   tilt attribute at all, so it sat flat while every card around it turned.
+   The markup now carries data-mrnp-tilt="6" and the rest is here.
+
+   Constant Z rather than :hover Z — the house pattern, as in
+   #heritage .abt-time__year. The rotation is what reveals the separation, so
+   the planes do not need to animate; they simply exist, and the tilt shows
+   them. It also means nothing to undo on mouseleave.
+
+   No transition is declared: marine-pages.css:1003 already transitions
+   transform on this card, and re-stating it here would replace that list
+   rather than extend it. */
+
+.mrnp-quote {
+    transform-style: preserve-3d;
+}
+
+/* the oversized quotation mark sits just off the face, behind the words */
+.mrnp-quote::before {
+    transform: translateZ(8px);
+}
+
+.mrnp-quote > p {
+    transform: translateZ(18px);
+}
+
+/* the attribution is nearest the perspective origin and carries furthest
+   without overrunning the card edge under a 6deg turn */
+.mrnp-quote__by {
+    position: relative;
+    transform: translateZ(30px);
 }
 
 /* --------------------------------------------------------------------------

@@ -237,9 +237,19 @@
        5. 3D tilt on figures / cards
     ------------------------------------------------------------------ */
     function initTilt() {
-        if (reduced) return;
-        /* :hover latches after a tap on touch, which would leave a card stuck
-           mid-rotation. marine-pages.js initTilt3d already gates this way. */
+        /* NOT gated on prefers-reduced-motion, deliberately, and it is the one
+           handler in this file that is not.
+
+           A hover tilt is not the kind of motion the preference exists to
+           stop: nothing moves until the visitor puts their own pointer on the
+           card, it tracks that pointer one-to-one rather than animating on its
+           own, and it stops the instant they leave. Scroll parallax, the
+           counters and the marquee are the vestibular risks here and all three
+           stay gated above.
+
+           Everything else on the page keeps honouring the preference. If this
+           is ever revisited, the honest alternative is to shrink `max` under
+           reduced motion rather than to remove the effect. */
         if (window.matchMedia && window.matchMedia('(pointer: coarse)').matches) return;
 
         var nodes = document.querySelectorAll('[data-mrn-tilt]');
@@ -288,15 +298,33 @@
                     if (!r.width || !r.height) return;
                     var px = (ev.clientX - r.left) / r.width - 0.5;
                     var py = (ev.clientY - r.top) / r.height - 0.5;
-                    target.style.transform =
+                    /* `important` is load-bearing. Eight stylesheets carry
+                       `@media (prefers-reduced-motion: reduce)` blocks that
+                       set `transform: none !important` on these very cards —
+                       css/about-fx.css:1971 is the clearest — and a plain
+                       inline transform loses to a stylesheet !important.
+                       Measured: the same value set without the flag computes
+                       to `none`, and with it computes to a real matrix3d.
+
+                       Those rules are NOT edited out, because they do a second
+                       job this must not break: entrance animations are
+                       authored at translateY(30px) / scaleX(0), so forcing
+                       identity is what stops them sitting at their `from`
+                       state for ever. Overriding only while the pointer is on
+                       the card leaves that intact — mouseleave hands the
+                       element straight back to the stylesheet. */
+                    target.style.setProperty('transform',
                         lens + 'rotateY(' + (px * max).toFixed(2) + 'deg) rotateX(' +
-                        (-py * max).toFixed(2) + 'deg)' + lift;
+                        (-py * max).toFixed(2) + 'deg)' + lift, 'important');
                 });
             }, { passive: true });
 
             el.addEventListener('mouseleave', function () {
                 if (raf) { cancelAnimationFrame(raf); raf = null; }
-                target.style.transform = '';
+                /* removeProperty, not = '' — an !important inline declaration
+                   is not cleared by assigning the empty string in every
+                   engine, and leaving it behind would pin the card tilted. */
+                target.style.removeProperty('transform');
             });
         });
     }

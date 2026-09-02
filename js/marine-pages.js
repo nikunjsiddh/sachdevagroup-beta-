@@ -14,7 +14,10 @@
        1. True 3D tilt — children with translateZ lift off the card face
     ------------------------------------------------------------------ */
     function initTilt3d() {
-        if (reduced || window.matchMedia('(pointer: coarse)').matches) return;
+        /* Not gated on prefers-reduced-motion — same reasoning as
+           js/marine.js initTilt, which carries the argument in full. Every
+           other handler in this file still honours it. */
+        if (window.matchMedia('(pointer: coarse)').matches) return;
 
         each(document.querySelectorAll('[data-mrnp-tilt]'), function (el) {
             var max = parseFloat(el.getAttribute('data-mrnp-tilt')) || 9;
@@ -26,15 +29,18 @@
                     var r = el.getBoundingClientRect();
                     var px = (e.clientX - r.left) / r.width - 0.5;
                     var py = (e.clientY - r.top) / r.height - 0.5;
-                    el.style.transform =
+                    /* see js/marine.js initTilt for why this is
+                       !important: reduced-motion blocks in eight stylesheets
+                       set `transform: none !important` on these cards. */
+                    el.style.setProperty('transform',
                         'perspective(1000px) rotateY(' + (px * max) + 'deg) rotateX(' + (-py * max) +
-                        'deg) translateY(-6px)';
+                        'deg) translateY(-6px)', 'important');
                     raf = null;
                 });
             });
 
             el.addEventListener('mouseleave', function () {
-                el.style.transform = '';
+                el.style.removeProperty('transform');
             });
         });
     }

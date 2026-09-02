@@ -17,9 +17,15 @@
      js/marine.js initTilt ([data-mrn-tilt]) and js/marine-pages.js
      initTilt3d ([data-mrnp-tilt]) already own `transform` on most of these
      cards. This file never touches transform, so the two compose: the tilt
-     rotates and lifts the card, this lights it. Cards with no tilt attribute
-     (.pfx-fact, .mrnp-quote) keep the CSS hover transform they already have
-     and simply gain the light.
+     rotates and lifts the card, this lights it.
+
+     Every family in SEL now carries one of the two tilt attributes. Four of
+     them did not until the coverage sweep: .mrnp-infocard (whose depth rules
+     already existed in css/page-fx.css, keyed on [data-mrnp-tilt], and had
+     simply never been switched on in any page's markup), .pfx-fact,
+     .pfx-step and .mrnp-gal__item — plus .mrn-tile, .mrn-stat and .mrn-cert
+     on index. index.html loads marine.js but not marine-pages.js, so those
+     three take data-mrn-tilt rather than data-mrnp-tilt.
 
    POINTER GATE
      Coarse pointers get nothing — no overlay element, no listeners. There is
@@ -47,7 +53,13 @@
         '.tst',             /* about_us — testimonial records                                     */
         '.viz-card',        /* about_us — vision / mission plates                                 */
         '.abt-unit',        /* about_us — the two company cards                                   */
-        '.abt-time__item'   /* about_us — heritage dates                                          */
+        '.abt-time__item',  /* about_us — heritage dates                                          */
+        '.mrnp-infocard',   /* contact, environment, jjsb, credentials, sspsb, testimonials, vision */
+        '.mrnp-gal__item',  /* gallery                                                            */
+        '.pfx-step',        /* waste_management                                                   */
+        '.mrn-tile',        /* index — the gallery link tiles                                     */
+        '.mrn-stat',        /* index — the figures band                                           */
+        '.mrn-cert'         /* index — certificates, inside a marquee that pauses on hover        */
     ].join(', ');
 
     function init() {

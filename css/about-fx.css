@@ -1642,7 +1642,17 @@
    nearest the plate's perspective origin, so it carries the deepest lift
    without overrunning the edge; the remark, which reaches the corners, does
    not. */
-@media (hover: hover) and (prefers-reduced-motion: no-preference) {
+/* The reduced-motion condition is gone from this one block on purpose. It
+   is the hover depth for .tst — the contents standing off the card face is
+   the whole point of the tilt, and the tilt itself is no longer gated (see
+   js/marine.js initTilt). Gating the depth but not the rotation would leave
+   the card turning as a flat slab, which is the worst of both.
+
+   The other three no-preference blocks in this file — #profile .mrnp-strip,
+   #vision .viz-card, #compliance .cmp — are deliberately left alone. The
+   strip is not a card, and the viz-card and cmp depth is dead code either
+   way: both are flattened by their own overflow/filter, per section 9. */
+@media (hover: hover) {
 
     #testimonials .tst:hover .tst__head {
         transform: translateZ(46px);
