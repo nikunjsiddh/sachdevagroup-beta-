@@ -4748,17 +4748,21 @@
     filter: grayscale(.12) saturate(1) contrast(1.05) brightness(.96);
 }
 
-/* crops tuned per photograph (see markup patches E-G) */
+/* crops tuned per plate. The three plates are 3:2 boards whose titling and
+   badge rows run edge to edge, so the frame's 1.32 aspect trims the sides,
+   not the top: only the X term does any work here. Each value is the one that
+   keeps that plate's own title whole — 100% pins ENVIRONMENT MANAGEMENT and
+   the ISO 14001 mark to the right edge, 10% pins the W of WASTE to the left. */
 #commitment .mrn-card:nth-of-type(1) .mrn-card__img img {
-    object-position: 50% 44%;
+    object-position: 100% 50%;
 }
 
 #commitment .mrn-card:nth-of-type(2) .mrn-card__img img {
-    object-position: 50% 46%;
+    object-position: 50% 50%;
 }
 
 #commitment .mrn-card:nth-of-type(3) .mrn-card__img img {
-    object-position: 50% 58%;
+    object-position: 10% 50%;
 }
 
 /* plotted survey grid over the footage — the drawing-sheet cue */
@@ -5142,6 +5146,14 @@
         border-radius: var(--cm-radius) 0 0 var(--cm-radius);
     }
 
+    /* the row plate is a 38% column — down at 768px it runs ~1.19:1, so cover
+       takes 21-24% off the width instead of the desktop 12%. Plates 1 and 3
+       are already pinned to the edge their title sits on and ride it out; the
+       HEALTH & SAFETY title starts 7% in, which a centred crop eats. */
+    #commitment .mrn-card:nth-of-type(2) .mrn-card__img img {
+        object-position: 20% 50%;
+    }
+
     #commitment .mrn-card__veil {
         top: 0;
         bottom: 0;
@@ -5213,6 +5225,22 @@
 
     #commitment .mrn-card__img::after {
         background-size: 38px 38px;
+    }
+
+    /* the column card is full-bleed against a fixed 228px plate, so here the
+       frame runs ~2.9:1 and cover trims the HEIGHT instead — the X crops above
+       stop mattering and Y takes over. Each value seats that plate's title
+       just under the top edge and keeps its badge row in shot. */
+    #commitment .mrn-card:nth-of-type(1) .mrn-card__img img {
+        object-position: 50% 17%;
+    }
+
+    #commitment .mrn-card:nth-of-type(2) .mrn-card__img img {
+        object-position: 50% 4%;
+    }
+
+    #commitment .mrn-card:nth-of-type(3) .mrn-card__img img {
+        object-position: 50% 38%;
     }
 
     #commitment .mrn-card__veil {
