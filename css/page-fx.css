@@ -452,7 +452,10 @@
 .mrnp-strip,
 .mrnp-pagenav,
 .pfx-note,
-.pfx-step {
+.pfx-step,
+.pfx-stamp,
+.pfx-figure,
+.pfx-hop__link {
     border-radius: var(--pfx-radius);
 }
 
@@ -2545,6 +2548,289 @@
     color: var(--cyan-bright, #35c6f4);
 }
 
+/* --- 6.10 unit profile — the opening block of a company page -------------
+   Caller: sspsb.html #profile.
+
+   WHAT IT REPLACES
+   The section was `.mrnp-split--wide-left` holding a `.mrn-figure` on the
+   left and, on the right, an eyebrow, one sentence of lead and the boxed
+   `.mrnp-pagenav`; a full-width `.mrnp-strip` carried the four figures
+   underneath. Three things were wrong with that, and none of them are copy:
+
+     1. HEIGHT. images/s3.webp is 1000x1000 — square, so it renders as tall as
+        its column is wide (585px at 1440). The column beside it held roughly
+        380px of content, so a third of the section was white space with a
+        table of contents floating in it.
+     2. GROUND. `.mrnp-strip` paints `--grad-brand`, and #yard-details
+        directly below it is `.mrn-dark`. Two dark bands separated only by the
+        light section's own bottom padding read as one band with a seam
+        through it — the rhythm rule in DESIGN-SYSTEM.md, inverted.
+     3. MATERIAL. `.mrn-figure` belongs to index-theme.css, and that file
+        scopes every rule for it to `#about`. On an inner page it therefore
+        renders from marine.css untouched: 26px radius, a shadow in the
+        retired #00008e navy, a dashed teal circle spinning at 22s and a 168px
+        round badge floating on a 6s loop. Beside components this file has
+        already squared to 3px plates, it read as a different site.
+
+   WHAT IT DOES INSTEAD
+   One balanced two-column block. The media half reuses `.mrnp-split__media` /
+   `.mrnp-split__frame` — rethemed in 5.3 already, with the machined bezel,
+   the duotone-at-rest grade and the offset cyan plate — so the photograph
+   needs no new material of its own, only the stamp that replaces the round
+   badge. The four figures move out of the strip and into the copy column as a
+   2x2 of plates, and that is what closes the height gap: the column carries
+   its own weight instead of being padded out, and the section now ends on
+   white, so the step down into #yard-details is a single clean edge.
+
+   No new copy. Every figure, label and destination below was already in the
+   section — the strip's four cells and the pagenav's links. */
+
+.pfx-unit {
+    display: grid;
+    grid-template-columns: 1.08fr 1fr;
+    gap: 64px;
+    align-items: center;
+}
+
+/* min-width:0, or a long unbroken label in the figures grid pushes the column
+   past its track and takes the photograph with it */
+.pfx-unit__body {
+    min-width: 0;
+}
+
+/* the gradient phrase is the second half of the heading, so it is where the
+   line wants to break — "RECYCLING AT ALANG SINCE / 1983" splits the year off
+   its own preposition. Holding the em together moves the break in front of
+   it instead, which is the reading the highlight was drawn for. */
+.pfx-unit .mrn-title em {
+    white-space: nowrap;
+}
+
+/* --- the lead ------------------------------------------------------------
+   NOT `.mrnp-prose--lead`, and no drop cap at all — both because of the one
+   letter this paragraph happens to start with.
+
+   5.1 sets that modifier's cap as a plate: 68px numeral, 10/14px padding, a
+   3px cyan rule down its left edge. That is right at the head of a page of
+   running prose and wrong here, where the whole block is three lines — the
+   plate stands nearly as tall as the paragraph, so it reads as a separate
+   element and the sentence appears to begin at "n 1994".
+
+   Dropping the box does not fix it. The sentence is "In 1994…", and a
+   capital I in Oswald is a bare vertical stroke: at 62px, floated, beside
+   this paragraph's own 3px rule, the cap renders as a second rule and the
+   reader still loses the letter. A drop cap needs a letter with a shape.
+   So the lead takes the size and the rule and nothing else. */
+
+.pfx-unit__lead > p {
+    margin: 0;
+    padding-left: 26px;
+    border-left: 3px solid var(--cyan, #22b3e6);
+    font-size: 19px;
+    line-height: 1.72;
+    color: var(--heading-on-light, #071a2e);
+}
+
+/* --- the stamp — what the round badge becomes ---------------------------
+   Squared, anchored to the frame's bottom corner and overhanging it, so the
+   figure keeps the depth the floating circle was reaching for without the 6s
+   vertical loop. It sits inside `.mrnp-split__media`, which carries the
+   perspective, so data-mrn-tilt carries it with the photograph. */
+
+.pfx-stamp {
+    position: absolute;
+    right: -18px;
+    bottom: -24px;
+    z-index: 5;
+    min-width: 176px;
+    padding: 20px 26px 18px;
+    background: var(--pfx-plate-dark);
+    border: 1px solid rgba(53, 198, 244, .26);
+    border-top: 2px solid var(--gold, #ffad18);
+    box-shadow: var(--lift-3, 0 34px 70px -30px rgba(4, 18, 31, .78));
+}
+
+.pfx-stamp > strong {
+    display: block;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 46px;
+    font-weight: 600;
+    line-height: .9;
+    color: var(--gold-light, #ffc247);
+}
+
+/* `>`, not a descendant selector. The figure is `<strong><span
+   data-count="32">` — js/marine.js counts the inner span — so a bare
+   `.pfx-stamp span` claims the counter as well as the label and sets 46px of
+   numeral at 11px with 2.6px of tracking. marine.css:857 has this exact bug
+   on `.mrn-figure__badge span`, and index-theme.css:1794 exists to undo it. */
+.pfx-stamp > span {
+    display: block;
+    margin-top: 9px;
+    max-width: 124px;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 2.6px;
+    line-height: 1.5;
+    text-transform: uppercase;
+    color: rgba(255, 255, 255, .74);
+}
+
+/* --- the figures — the strip's four cells, re-set as plates -------------
+   Two colours had to change on the way out of the strip, both for contrast on
+   a light ground:
+
+     GOLD, the strip's numeral colour, measures 1.9:1 on white and fails even
+     the large-text threshold. The figure takes the heading ink instead.
+
+     CYAN, which is what 6.8 gives `.pfx-fact dt` and would be the consistent
+     choice for the label, measures 3.41:1 as --cyan-deep on white. That
+     clears 3:1 for large text and these labels are 11px, so it does not clear
+     anything that applies to them. The label takes --body-on-light (6.5:1)
+     and the cyan stays where it is legible: the tick, and the ruled edge of
+     the lead above. No new colour is introduced either way.
+     (`.pfx-fact dt` on news.html has the same shortfall and is unchanged
+     here — that is a separate pass, not a thing to fix from this section.) */
+
+.pfx-figures {
+    list-style: none;
+    margin: 36px 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+}
+
+.pfx-figure {
+    position: relative;
+    padding: 20px 22px 18px 24px;
+    background: var(--pfx-plate);
+    border: var(--pfx-ring);
+    box-shadow: var(--lift-1, 0 10px 28px -18px rgba(4, 18, 31, .55));
+    transition: transform .45s var(--e-out), border-color .45s var(--e-out),
+        box-shadow .45s var(--e-out), background .45s var(--e-out);
+}
+
+/* the tick, as on .pfx-fact — cyan at rest, gold and twice the length on
+   hover, so the cell being read is the one that is marked */
+.pfx-figure::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 20px;
+    width: 3px;
+    height: 20px;
+    background: var(--cyan, #22b3e6);
+    transform-origin: top;
+    transition: transform .45s var(--e-out), background .45s var(--e-out);
+}
+
+.pfx-figure:hover {
+    transform: translateY(-4px);
+    border-color: rgba(34, 179, 230, .40);
+    box-shadow: var(--lift-2, 0 22px 48px -26px rgba(4, 18, 31, .65));
+    background: linear-gradient(180deg, #ffffff 0%, #f4fbff 100%);
+}
+
+.pfx-figure:hover::before {
+    transform: scaleY(1.9);
+    background: var(--gold, #ffad18);
+}
+
+.pfx-figure > strong {
+    display: block;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 34px;
+    font-weight: 600;
+    line-height: 1;
+    letter-spacing: .4px;
+    color: var(--heading-on-light, #071a2e);
+}
+
+.pfx-figure > span {
+    display: block;
+    margin-top: 10px;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 1.9px;
+    line-height: 1.55;
+    text-transform: uppercase;
+    color: var(--body-on-light, #4a6076);
+}
+
+/* --- the hops — what the boxed page nav becomes -------------------------
+   `.mrnp-pagenav` listed three destinations and the first of them was
+   #profile, the section the card itself sat in. The two that go anywhere are
+   here, as plates rather than as a sidebar: the sticky card was 24px of
+   chrome around three 14px links, and it was competing with the lead for the
+   top of the column. Scrollspy goes with it — js/marine-pages.js
+   initPageNav() returns on a missing `.mrnp-pagenav`, and a two-item list on
+   a three-section page has nothing worth spying on. */
+
+.pfx-hop {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-top: 30px;
+}
+
+.pfx-hop__link {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    padding: 16px 22px;
+    background: var(--pfx-plate);
+    border: var(--pfx-ring-strong);
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 12px;
+    font-weight: 500;
+    letter-spacing: 2.2px;
+    text-transform: uppercase;
+    color: var(--heading-on-light, #071a2e);
+    text-decoration: none;
+    transition: background .45s var(--e-out), border-color .45s var(--e-out),
+        color .45s var(--e-out), box-shadow .45s var(--e-out),
+        transform .45s var(--e-out);
+}
+
+.pfx-hop__no {
+    font-size: 11px;
+    letter-spacing: 1.6px;
+    color: var(--cyan-deep, #1195cf);
+    transition: color .45s var(--e-out);
+}
+
+.pfx-hop__link .sg-ico {
+    transition: transform .45s var(--e-out);
+}
+
+.pfx-hop__link:hover,
+.pfx-hop__link:focus {
+    transform: translateY(-3px);
+    background: var(--pfx-plate-dark);
+    border-color: rgba(53, 198, 244, .38);
+    color: #ffffff;
+    text-decoration: none;
+    box-shadow: var(--lift-2, 0 22px 48px -26px rgba(4, 18, 31, .65));
+}
+
+.pfx-hop__link:hover .pfx-hop__no,
+.pfx-hop__link:focus .pfx-hop__no {
+    color: var(--gold, #ffad18);
+}
+
+.pfx-hop__link:hover .sg-ico {
+    transform: translateX(6px);
+}
+
+.pfx-hop__link:focus-visible {
+    outline: 2px solid var(--cyan, #22b3e6);
+    outline-offset: 3px;
+}
+
+
 /* ==========================================================================
    7. MOTION — extensions to the index-theme.css section 9 entrance vocabulary
    Adding a direction is one --sg-from line, because `[data-sg-in].sg-in`
@@ -2639,6 +2925,12 @@ html.sg-motion [data-sg-delay="10"] {
         padding-top: 168px;
         padding-bottom: 118px;
     }
+
+    /* still side by side — the photograph is square, so the two columns lose
+       height together and the block stays balanced. Only the gutter gives. */
+    .pfx-unit {
+        gap: 44px;
+    }
 }
 
 @media (max-width: 860px) {
@@ -2661,6 +2953,20 @@ html.sg-motion [data-sg-delay="10"] {
 
     .pfx-cue {
         display: none;
+    }
+
+    /* One column from here down. The photograph is capped rather than let
+       run full-bleed: at 812px of container a square image is 812px tall and
+       the reader scrolls past a wall of it before reaching a word. */
+    .pfx-unit {
+        grid-template-columns: 1fr;
+        gap: 52px;
+    }
+
+    .pfx-unit__media {
+        width: 100%;
+        max-width: 520px;
+        margin: 0 auto;
     }
 
     /* the mobile bar is the slicknav strip, which stands taller than the
@@ -2864,6 +3170,46 @@ html.sg-motion [data-sg-delay="10"] {
     .mrnp-section + .mrnp-section::before {
         width: 94%;
     }
+
+    /* "Business Started Under This Name" is 32 characters; two columns of a
+       327px content box give each label 150px, which sets it as five lines
+       and leaves the four cells at four different heights */
+    .pfx-figures {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .pfx-stamp {
+        right: 0;
+        bottom: -18px;
+        min-width: 0;
+        padding: 16px 20px 15px;
+    }
+
+    .pfx-stamp > strong {
+        font-size: 36px;
+    }
+
+    .pfx-stamp > span {
+        margin-top: 7px;
+        letter-spacing: 2.2px;
+    }
+
+    .pfx-unit__lead > p {
+        font-size: 17.5px;
+        padding-left: 20px;
+    }
+
+    /* both destinations on their own row, full width — at 12px/2.2px
+       "List of Ships Recycled" is 232px and will not sit beside anything */
+    .pfx-hop__link {
+        width: 100%;
+        justify-content: flex-start;
+    }
+
+    .pfx-hop__link .sg-ico {
+        margin-left: auto;
+    }
 }
 
 /* ==========================================================================
@@ -2918,7 +3264,11 @@ html.sg-motion [data-sg-delay="10"] {
     .pfx-go,
     .pfx-go .sg-ico,
     .pfx-note--live,
-    .pfx-note__flag {
+    .pfx-note__flag,
+    .pfx-figure,
+    .pfx-figure::before,
+    .pfx-hop__link,
+    .pfx-hop__link .sg-ico {
         transition: none !important;
         transform: none !important;
     }
