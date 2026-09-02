@@ -179,6 +179,17 @@
            should already be there when the figures start counting */
         { sel: '.mrnp-strip > div', dir: 'up', cols: 4 },
 
+        /* --- sspsb.html #profile ------------------------------------------
+           The same four figures as the strip above, re-set as a 2x2 inside
+           the copy column, so the sweep is two wide rather than four. The
+           stamp is a child of the tilted .mrnp-split__media but not tilted
+           itself, so it is free to take an entrance of its own; it lands
+           after the frame has clipped in, which is what makes it read as
+           being set down ON the photograph. */
+        { sel: '.pfx-figure', dir: 'rise', cols: 2 },
+        { sel: '.pfx-hop__link', dir: 'up', cols: 2, base: 2 },
+        { sel: '.pfx-stamp', dir: 'zoom', base: 3 },
+
         { sel: '.pfx-marquee', dir: 'up' },
         { sel: '.mrnp-section .table-responsive', dir: 'up' },
 
