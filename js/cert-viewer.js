@@ -58,9 +58,12 @@
       images/cert/ holds nine files but only five distinct documents
       (1=2, 3=4=7, 5=9). The strip still shows all nine plates — that is the
       page's own content and not this file's call — but the VIEWER lists each
-      document once, keyed on src, so paging through it does not show the same
-      certificate three times and the counter tells the truth. Drop five real
-      scans in and it becomes 9 of 9 on its own, with no change here.
+      document once so paging through it does not show the same certificate
+      three times and the counter tells the truth. The key is the declared
+      label, NOT the src: the repeats are byte-identical files at different
+      paths (1.jpg and 2.jpg have the same md5), so a src key sees nine
+      distinct documents and dedupes nothing. Give five real scans five real
+      labels and it becomes 9 of 9 on its own, with no change here.
 
    ORDERING
       This file must run BEFORE js/marine.js and js/card-fx.js. It clones the
@@ -128,6 +131,11 @@
 
     function clamp(n, lo, hi) { return n < lo ? lo : (n > hi ? hi : n); }
 
+    function nowMs() {
+        return (win.performance && win.performance.now)
+            ? win.performance.now() : new Date().getTime();
+    }
+
     /* ======================================================================
        PART 1 — THE STRIP
        ====================================================================== */
@@ -157,7 +165,11 @@
            ------------------------------------------------------------------ */
 
         var setWidth = 0;
-        var copies = 0;
+        /* how far into the track the real, focusable plates start. One full
+           set is cloned BEFORE them so a leftward flick has runway instead of
+           slamming into scrollLeft 0 — a native scroller clamps there, and on
+           a swipeable strip hitting a wall in one direction reads as broken. */
+        var base = 0;
 
         function measureSet() {
             var w = 0;
@@ -169,31 +181,45 @@
             return w;
         }
 
+        function makeClone(src) {
+            var clone = src.cloneNode(true);
+            clone.setAttribute('data-cert-clone', '1');
+            /* copies are decoration: never announced, never tabbable, and never
+               a second copy of the same label in the accessibility tree. The
+               click handler is delegated, so they still open the viewer when
+               tapped. */
+            clone.setAttribute('aria-hidden', 'true');
+            clone.setAttribute('tabindex', '-1');
+            clone.removeAttribute('id');
+            clone.removeAttribute('role');
+            return clone;
+        }
+
         function buildCopies() {
             /* remove any copies from a previous pass */
             all('.mrn-cert[data-cert-clone]', track).forEach(function (el) {
                 track.removeChild(el);
             });
-            copies = 0;
 
             setWidth = measureSet();
-            if (setWidth <= 0) return;
+            if (setWidth <= 0) { base = 0; return; }
 
-            var need = 1 + Math.ceil(scroller.clientWidth / setWidth);
-            for (var c = 0; c < need; c++) {
-                for (var i = 0; i < originals.length; i++) {
-                    var clone = originals[i].cloneNode(true);
-                    clone.setAttribute('data-cert-clone', '1');
-                    /* copies are decoration: never announced, never tabbable,
-                       and never a second copy of the same heading in the a11y
-                       tree. The click handler is delegated, so they still open
-                       the viewer when tapped. */
-                    clone.setAttribute('aria-hidden', 'true');
-                    clone.setAttribute('tabindex', '-1');
-                    clone.removeAttribute('id');
-                    track.appendChild(clone);
+            /* one set of runway behind, and enough ahead to cover the viewport
+               plus a full period. Computed rather than assumed: a future edit
+               that leaves three plates in the markup would otherwise tear at
+               the seam on a wide screen. */
+            var ahead = 1 + Math.ceil(scroller.clientWidth / setWidth);
+            var i, c;
+
+            for (i = originals.length - 1; i >= 0; i--) {
+                track.insertBefore(makeClone(originals[i]), track.firstChild);
+            }
+            base = setWidth;
+
+            for (c = 0; c < ahead; c++) {
+                for (i = 0; i < originals.length; i++) {
+                    track.appendChild(makeClone(originals[i]));
                 }
-                copies++;
             }
         }
 
@@ -221,9 +247,21 @@
             '</span><span class="mrn-certs__toggle-txt"></span>';
 
         controls.appendChild(toggle);
-        scroller.parentNode.insertBefore(controls, scroller.nextSibling);
+        /* BEFORE the shelf, not after it. A keyboard or screen-reader user has to
+           meet the stop control before they meet the moving content, or the
+           mechanism WCAG 2.2.2 asks for sits behind the thing it exists to
+           stop. */
+        scroller.parentNode.insertBefore(controls, scroller);
 
         function paintToggle() {
+            /* The edge mask fades whatever sits at the ends of the shelf, which
+               is right while the band is moving and wrong the moment someone
+               stops it to read — the plate they stopped on would be the one left
+               half dissolved. Dropped on a deliberate pause only; the transient
+               hover and off-screen holds keep it. */
+            if (userPaused) { band.classList.add('mrn-certs-stopped'); }
+            else { band.classList.remove('mrn-certs-stopped'); }
+
             toggle.setAttribute('aria-pressed', userPaused ? 'true' : 'false');
             toggle.setAttribute('aria-label',
                 userPaused ? 'Play the certificate strip' : 'Pause the certificate strip');
@@ -249,12 +287,21 @@
         var interacting = -100000;
         var viewerOpen = false;
 
-        on(scroller, 'mouseenter', function () { hovering = true; });
-        on(scroller, 'mouseleave', function () { hovering = false; });
+        /* HOVER PAUSE ONLY WHERE HOVER IS REAL.
+           Touch browsers synthesise mouseenter on tap and routinely never fire
+           the matching mouseleave, so on a phone the first tap on a plate would
+           freeze the shelf for the rest of the session — and a tap on a plate is
+           now how the viewer is opened, so it would happen immediately, to
+           everyone. The pointer query is the same gate js/marine.js initTilt and
+           js/card-fx.js already use for this class of problem. */
+        if (win.matchMedia && win.matchMedia('(hover: hover)').matches) {
+            on(scroller, 'mouseenter', function () { hovering = true; });
+            on(scroller, 'mouseleave', function () { hovering = false; });
+        }
         on(scroller, 'focusin', function () { focused = true; });
         on(scroller, 'focusout', function () { focused = false; });
 
-        function poke() { interacting = now(); }
+        function poke() { interacting = nowMs(); }
         on(scroller, 'pointerdown', poke, { passive: true });
         on(scroller, 'touchstart', poke, { passive: true });
         on(scroller, 'wheel', poke, { passive: true });
@@ -274,7 +321,7 @@
             if (reduced && STRICT_REDUCED_MOTION) return false;
             if (hovering || focused || viewerOpen) return false;
             if (!onscreen || doc.hidden) return false;
-            if (now() - interacting < 1400) return false;
+            if (nowMs() - interacting < 1400) return false;
             return true;
         }
 
@@ -287,16 +334,15 @@
         var boost = 0;
         var dir = band.getAttribute('data-cert-dir') === 'ltr' ? -1 : 1;
 
-        function now() {
-            return (win.performance && win.performance.now)
-                ? win.performance.now() : new Date().getTime();
-        }
-
+        /* Keep the offset inside one period, measured from `base` so the real
+           plates are the ones on screen at rest and there is a whole set of
+           runway on either side. Content at x and x + setWidth is identical, so
+           the correction is invisible. */
         function wrap(v) {
             if (!setWidth) return v;
-            while (v >= setWidth) { v -= setWidth; }
-            while (v < 0) { v += setWidth; }
-            return v;
+            var d = (v - base) % setWidth;
+            if (d < 0) { d += setWidth; }
+            return base + d;
         }
 
         function frame(t) {
@@ -343,6 +389,9 @@
             }, { passive: true });
         }
 
+        pos = wrap(base);
+        scroller.scrollLeft = pos;
+        applied = scroller.scrollLeft;
         raf = win.requestAnimationFrame(frame);
 
         /* --- reflow --------------------------------------------------------
@@ -355,9 +404,9 @@
         on(win, 'resize', function () {
             win.clearTimeout(rt);
             rt = win.setTimeout(function () {
-                var fraction = setWidth ? (pos / setWidth) : 0;
+                var fraction = setWidth ? ((pos - base) / setWidth) : 0;
                 buildCopies();
-                pos = wrap(fraction * setWidth);
+                pos = wrap(base + fraction * setWidth);
                 scroller.scrollLeft = pos;
                 applied = scroller.scrollLeft;
             }, 180);
@@ -400,7 +449,7 @@
             /* the src is part of the key so an unlabelled strip still works —
                with no data-cert-* attributes this degrades to one entry per
                file, which is the old behaviour and never collapses anything */
-            var key = (title || sub) ? (title + ' ' + sub) : img.getAttribute('src');
+            var key = (title || sub) ? (title + '\u0000' + sub) : img.getAttribute('src');
 
             if (!byKey.hasOwnProperty(key)) {
                 byKey[key] = docs.length;
@@ -455,7 +504,36 @@
             return null;
         }
 
+        /* A FLICK IS NOT A CLICK.
+           The shelf is a native horizontal scroller now, so a visitor swiping it
+           on a phone — or dragging it with a mouse — ends every gesture with a
+           click event on whichever plate happens to be under the finger. Without
+           a movement threshold that opens a certificate nobody asked for at the
+           end of every swipe. 8px of travel, or a press longer than 700ms, and
+           the gesture was a scroll. */
+        var pressX = 0, pressY = 0, pressT = 0, pressed = false;
+
+        on(strip.track, 'pointerdown', function (e) {
+            pressed = true;
+            pressX = e.clientX;
+            pressY = e.clientY;
+            pressT = nowMs();
+        }, { passive: true });
+
+        on(strip.track, 'pointercancel', function () { pressed = false; }, { passive: true });
+
+        function wasDrag(e) {
+            if (!pressed) return false;
+            var dx = Math.abs(e.clientX - pressX);
+            var dy = Math.abs(e.clientY - pressY);
+            return (dx > 8 || dy > 8) || (nowMs() - pressT > 700);
+        }
+
         on(strip.track, 'click', function (e) {
+            var drag = wasDrag(e);
+            pressed = false;
+            if (drag) return;
+
             var tile = tileFrom(e.target);
             if (!tile) return;
             var idx = docIndexFor(tile);
@@ -486,6 +564,7 @@
         var zoomBtn = null;
         var current = 0;
         var zoomed = false;
+        var loadToken = 0;
         var returnTo = null;
         var lockedScrollbar = 0;
         var lockedScrollY = 0;
@@ -561,7 +640,7 @@
 
             /* double-click / double-tap toggles zoom, the gesture every
                document reader uses */
-            on(stage, 'dblclick', function (e) { e.preventDefault(); setZoom(!zoomed); });
+            on(stage, 'dblclick', function (e) { e.preventDefault(); setZoom(!zoomed, e); });
 
             wireGestures();
             on(imgEl, 'load', onImgLoad);
@@ -586,11 +665,45 @@
 
         function zoomWidth() {
             var natural = imgEl.naturalWidth || 1240;
-            var floor = Math.round(stage.clientWidth * 1.9);
-            return Math.min(Math.max(floor, 900), Math.max(natural, 900), 1500);
+            var stageW = stage.clientWidth || 360;
+
+            /* Wanted: 2.6x the width the page gets in fit mode, and never less
+               than 1100px — on a 390px phone the stage is ~366px, so 2.6x is
+               only 952px and the certificate number is still marginal. 1100 of
+               an A4 scan's 1240 native pixels is where the small print under
+               the signature becomes readable.
+
+               Capped at what the file actually has, so a 1240px scan is never
+               upscaled into mush, and then at 1600 so images/cert/6.jpg
+               (3307px wide) does not open at 2.7x the useful size and force a
+               long pan just to find the middle of the page.
+
+               The stageW * 1.3 floor runs underneath both caps: on a very tall
+               window the fit view can already be wider than the natural cap,
+               and without it "Zoom" would make the document smaller. */
+            var floor = stageW * 1.3;
+            var want = Math.max(stageW * 2.6, 1100, floor);
+
+            return Math.round(Math.min(want, Math.max(natural, floor), 1600));
         }
 
-        function setZoom(state) {
+        function setZoom(state, ev) {
+            /* Where the reader was looking, as a fraction of the page, measured
+               BEFORE the resize. Zooming from the stage centre throws someone
+               off the line they were reading the moment they double-tap a seal
+               or a certificate number — the one gesture that says "this bit". */
+            var was = imgEl.getBoundingClientRect();
+            var sr = stage.getBoundingClientRect();
+            var fx = 0.5, fy = 0;
+            var anchorX = stage.clientWidth / 2, anchorY = 0;
+
+            if (ev && was.width > 0 && was.height > 0) {
+                fx = clamp((ev.clientX - was.left) / was.width, 0, 1);
+                fy = clamp((ev.clientY - was.top) / was.height, 0, 1);
+                anchorX = ev.clientX - sr.left;
+                anchorY = ev.clientY - sr.top;
+            }
+
             zoomed = !!state;
             /* add/remove rather than toggle(class, force): the two-argument
                form of classList.toggle is ignored by some of the browsers this
@@ -602,12 +715,15 @@
             one('.sgcv__btn-txt', zoomBtn).textContent = zoomed ? 'Fit' : 'Zoom';
 
             if (zoomed) {
-                var w = zoomWidth();
-                imgEl.style.width = w + 'px';
-                /* open centred horizontally, at the top of the page — where
-                   the letterhead is, and where reading starts */
-                stage.scrollLeft = Math.max(0, (w - stage.clientWidth) / 2);
-                stage.scrollTop = 0;
+                imgEl.style.width = zoomWidth() + 'px';
+                /* offsetLeft/Top are in the stage's own scroll coordinates —
+                   the stage is position:relative, so it is the offsetParent —
+                   which is exactly the space scrollLeft/scrollTop live in.
+                   With no pointer to anchor to this reduces to centred
+                   horizontally and at the top of the page, where the letterhead
+                   is and where reading starts. */
+                stage.scrollLeft = imgEl.offsetLeft + fx * imgEl.offsetWidth - anchorX;
+                stage.scrollTop = imgEl.offsetTop + fy * imgEl.offsetHeight - anchorY;
             } else {
                 imgEl.style.width = '';
                 stage.scrollLeft = 0;
@@ -708,9 +824,38 @@
             current = (i + docs.length) % docs.length;
             var d = docs[current];
 
+            /* Load into a detached Image first and only swap the visible one
+               once the bytes are in. Assigning src directly blanks the frame
+               while the next scan downloads, and images/cert/6.jpg is 632KB —
+               on a phone that is a second of empty viewer. This way the
+               previous certificate stays up, dimmed under the spinner, until
+               the new one can replace it in a single paint.
+
+               The token guards the race: page quickly through five documents
+               and four of these callbacks are stale by the time they fire. */
+            var token = ++loadToken;
             box.classList.add('is-loading');
-            imgEl.setAttribute('src', d.src);
-            imgEl.setAttribute('alt', d.alt);
+            box.classList.remove('is-failed');
+
+            if (imgEl.getAttribute('src') === d.src) {
+                box.classList.remove('is-loading');
+            } else {
+                var probe = new Image();
+                probe.onload = function () {
+                    if (token !== loadToken) return;
+                    imgEl.setAttribute('src', d.src);
+                    imgEl.setAttribute('alt', d.alt);
+                    /* a cached decode may not re-fire load on the visible node */
+                    if (imgEl.complete) onImgLoad();
+                };
+                probe.onerror = function () {
+                    if (token !== loadToken) return;
+                    box.classList.remove('is-loading');
+                    box.classList.add('is-failed');
+                };
+                probe.src = d.src;
+            }
+
             titleEl.textContent = d.title;
             subEl.textContent = d.sub;
             subEl.hidden = !d.sub;
@@ -764,6 +909,13 @@
                two lines. Only corrected if it actually moved. */
             if (Math.abs(win.pageYOffset - lockedScrollY) > 2) {
                 win.scrollTo(0, lockedScrollY);
+            }
+
+            /* The body carried a scrollbar-width padding while the viewer was
+               open, so every ScrollTrigger on the page measured against a
+               slightly narrower body. Hand the real numbers back. */
+            if (win.ScrollTrigger && win.ScrollTrigger.refresh) {
+                win.ScrollTrigger.refresh();
             }
 
             /* wait out the fade, then take it out of the a11y tree */

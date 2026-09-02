@@ -61,13 +61,26 @@
     --pfx-plate: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
     --pfx-plate-dark: linear-gradient(165deg, #0a2340 0%, #071a2e 60%, #04121f 100%);
 
-    /* one sheen, reused by every hoverable plate */
-    --pfx-sheen: linear-gradient(105deg,
-            transparent 30%,
-            rgba(53, 198, 244, .10) 45%,
-            rgba(255, 255, 255, .45) 50%,
-            rgba(53, 198, 244, .10) 55%,
-            transparent 70%);
+    /* WAS a sheen: a 105deg band with rgba(255,255,255,.45) at its centre,
+       swept across the plate on hover by translating ::before from -64% to
+       +64% over 1.05s. Removed — at 45% white on a near-black plate it read as
+       a bar of glare crossing the card rather than as light on it, and on a
+       tall card it wiped the heading and the body copy on the way past.
+
+       What replaces it is light with a SOURCE instead of a streak: a soft
+       cyan pool anchored to the corner the pictogram sits in, which fades up
+       and does not travel. The movement on hover is now only the card's own
+       8px lift; the cursor-tracked ring in css/card-fx.css already supplies
+       the pointer-following half, and the two were fighting each other. */
+    --pfx-hover-wash: radial-gradient(120% 108% at 14% 0%,
+            rgba(34, 179, 230, .15) 0%,
+            rgba(34, 179, 230, .05) 42%,
+            rgba(34, 179, 230, 0) 72%);
+
+    --pfx-hover-wash-dark: radial-gradient(120% 108% at 14% 0%,
+            rgba(53, 198, 244, .22) 0%,
+            rgba(53, 198, 244, .07) 44%,
+            rgba(53, 198, 244, 0) 74%);
 }
 
 /* ==========================================================================
@@ -561,19 +574,24 @@
     overflow: hidden;
 }
 
-/* marine-pages.css paints a gradient wash in ::before — retune it to cyan and
-   make it the sheen sweep instead of a static tint */
+/* marine-pages.css paints a gradient wash in ::before — retuned to a cyan
+   pool that fades up in place. `transform: none` is load-bearing: without it
+   the element keeps marine-pages.css's own translate and starts off-card. */
 .mrnp-icard::before {
     content: "";
     position: absolute;
     inset: 0;
-    background: var(--pfx-sheen);
+    background: var(--pfx-hover-wash);
     opacity: 0;
-    transform: translateX(-64%);
-    transition: opacity .5s var(--e-out), transform 1.05s var(--e-out);
+    transform: none;
+    transition: opacity .42s var(--e-out);
     pointer-events: none;
     z-index: 0;
     border-radius: inherit;
+}
+
+.mrn-dark .mrnp-icard::before {
+    background: var(--pfx-hover-wash-dark);
 }
 
 .mrnp-icard:hover {
@@ -586,7 +604,6 @@
 
 .mrnp-icard:hover::before {
     opacity: 1;
-    transform: translateX(64%);
 }
 
 .mrnp-icard > * {
@@ -615,10 +632,14 @@
     object-fit: contain;
 }
 
-/* keeps the translateZ lift — the card is a preserve-3d surface under
-   data-mrnp-tilt and the icon should sit proud of it, as it does on index */
+/* The translateZ is kept for the pages where the card is genuinely a
+   preserve-3d surface. The rotate(-5deg) is not: `overflow: hidden` on
+   .mrnp-icard flattens the 3D context, so the Z never renders and the rotation
+   was the only part that did — a 42px plate sitting visibly crooked next to
+   dead-straight type, which read as a rendering fault rather than a flourish.
+   The fill and the glow carry the state on their own. */
 .mrnp-icard:hover .mrnp-icard__icon {
-    transform: translateZ(48px) rotate(-5deg);
+    transform: translateZ(48px);
     background: linear-gradient(150deg, var(--cyan, #22b3e6), var(--cyan-deep, #1195cf));
     border-color: transparent;
     color: #fff;
@@ -687,7 +708,14 @@
 
 .mrn-dark .mrnp-icard:hover {
     background: linear-gradient(165deg, #0d2b4e 0%, #08203a 60%, #051829 100%);
-    border-color: rgba(53, 198, 244, .45);
+    border-color: rgba(53, 198, 244, .5);
+    /* .mrnp-icard:hover above sets a light-ground shadow that is invisible on
+       a near-black plate, and the sweep used to be the only thing that said
+       "this one". A contact shadow plus a cyan spill is what says it now. */
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .07),
+        0 34px 68px -34px rgba(0, 0, 0, .9),
+        0 20px 46px -30px rgba(34, 179, 230, .65);
 }
 
 .mrn-dark .mrnp-icard h4 {

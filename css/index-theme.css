@@ -5472,6 +5472,21 @@
     display: none;
 }
 
+/* The edge fade is right while the shelf is moving — the band dissolves at the
+   viewport edge instead of being guillotined — and wrong the instant someone
+   stops it, because the plate they stopped on is then the one left half
+   dissolved. js/cert-viewer.js stamps .mrn-certs-stopped on a DELIBERATE pause
+   only; the transient hover and off-screen holds keep the mask, since nobody is
+   reading a plate they merely swept the pointer across.
+
+   This is the concern the old reduced-motion block raised when it dropped the
+   mask for a scroll region — answered here without giving up the mask while it
+   is doing its job. */
+#credentials.mrn-certs-stopped .mrn-certs {
+    -webkit-mask-image: none;
+    mask-image: none;
+}
+
 /* --------------------------------------------------------------------------
    3. Track
    js/marine.js initMarquees() does `track.innerHTML += track.innerHTML`, so

@@ -244,13 +244,13 @@
     z-index: 2;
 }
 
-/* page-fx.css tints the hover sheen cyan for every card family. Retuned to
-   the card's own tone so a green card does not sweep blue. */
+/* page-fx.css now fades a cyan pool up from the pictogram's corner instead of
+   sweeping a white band across the plate. Retuned to the card's own tone so a
+   green card does not glow blue. */
 .env-commit .mrnp-icard::before {
-    background: linear-gradient(100deg,
-            rgba(255, 255, 255, 0) 18%,
-            var(--tone-wash) 50%,
-            rgba(255, 255, 255, 0) 82%);
+    background: radial-gradient(120% 108% at 14% 0%,
+            var(--tone-wash) 0%,
+            rgba(255, 255, 255, 0) 68%);
 }
 
 .env-commit .mrnp-icard:hover {
