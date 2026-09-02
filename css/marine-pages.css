@@ -807,7 +807,21 @@
     transform: none;
 }
 
-/* lightbox */
+/* ==========================================================================
+   LIGHTBOX / IMAGE VIEWER
+   --------------------------------------------------------------------------
+   Was: a bare <img> floated on a scrim, with the round nav buttons pinned to
+   the VIEWPORT edges. At 1280px the image measured 1177px wide, so the arrows
+   sat half off-screen on top of the photo, the counter collided with its
+   bottom edge, and the caption the trigger already carries was never shown.
+
+   Now: a framed viewer. A plate holds a title bar (caption + counter + tools),
+   a letterboxed stage and a thumbnail rail. js/marine-pages.js measures the
+   image and sets the frame width + stage height, so the chrome lines up with
+   the picture's own edges instead of the window's. One viewer serves both the
+   16:9 yard photos and the portrait A4 certificate scans.
+   ========================================================================== */
+
 .mrnp-lb {
     position: fixed;
     inset: 0;
@@ -815,13 +829,10 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    padding: 40px;
-    background: rgba(3, 6, 28, .94);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
+    padding: 34px 40px;
     opacity: 0;
     visibility: hidden;
-    transition: opacity .4s, visibility .4s;
+    transition: opacity .38s var(--ease-out), visibility .38s;
 }
 
 .mrnp-lb.is-open {
@@ -829,69 +840,376 @@
     visibility: visible;
 }
 
-.mrnp-lb__img {
-    max-width: 92vw;
-    max-height: 82vh;
-    border-radius: 14px;
-    box-shadow: 0 40px 90px -30px rgba(0, 0, 0, .9);
-    transform: scale(.92);
-    transition: transform .5s var(--ease-out);
-}
-
-.mrnp-lb.is-open .mrnp-lb__img {
-    transform: scale(1);
-}
-
-.mrnp-lb__close,
-.mrnp-lb__nav {
+/* Own layer so the blur composites against the PAGE. Blurring on .mrnp-lb
+   itself asks the compositor to filter the backdrop of the same element that
+   paints the frame sitting on top of it. */
+.mrnp-lb__scrim {
     position: absolute;
-    width: 52px;
-    height: 52px;
-    border-radius: 50%;
-    border: 1px solid rgba(255, 255, 255, .25);
-    background: rgba(255, 255, 255, .08);
-    color: #fff;
-    font-size: 22px;
-    line-height: 1;
-    cursor: pointer;
+    inset: 0;
+    background: rgba(4, 18, 31, .93);
+    -webkit-backdrop-filter: blur(8px) saturate(120%);
+    backdrop-filter: blur(8px) saturate(120%);
+}
+
+/* ---- frame ------------------------------------------------------------- */
+
+.mrnp-lb__frame {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    max-width: 1240px;
+    max-height: 100%;
+    background: var(--pfx-plate-dark, linear-gradient(165deg, #0a2340 0%, #071a2e 60%, #04121f 100%));
+    border: 1px solid rgba(53, 198, 244, .28);
+    border-radius: var(--pfx-radius, 3px);
+    box-shadow: 0 50px 120px -40px #000;
+    opacity: 0;
+    transform: translateY(18px) scale(.97);
+    transition: opacity .5s var(--ease-out), transform .55s var(--ease-out);
+}
+
+.mrnp-lb.is-open .mrnp-lb__frame {
+    opacity: 1;
+    transform: none;
+}
+
+/* the engineering-drawing corner ticks the rest of the page uses */
+.mrnp-lb__frame::before,
+.mrnp-lb__frame::after {
+    content: "";
+    position: absolute;
+    width: var(--pfx-tick, 14px);
+    height: var(--pfx-tick, 14px);
+    border: 2px solid var(--cyan-bright, #35c6f4);
+    pointer-events: none;
+}
+
+.mrnp-lb__frame::before {
+    top: -1px;
+    left: -1px;
+    border-right: 0;
+    border-bottom: 0;
+}
+
+.mrnp-lb__frame::after {
+    right: -1px;
+    bottom: -1px;
+    border-top: 0;
+    border-left: 0;
+}
+
+/* ---- title bar --------------------------------------------------------- */
+
+.mrnp-lb__bar {
+    flex: 0 0 auto;
     display: flex;
     align-items: center;
-    justify-content: center;
-    transition: background .3s, transform .3s, color .3s;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 11px 11px 11px 18px;
+    background: rgba(4, 18, 31, .55);
+    border-bottom: 1px solid rgba(53, 198, 244, .18);
 }
 
-.mrnp-lb__close:hover,
-.mrnp-lb__nav:hover {
-    background: var(--grad-gold);
-    color: var(--navy-deep);
-    transform: scale(1.08);
+.mrnp-lb__meta {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    min-width: 0;
 }
 
-.mrnp-lb__close {
-    top: 28px;
-    right: 28px;
+.mrnp-lb__idx {
+    flex: 0 0 auto;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2px;
+    color: var(--gold, #ffad18);
 }
 
-.mrnp-lb__nav--prev {
-    left: 28px;
-    top: 50%;
-    margin-top: -26px;
+.mrnp-lb__title {
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 15px;
+    font-weight: 500;
+    letter-spacing: 1.6px;
+    text-transform: uppercase;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.mrnp-lb__nav--next {
-    right: 28px;
-    top: 50%;
-    margin-top: -26px;
+.mrnp-lb__tools {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 }
 
 .mrnp-lb__count {
+    margin-right: 4px;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 12px;
+    letter-spacing: 2.5px;
+    white-space: nowrap;
+    color: var(--cyan-bright, #35c6f4);
+}
+
+.mrnp-lb__btn {
+    width: 34px;
+    height: 34px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(53, 198, 244, .3);
+    border-radius: var(--pfx-radius, 3px);
+    background: rgba(10, 35, 64, .8);
+    color: #fff;
+    cursor: pointer;
+    transition: background .28s, border-color .28s, color .28s;
+}
+
+.mrnp-lb__btn svg {
+    display: block;
+    width: 16px;
+    height: 16px;
+}
+
+.mrnp-lb__btn:hover,
+.mrnp-lb__btn:focus-visible {
+    outline: none;
+    background: var(--cyan-deep, #1195cf);
+    border-color: transparent;
+}
+
+.mrnp-lb__btn:focus-visible {
+    box-shadow: 0 0 0 2px rgba(53, 198, 244, .55);
+}
+
+/* ---- stage ------------------------------------------------------------- */
+
+.mrnp-lb__stage {
+    position: relative;
+    flex: 1 1 auto;
+    min-height: 0;
+    overflow: hidden;
+    background:
+        linear-gradient(135deg, rgba(53, 198, 244, .05) 0%, transparent 55%),
+        #04121f;
+}
+
+/* The picture scrolls when zoomed, and the prev/next buttons must not scroll
+   with it — so the scroll port is its own layer and the buttons stay pinned
+   to the stage above it. */
+.mrnp-lb__canvas {
     position: absolute;
-    bottom: 30px;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.mrnp-lb__img {
+    display: block;
+    margin: auto;
+    max-width: 100%;
+    max-height: 100%;
+    opacity: 0;
+    transition: opacity .35s var(--ease-out);
+}
+
+.mrnp-lb__frame:not(.is-loading) .mrnp-lb__img {
+    opacity: 1;
+}
+
+/* Zoom. The A4 certificate scans letterbox down to ~350px wide on a laptop,
+   which is legible as a picture and not as a document. */
+.mrnp-lb__canvas.is-zoomable .mrnp-lb__img {
+    cursor: zoom-in;
+}
+
+.mrnp-lb__canvas.is-zoomed {
+    /* Block, not flex. A flex item centred by justify-content/margin:auto
+       overflows EQUALLY in both directions, and there is no scrolling into
+       the leading overflow — half a zoomed picture is unreachable. In block
+       flow the auto margins collapse to 0 once the image is wider than the
+       port, so it starts at the left edge and every pixel can be scrolled to. */
+    display: block;
+    overflow: auto;
+    cursor: grab;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(53, 198, 244, .4) rgba(255, 255, 255, .05);
+}
+
+.mrnp-lb__canvas.is-zoomed .mrnp-lb__img {
+    max-width: none;
+    max-height: none;
+    cursor: inherit;
+}
+
+.mrnp-lb__canvas.is-panning {
+    cursor: grabbing;
+}
+
+.mrnp-lb__canvas::-webkit-scrollbar {
+    width: 9px;
+    height: 9px;
+}
+
+.mrnp-lb__canvas::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, .05);
+}
+
+.mrnp-lb__canvas::-webkit-scrollbar-thumb {
+    background: rgba(53, 198, 244, .4);
+}
+
+.mrnp-lb__spin {
+    position: absolute;
+    top: 50%;
     left: 50%;
-    transform: translateX(-50%);
-    color: rgba(255, 255, 255, .7);
-    font-size: 13px;
-    letter-spacing: 3px;
+    width: 34px;
+    height: 34px;
+    margin: -17px 0 0 -17px;
+    border: 2px solid rgba(53, 198, 244, .22);
+    border-top-color: var(--cyan-bright, #35c6f4);
+    border-radius: 50%;
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity .2s;
+}
+
+.mrnp-lb__frame.is-loading .mrnp-lb__spin {
+    opacity: 1;
+    animation: mrnpLbSpin .8s linear infinite;
+}
+
+@keyframes mrnpLbSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* ---- prev / next ------------------------------------------------------- */
+
+.mrnp-lb__nav {
+    position: absolute;
+    top: 50%;
+    width: 46px;
+    height: 46px;
+    margin-top: -23px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid rgba(53, 198, 244, .32);
+    border-radius: var(--pfx-radius, 3px);
+    background: rgba(4, 18, 31, .72);
+    -webkit-backdrop-filter: blur(6px);
+    backdrop-filter: blur(6px);
+    color: #fff;
+    cursor: pointer;
+    opacity: .82;
+    transition: opacity .3s, background .3s, border-color .3s;
+}
+
+.mrnp-lb__nav svg {
+    display: block;
+    width: 20px;
+    height: 20px;
+}
+
+.mrnp-lb__nav:hover,
+.mrnp-lb__nav:focus-visible {
+    outline: none;
+    opacity: 1;
+    background: var(--cyan-deep, #1195cf);
+    border-color: transparent;
+}
+
+.mrnp-lb__nav:focus-visible {
+    box-shadow: 0 0 0 2px rgba(53, 198, 244, .55);
+}
+
+.mrnp-lb__nav--prev {
+    left: 14px;
+}
+
+.mrnp-lb__nav--next {
+    right: 14px;
+}
+
+/* ---- thumbnail rail ---------------------------------------------------- */
+
+.mrnp-lb__foot {
+    flex: 0 0 auto;
+    padding: 10px 12px;
+    background: rgba(4, 18, 31, .55);
+    border-top: 1px solid rgba(53, 198, 244, .18);
+}
+
+.mrnp-lb__rail {
+    display: flex;
+    gap: 8px;
+    overflow-x: auto;
+    overflow-y: hidden;
+    -webkit-overflow-scrolling: touch;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(53, 198, 244, .4) transparent;
+}
+
+.mrnp-lb__rail::-webkit-scrollbar {
+    height: 6px;
+}
+
+.mrnp-lb__rail::-webkit-scrollbar-thumb {
+    background: rgba(53, 198, 244, .4);
+}
+
+.mrnp-lb__thumb {
+    flex: 0 0 auto;
+    width: 78px;
+    height: 52px;
+    padding: 0;
+    overflow: hidden;
+    border: 1px solid rgba(53, 198, 244, .2);
+    border-radius: 2px;
+    background: #04121f;
+    opacity: .5;
+    cursor: pointer;
+    transition: opacity .3s, border-color .3s;
+}
+
+.mrnp-lb__thumb img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.mrnp-lb__thumb:hover {
+    opacity: .85;
+}
+
+.mrnp-lb__thumb:focus-visible {
+    outline: none;
+    opacity: 1;
+    box-shadow: 0 0 0 2px rgba(53, 198, 244, .55);
+}
+
+.mrnp-lb__thumb.is-active {
+    opacity: 1;
+    border-color: var(--gold, #ffad18);
+}
+
+/* a single-image set has nothing to navigate between */
+.mrnp-lb--single .mrnp-lb__foot,
+.mrnp-lb--single .mrnp-lb__nav,
+.mrnp-lb--single .mrnp-lb__count {
+    display: none;
 }
 
 /* ==========================================================================
@@ -1561,17 +1879,63 @@
         display: none;
     }
 
-    .mrnp-lb__close {
-        top: 14px;
-        right: 14px;
+    /* The viewer drops its frame below 860px: at that width a plate sized to
+       the image leaves margins too thin to read as a frame, so it goes
+       full-bleed and the stage takes whatever the bar and rail leave.
+       !important beats the width initLightbox() writes inline — the script
+       also clears it, this is the belt to that pair of braces. */
+    .mrnp-lb {
+        padding: 0;
+    }
+
+    .mrnp-lb__frame {
+        width: 100% !important;
+        max-width: none;
+        height: 100%;
+        max-height: none;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .mrnp-lb__frame::before,
+    .mrnp-lb__frame::after {
+        display: none;
+    }
+
+    .mrnp-lb__stage {
+        /* basis 0 rather than the height layout() writes on desktop: the
+           canvas inside is absolutely positioned and contributes no height,
+           so the stage has to be grown into the space instead of measured */
+        height: auto !important;
+        flex: 1 1 0%;
+    }
+
+    .mrnp-lb__bar {
+        padding: 10px 10px 10px 14px;
+    }
+
+    .mrnp-lb__title {
+        font-size: 13px;
+        letter-spacing: 1.2px;
+    }
+
+    .mrnp-lb__nav {
+        width: 38px;
+        height: 38px;
+        margin-top: -19px;
     }
 
     .mrnp-lb__nav--prev {
-        left: 10px;
+        left: 8px;
     }
 
     .mrnp-lb__nav--next {
-        right: 10px;
+        right: 8px;
+    }
+
+    .mrnp-lb__thumb {
+        width: 62px;
+        height: 42px;
     }
 }
 
@@ -1617,7 +1981,12 @@
     .mrnp-icard > *,
     .mrnp-flip__inner,
     .mrnp-split__frame,
-    .mrnp-certcard {
+    .mrnp-certcard,
+    .mrnp-lb__frame {
         transform: none !important;
+    }
+
+    .mrnp-lb__frame.is-loading .mrnp-lb__spin {
+        animation: none;
     }
 }

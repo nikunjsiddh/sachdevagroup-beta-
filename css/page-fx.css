@@ -978,35 +978,12 @@
     color: #fff;
 }
 
-.mrnp-lb {
-    background: rgba(4, 18, 31, .96);
-}
-
-.mrnp-lb__img {
-    border: 1px solid rgba(53, 198, 244, .3);
-    border-radius: var(--pfx-radius);
-    box-shadow: 0 50px 120px -40px #000;
-}
-
-.mrnp-lb__close,
-.mrnp-lb__nav {
-    border-radius: 2px;
-    border: 1px solid rgba(53, 198, 244, .32);
-    background: rgba(10, 35, 64, .8);
-    color: #fff;
-}
-
-.mrnp-lb__close:hover,
-.mrnp-lb__nav:hover {
-    background: var(--cyan-deep, #1195cf);
-    border-color: transparent;
-}
-
-.mrnp-lb__count {
-    font-family: var(--font-display, "Oswald", sans-serif);
-    letter-spacing: 3px;
-    color: var(--cyan-bright, #35c6f4);
-}
+/* The lightbox is the one .mrnp-* component that already ships in the
+   industrial language: marine-pages.css section 8 was rebuilt around the
+   framed viewer and reads the same --cyan / --gold / --pfx-* tokens this
+   file works in, so re-skinning it here would only fight that. What stood
+   here were overrides for .mrnp-lb__img and .mrnp-lb__close, and the frame,
+   the title bar and the thumbnail rail have taken over both jobs. */
 
 /* --- 5.7 news / articles ------------------------------------------------ */
 
