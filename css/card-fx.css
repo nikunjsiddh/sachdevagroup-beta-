@@ -151,7 +151,13 @@
    ring, which is correct on any ground.
    -------------------------------------------------------------------------- */
 
-.mrn-dark .sg-cardfx::before {
+/* .sgf-yard__card is the one card that its section cannot speak for. The
+   band sits in a white .sgf-yard section, so the .mrn-dark test below misses
+   it — but the card itself is a deep navy gradient, and on that ground the
+   cyan-only ring is the wrong one. Named explicitly rather than by ancestor.
+   If another dark card ever lands in a light section, it belongs here too. */
+.mrn-dark .sg-cardfx::before,
+.sgf-yard__card > .sg-cardfx::before {
     background:
         radial-gradient(240px circle at var(--mx, 50%) var(--my, 50%),
             rgba(var(--sgfx-lead), .95) 0%,
@@ -159,7 +165,8 @@
             rgba(var(--sgfx-lead), 0) 70%);
 }
 
-.mrn-dark .sg-cardfx::after {
+.mrn-dark .sg-cardfx::after,
+.sgf-yard__card > .sg-cardfx::after {
     background:
         radial-gradient(260px circle at var(--mx, 50%) var(--my, 50%),
             rgba(var(--sgfx-lead), .17) 0%,

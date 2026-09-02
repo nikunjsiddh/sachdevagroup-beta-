@@ -59,7 +59,8 @@
         '.pfx-step',        /* waste_management                                                   */
         '.mrn-tile',        /* index — the gallery link tiles                                     */
         '.mrn-stat',        /* index — the figures band                                           */
-        '.mrn-cert'         /* index — certificates, inside a marquee that pauses on hover        */
+        '.mrn-cert',        /* index — certificates, inside a marquee that pauses on hover        */
+        '.sgf-yard__card'   /* all 13 — the yard address band, in the footer                      */
     ].join(', ');
 
     function init() {
