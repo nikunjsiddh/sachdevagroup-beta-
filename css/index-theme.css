@@ -3611,6 +3611,81 @@
     background: linear-gradient(90deg, var(--cyan-bright), var(--cyan-deep));
 }
 
+/* --- the hover plate ------------------------------------------------------
+   js/card-fx.js appends one <i class="sg-cardfx"> to every .d3-card and every
+   step carries that class, so a cursor-tracked ring was already being drawn
+   here. On the card families it was written for it traces a plate that exists.
+   On a step there was none — no background, and `border-radius: inherit`
+   resolving to 0 against a bare grid cell — so the hover put a hard-cornered
+   rectangle around the copy, cropped to the text box and hanging in the white.
+
+   Rather than switch the overlay off, give the ring something to trace. The
+   same element becomes the plate: pushed out past the content so it frames the
+   step instead of cropping it, rounded to echo the tile's own corner, and set
+   behind the copy so the ring reads as the plate's edge and the spotlight as
+   light falling across it.
+
+   BEHIND, not merely under. .mrn-step is preserve-3d, so its children paint in
+   depth order and z-index does not settle this — translateZ does. -2px against
+   the 1600px stage is no visible displacement, and in one declaration it puts
+   the plate behind the copy (Z 0), the connector segments (Z 0) and the tile
+   (Z 20).
+
+   The insets are asymmetric because the box is: it starts at the tile's top
+   edge and the step number overhangs that by 12px, so the plate has to clear
+   30px before it frames anything.
+
+   Nothing here declares a transition. .sg-cardfx.sg-cardfx already fades the
+   whole overlay in on hover, and re-stating `transition` on this selector
+   would replace that fade rather than extend it.
+   -------------------------------------------------------------------------- */
+
+#process .mrn-step > .sg-cardfx {
+    inset: -30px -6px -24px;
+    border-radius: 20px;
+    transform: translateZ(-2px);
+    background:
+        radial-gradient(128% 96% at 50% 0%, rgba(53, 198, 244, .11), rgba(53, 198, 244, 0) 62%),
+        linear-gradient(180deg, #ffffff 0%, #f3fafe 100%);
+    box-shadow:
+        0 26px 52px -30px rgba(7, 26, 46, .42),
+        0 2px 10px -6px rgba(7, 26, 46, .16);
+}
+
+/* The ring keeps a floor instead of fading to nothing. card-fx.css takes its
+   outer stop to alpha 0, which is right when there is nothing behind it and
+   wrong once there is: the far side of the frame would end in mid-air. */
+#process .mrn-step > .sg-cardfx::before {
+    padding: 1px;
+    background:
+        radial-gradient(340px circle at var(--mx, 50%) var(--my, 50%),
+            rgba(53, 198, 244, .72) 0%,
+            rgba(53, 198, 244, .28) 44%,
+            rgba(53, 198, 244, .10) 80%);
+}
+
+/* Widened to the plate rather than to the step: js/card-fx.js measures
+   --mx / --my against the card's own box, and the plate is 54px taller. */
+#process .mrn-step > .sg-cardfx::after {
+    background:
+        radial-gradient(300px circle at var(--mx, 50%) var(--my, 50%),
+            rgba(53, 198, 244, .13) 0%,
+            rgba(53, 198, 244, .05) 36%,
+            rgba(53, 198, 244, 0) 66%);
+}
+
+/* The copy closes up as the plate arrives, so the hovered step is the darkest
+   in the row rather than the same weight as its three neighbours.
+   #35506b on the plate's #f3fafe = 7.8:1, up from 6.1:1 for --body-on-light. */
+#process .mrn-step p {
+    transition: color .35s var(--e-out);
+}
+
+#process .mrn-step:hover p,
+#process .mrn-step:focus-within p {
+    color: #35506b;
+}
+
 /* ==========================================================================
    PROCESS — responsive
    1200: same four-across diagram, metrics tightened; connector geometry
@@ -3666,6 +3741,13 @@
         font-size: 13.5px;
         line-height: 1.75;
         max-width: 30ch;
+    }
+
+    /* --prc-gap drops to 18px and the tile to 76px, so the plate comes in with
+       them; the number plate now overhangs by 10px rather than 12px. */
+    #process .mrn-step > .sg-cardfx {
+        inset: -26px -4px -20px;
+        border-radius: 18px;
     }
 }
 
@@ -3761,6 +3843,17 @@
         grid-column: 2;
         max-width: 48ch;
         margin: 0;
+    }
+
+    /* The plate stops short of the tile and frames the copy alone. The rail is
+       drawn on .mrn-flow, one stacking context below .mrn-step (z-index 2), so
+       a full-width plate would paint over the spine exactly where the hovered
+       step sits on it. Leaving the tile outside keeps the rail unbroken — and
+       the tile is opaque, so it covers its own length of it as it always did. */
+    #process .mrn-step > .sg-cardfx {
+        inset: -12px -14px;
+        left: calc(var(--prc-tile) + 10px);
+        border-radius: 16px;
     }
 }
 
