@@ -2241,73 +2241,208 @@
    each row: one shared vanishing point means the rows tilt as a stack rather
    than each one having its own private camera. */
 
+/* --- 6.8 the fact file — a bed of plates, not a stack of rules ----------
+   WAS seven full-bleed bars split 230px label / 1fr value. At container
+   width that put "1983" alone against ~900px of empty plate, and seven
+   identical bars in a column gave the eye no place to land: every fact
+   looked exactly as important as every other one.
+
+   It is now a six-column bed, and each fact takes the width its own answer
+   needs — 2 for the one-liners, 3 for the addresses, 4 for the two that
+   carry a list, 6 for the media line that closes the section. Same seven
+   facts, same order, four rows instead of seven. The label moves above the
+   value with a pictogram beside it, which is the .mrnp-icard idiom this
+   page already uses everywhere else. */
+
 .pfx-facts {
     margin: 46px 0 0;
     padding: 0;
     display: grid;
-    gap: 12px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
     perspective: 1500px;
 }
 
 .pfx-fact {
     position: relative;
+    grid-column: span 3;
     display: grid;
-    grid-template-columns: 230px 1fr;
-    gap: 26px;
-    align-items: baseline;
-    padding: 22px 30px;
+    align-content: start;
+    gap: 16px;
+    padding: 26px 28px 28px;
     background: var(--pfx-plate);
     border: var(--pfx-ring);
+    border-radius: var(--pfx-radius);
     box-shadow: var(--lift-1, 0 10px 28px -18px rgba(4, 18, 31, .55));
+    /* NOT overflow:hidden — card-fx.css:183 records that .mrnp-icard's own
+       clip is what killed its declared depth set. The wash below is inset:0
+       on the same box, so there is nothing to clip anyway. */
     transform-style: preserve-3d;
     transition: transform .5s var(--e-out), box-shadow .5s var(--e-out),
         border-color .5s var(--e-out), background .5s var(--e-out);
 }
 
+.pfx-fact--sm {
+    grid-column: span 2;
+}
+
+.pfx-fact--lg {
+    grid-column: span 4;
+}
+
+.pfx-fact--full {
+    grid-column: span 6;
+}
+
+/* the tick, promoted from a centred 18px mark to a rail that runs down the
+   ring beside the pictogram and doubles on hover. Origin is the top edge so
+   it grows into the card rather than out of both ends. */
 .pfx-fact::before {
     content: "";
     position: absolute;
-    left: 0;
-    top: 50%;
+    left: -1px;
+    top: 26px;
+    z-index: 1;
     width: 3px;
-    height: 18px;
+    height: 34px;
     background: var(--cyan, #22b3e6);
-    transform: translateY(-50%) scaleY(.5);
-    transition: transform .5s var(--e-out), background .5s var(--e-out);
+    transform-origin: 50% 0;
+    transform: scaleY(1);
+    transition: transform .55s var(--e-out), background .55s var(--e-out);
 }
 
-.pfx-fact:hover {
-    transform: translate3d(0, -4px, 34px);
-    border-color: rgba(34, 179, 230, .4);
+/* the same cyan pool .mrnp-icard fades up, anchored to the pictogram corner */
+.pfx-fact::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    background: var(--pfx-hover-wash);
+    opacity: 0;
+    transition: opacity .42s var(--e-out);
+    pointer-events: none;
+}
+
+/* js/marine-pages.js initTilt3d overwrites `transform` inline and !important
+   while the pointer is inside, so this lift is what shows on a keyboard
+   focus or a coarse pointer, where the tilt never runs. */
+.pfx-fact:hover,
+.pfx-fact:focus-within {
+    transform: translate3d(0, -6px, 34px);
+    border-color: rgba(34, 179, 230, .40);
     box-shadow: var(--lift-3, 0 34px 70px -30px rgba(4, 18, 31, .78));
     background: linear-gradient(180deg, #ffffff 0%, #f4fbff 100%);
     z-index: 2;
 }
 
-.pfx-fact:hover::before {
-    transform: translateY(-50%) scaleY(2.5);
+.pfx-fact:hover::before,
+.pfx-fact:focus-within::before {
+    transform: scaleY(2.15);
     background: var(--gold, #ffad18);
 }
 
+.pfx-fact:hover::after,
+.pfx-fact:focus-within::after {
+    opacity: 1;
+}
+
+/* --- the label row: pictogram + caption --------------------------------- */
+
 .pfx-fact dt {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform .5s var(--e-out);
+}
+
+.pfx-fact:hover dt,
+.pfx-fact:focus-within dt {
+    transform: translateZ(22px);
+}
+
+.pfx-fact__ico {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 2px;
+    background: linear-gradient(150deg, rgba(34, 179, 230, .16), rgba(34, 179, 230, .04));
+    border: 1px solid rgba(34, 179, 230, .28);
+    color: var(--cyan-deep, #1195cf);
+    transition: transform .5s var(--e-out), background .5s var(--e-out),
+        border-color .5s var(--e-out), color .5s var(--e-out),
+        box-shadow .5s var(--e-out);
+}
+
+.pfx-fact__ico svg {
+    width: 21px;
+    height: 21px;
+    display: block;
+}
+
+.pfx-fact:hover .pfx-fact__ico,
+.pfx-fact:focus-within .pfx-fact__ico {
+    transform: translateZ(30px);
+    background: linear-gradient(150deg, var(--cyan, #22b3e6), var(--cyan-deep, #1195cf));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: var(--glow-cyan, 0 22px 50px -26px rgba(34, 179, 230, .85));
+}
+
+.pfx-fact__label {
     font-family: var(--font-display, "Oswald", sans-serif);
     font-size: 11.5px;
     font-weight: 500;
     letter-spacing: 2.4px;
     text-transform: uppercase;
     color: var(--cyan-deep, #1195cf);
+}
+
+/* --- the value ---------------------------------------------------------- */
+
+.pfx-fact dd {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--heading-on-light, #071a2e);
     transition: transform .5s var(--e-out);
 }
 
-.pfx-fact:hover dt {
-    transform: translateZ(22px);
+.pfx-fact:hover dd,
+.pfx-fact:focus-within dd {
+    transform: translateZ(12px);
 }
 
-.pfx-fact dd {
-    margin: 0;
-    font-size: 15.5px;
-    line-height: 1.72;
-    color: var(--heading-on-light, #071a2e);
+/* a pair of links reading as one line, with a middot holding them apart.
+   Only the link lists get this — the certifications value is chips, which
+   want ordinary inline flow so they wrap as a block of tags. */
+.pfx-fact__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* the closing row is six columns wide for two short links, which stacked
+   under the label leaves most of the plate empty. It splits instead —
+   label held left, the contact details run out to the right edge — so the
+   width is doing something and the row reads as the signature line it is. */
+.pfx-fact--full {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0 40px;
+    padding-top: 22px;
+    padding-bottom: 22px;
+}
+
+.pfx-fact--full .pfx-fact__links {
+    justify-content: flex-end;
+    font-size: 17px;
 }
 
 .pfx-fact dd a {
@@ -2316,14 +2451,15 @@
     transition: color .35s var(--e-out), border-color .35s var(--e-out);
 }
 
-.pfx-fact dd a:hover {
+.pfx-fact dd a:hover,
+.pfx-fact dd a:focus-visible {
     color: var(--cyan-deep, #1195cf);
     border-color: var(--cyan, #22b3e6);
 }
 
 .pfx-fact__sep {
     color: rgba(7, 26, 46, .28);
-    padding: 0 9px;
+    padding: 0 11px;
 }
 
 .pfx-fact__chip {
@@ -2341,7 +2477,8 @@
         border-color .45s var(--e-out);
 }
 
-.pfx-fact:hover .pfx-fact__chip {
+.pfx-fact:hover .pfx-fact__chip,
+.pfx-fact:focus-within .pfx-fact__chip {
     transform: translateZ(16px);
     border-color: rgba(34, 179, 230, .5);
     background: rgba(34, 179, 230, .12);
@@ -2490,6 +2627,14 @@ html.sg-motion [data-sg-delay="10"] {
         padding: 96px 0;
     }
 
+    /* a 2-of-6 plate is ~300px here and the addresses beside it are already
+       running to four lines — the bed drops to a plain 3+3, and the two wide
+       facts each take a row of their own */
+    .pfx-fact--sm,
+    .pfx-fact--lg {
+        grid-column: span 3;
+    }
+
     .mrnp-hero__inner {
         padding-top: 168px;
         padding-bottom: 118px;
@@ -2572,16 +2717,59 @@ html.sg-motion [data-sg-delay="10"] {
         padding: 32px 24px 28px;
     }
 
-    /* the label column is 230px against a 1fr value; below this the value has
-       nowhere left to wrap to, so the row becomes two stacked lines */
-    .pfx-fact {
+    /* two plates across is ~330px each and the addresses stop fitting, so the
+       bed becomes one column. The spans have to be reset rather than left to
+       collapse: `span 3` against a single-column template opens three
+       implicit columns and drops each fact into a third of the row. */
+    .pfx-facts {
         grid-template-columns: 1fr;
-        gap: 8px;
-        padding: 20px 22px;
+        gap: 12px;
+    }
+
+    .pfx-fact,
+    .pfx-fact--sm,
+    .pfx-fact--lg,
+    .pfx-fact--full {
+        grid-column: 1 / -1;
+    }
+
+    .pfx-fact {
+        gap: 13px;
+        padding: 22px 22px 24px;
+    }
+
+    /* the media row's label/details split needs the full width it had; at one
+       column it goes back to stacking like every other fact */
+    .pfx-fact--full {
+        grid-template-columns: 1fr;
+        align-items: start;
+        gap: 13px;
+    }
+
+    .pfx-fact--full .pfx-fact__links {
+        justify-content: flex-start;
+        font-size: 15.5px;
+    }
+
+    /* one plate is now too narrow to hold either pair on a single line, and a
+       wrapped middot lands at the head of the second line reading as a bullet.
+       The pairs stack and the separator goes. */
+    .pfx-fact__links {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 7px;
+    }
+
+    .pfx-fact__links .pfx-fact__sep {
+        display: none;
+    }
+
+    .pfx-fact::before {
+        top: 22px;
     }
 
     .pfx-fact dd {
-        font-size: 15px;
+        font-size: 15.5px;
     }
 
     /* 4 counters across 375px is 80px a cell — the figures collide with their
@@ -2724,6 +2912,8 @@ html.sg-motion [data-sg-delay="10"] {
     .pfx-step,
     .pfx-fact,
     .pfx-fact dt,
+    .pfx-fact dd,
+    .pfx-fact__ico,
     .pfx-fact__chip,
     .pfx-go,
     .pfx-go .sg-ico,
@@ -2733,11 +2923,16 @@ html.sg-motion [data-sg-delay="10"] {
         transform: none !important;
     }
 
-    /* the tick is a transform, and `transform: none` above would drop the
-       translateY that centres it — restate the resting state rather than
-       letting the row lose its mark */
+    /* the tick now rests at its own height and is only scaled on hover, so
+       the blanket `transform: none` costs it nothing — it just stops growing */
     .pfx-fact::before {
-        transform: translateY(-50%) scaleY(.5) !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    /* the wash is opacity, which is not motion, so it still arrives — only
+       the fade is dropped */
+    .pfx-fact::after {
         transition: none !important;
     }
 
