@@ -1,0 +1,346 @@
+/* ==========================================================================
+   SACHDEVA GROUP — WASTE PROCEDURE FLOW  (#procedure)
+   ==========================================================================
+   Loaded on waste_management.html only, LAST — after css/card-fx.css.
+   .pfx-step exists on no other page, so nothing else can be affected; every
+   selector is scoped under #procedure anyway.
+
+   WHAT WAS WRONG — measured on the live page before this file existed
+
+   1. THE HOVER DREW A BROKEN RECTANGLE
+      js/card-fx.js lists .pfx-step, so each step carries an injected
+      <i class="sg-cardfx"> — a cursor-tracked ring and spotlight. That
+      component draws on `border-radius: inherit` and expects a plate behind
+      it. A step had `background: rgba(0,0,0,0)` and a 3px radius, so the ring
+      traced the bare 900x122 row: a hard-cornered rectangle hanging in the
+      dark. On .mrn-dark the ring also switches to its cyan-into-AMBER variant
+      (css/card-fx.css), which is where the gold horizontal lines through the
+      first step came from. Nothing was misconfigured; there was simply no
+      surface for it to draw on.
+
+   2. THE CORNER BRACKET LANDED IN OPEN SPACE
+      css/page-fx.css:455 hangs a 30x30 cyan bracket off the top-left of
+      .pfx-step on hover. The row's top-left corner is the numeral's corner —
+      not a card corner — so the bracket appeared floating above and to the
+      left of the number, attached to nothing.
+
+   3. THE ICON SAT ON TOP OF THE TEXT INSTEAD OF BESIDE IT
+      .pfx-step__icon is `display: inline-flex` with `margin-bottom: 12px`, so
+      the 34px pictogram stacked ABOVE the sentence. Measured: icon at x=340,
+      paragraph at x=340 — the same column, one under the other, which is what
+      made every row read as two unrelated fragments.
+
+   4. THE RHYTHM WAS EMPTY
+      148px of pitch for one line of text, 26px of which was a gap and the
+      rest padding. Nine steps over 1332px with nothing in between.
+
+   5. THE SPINE OVERSHOT ITS FIRST NODE
+      .pfx-steps::before starts at top:14px while the first numeral's centre
+      sits at 50px, so 36px of track stuck out above step 01 with no node on
+      the end of it.
+
+   WHAT THIS FILE DOES
+      Gives the row the surface everything above was already assuming: the
+      existing .pfx-step__body becomes a plate, laid out as [icon][text] on one
+      line, with the numeral outside it on the spine. The ring, the bracket and
+      the sheen then have something to trace, and they are re-anchored to the
+      plate rather than to the row.
+
+   ON HOVER, ALL OF IT
+      The brief was that hovering should show the data properly. It does not
+      REVEAL anything — every sentence is fully legible at rest, at 7.4:1, and
+      hiding procedure text behind a pointer would be the wrong trade on a page
+      about hazardous-waste handling. Hover raises the plate, lights its edge,
+      fills the numeral and the pictogram, and takes the sentence from
+      #a7bbcf to #ffffff — 7.4:1 to 14.7:1. The step you are pointing at is the
+      brightest thing on the screen; the other eight stay readable.
+   ========================================================================== */
+
+#procedure {
+    --flow-node: 56px;
+    /* numeral column + gutter: where the plate, the ring and the bracket all
+       have to start. Stated once so the three cannot drift apart. */
+    --flow-inset: 76px;
+}
+
+/* --------------------------------------------------------------------------
+   1. The spine
+   -------------------------------------------------------------------------- */
+
+#procedure .pfx-steps {
+    max-width: 980px;
+    margin-top: 52px;
+    gap: 16px;
+}
+
+/* Both the track and the scroll-filled progress line start at the centre of
+   the first numeral — 28px, half of --flow-node, with the steps aligned to
+   `start` so every numeral sits the same distance from its own row top.
+
+   They run to the floor of the list and dissolve rather than stopping at a
+   computed offset: the last row's height depends on whether its sentence
+   wraps, so any fixed `bottom` is wrong for one viewport or another. The fade
+   also gives the progress line somewhere to end. */
+#procedure .pfx-steps::before,
+#procedure .pfx-steps::after {
+    left: calc(var(--flow-node) / 2 - 1px);
+    top: calc(var(--flow-node) / 2);
+    bottom: 0;
+    -webkit-mask-image: linear-gradient(180deg, #000 0 calc(100% - 46px), transparent 100%);
+    mask-image: linear-gradient(180deg, #000 0 calc(100% - 46px), transparent 100%);
+}
+
+/* --------------------------------------------------------------------------
+   2. The row
+   -------------------------------------------------------------------------- */
+
+#procedure .pfx-step {
+    grid-template-columns: var(--flow-node) 1fr;
+    gap: calc(var(--flow-inset) - var(--flow-node));
+    align-items: start;
+    padding: 0;
+    /* the row itself never moves. css/page-fx.css:1741 gives it
+       translateX(6px), which has never rendered anyway — the tilt handler in
+       js/marine-pages.js writes an inline transform with !important and wins.
+       The lift now belongs to the plate, where it reads as the plate lifting
+       rather than the whole row sliding out of its own spine. */
+    transform: none;
+}
+
+#procedure .pfx-step__no {
+    width: var(--flow-node);
+    height: var(--flow-node);
+    border-radius: 10px;
+    font-size: 19px;
+    font-weight: 400;
+    letter-spacing: .5px;
+}
+
+/* --------------------------------------------------------------------------
+   3. The plate
+   --------------------------------------------------------------------------
+   .pfx-step__body already wraps the pictogram and the sentence, so it becomes
+   the surface with no markup change. Two columns, vertically centred: the icon
+   stops being a header above the text and becomes its marker beside it.
+   -------------------------------------------------------------------------- */
+
+#procedure .pfx-step__body {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 18px;
+    padding: 15px 22px;
+    min-height: var(--flow-node);
+    border-radius: 12px;
+    background:
+        linear-gradient(135deg,
+            rgba(17, 47, 79, .92) 0%,
+            rgba(10, 35, 64, .86) 55%,
+            rgba(7, 26, 46, .92) 100%);
+    border: 1px solid rgba(53, 198, 244, .17);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .05),
+        0 16px 36px -26px rgba(0, 0, 0, .9);
+    transition:
+        transform .42s var(--e-out, cubic-bezier(.16, 1, .3, 1)),
+        border-color .42s var(--e-out, cubic-bezier(.16, 1, .3, 1)),
+        background .42s var(--e-out, cubic-bezier(.16, 1, .3, 1)),
+        box-shadow .42s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+#procedure .pfx-step__icon {
+    width: 42px;
+    height: 42px;
+    /* it was stacked above the sentence by this margin */
+    margin: 0;
+    border-radius: 9px;
+    flex: 0 0 auto;
+}
+
+#procedure .pfx-step__icon svg {
+    width: 21px;
+    height: 21px;
+}
+
+#procedure .pfx-step__body p {
+    font-size: 15.5px;
+    line-height: 1.62;
+    /* #a7bbcf on the plate = 7.4:1 at rest. The data is readable before
+       anybody points at it. */
+    color: var(--body-on-dark, #a7bbcf);
+    transition: color .42s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+/* --------------------------------------------------------------------------
+   4. Re-anchoring the two things that were drawing on the row
+   -------------------------------------------------------------------------- */
+
+/* the cursor-tracked ring and spotlight, moved off the bare row and onto the
+   plate, and given the plate's radius so it traces an edge that exists */
+#procedure .pfx-step > .sg-cardfx {
+    inset: 0 0 0 var(--flow-inset);
+    border-radius: 12px;
+}
+
+/* the corner bracket, moved from the row's top-left to the plate's.
+   `inset` is restated because css/page-fx.css:478 sets the shorthand, which
+   would otherwise put top/left back to -1px after these longhands. */
+#procedure .pfx-step::after {
+    inset: -1px auto auto calc(var(--flow-inset) - 1px);
+    border-color: var(--cyan-bright, #35c6f4);
+}
+
+#procedure .pfx-step:hover::after {
+    width: 26px;
+    height: 26px;
+}
+
+/* --------------------------------------------------------------------------
+   5. Hover — the step you are pointing at
+   -------------------------------------------------------------------------- */
+
+#procedure .pfx-step:hover .pfx-step__body,
+#procedure .pfx-step:focus-within .pfx-step__body {
+    transform: translateY(-3px);
+    border-color: rgba(53, 198, 244, .58);
+    background:
+        linear-gradient(135deg,
+            rgba(22, 63, 104, .96) 0%,
+            rgba(13, 46, 82, .92) 55%,
+            rgba(9, 32, 56, .95) 100%);
+    box-shadow:
+        inset 0 1px 0 rgba(255, 255, 255, .09),
+        0 24px 48px -26px rgba(0, 0, 0, .95),
+        0 18px 40px -28px rgba(34, 179, 230, .75);
+}
+
+/* the whole point of the hover: the sentence goes to full white, 14.7:1 */
+#procedure .pfx-step:hover .pfx-step__body p,
+#procedure .pfx-step:focus-within .pfx-step__body p {
+    color: #ffffff;
+}
+
+#procedure .pfx-step:hover .pfx-step__icon,
+#procedure .pfx-step:focus-within .pfx-step__icon {
+    background: linear-gradient(150deg, var(--cyan, #22b3e6), var(--cyan-deep, #1195cf));
+    border-color: transparent;
+    color: #ffffff;
+    box-shadow: 0 10px 22px -12px rgba(34, 179, 230, .8);
+}
+
+/* the numeral is outside the plate, so it lights with it rather than after it */
+#procedure .pfx-step:hover .pfx-step__no,
+#procedure .pfx-step:focus-within .pfx-step__no {
+    background: linear-gradient(150deg, var(--cyan, #22b3e6), var(--cyan-deep, #1195cf));
+    border-color: transparent;
+    color: #ffffff;
+}
+
+/* ==========================================================================
+   6. Responsive
+   --------------------------------------------------------------------------
+   767: the numeral drops to 46px (css/page-fx.css:2528 already does this) and
+        --flow-node follows it, which re-derives the spine, the gutter, the
+        ring inset and the bracket in one go.
+   560: a 42px pictogram plus two words of a sentence is not a row any more.
+        The plate stacks — icon on its own line, sentence under it — which is
+        the one place the original stacked layout was actually right.
+   ========================================================================== */
+
+@media (max-width: 991px) {
+    #procedure .pfx-steps {
+        max-width: 720px;
+    }
+
+    #procedure .pfx-step__body {
+        padding: 14px 18px;
+        gap: 15px;
+    }
+
+    #procedure .pfx-step__body p {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 767px) {
+    #procedure {
+        --flow-node: 46px;
+        --flow-inset: 62px;
+    }
+
+    #procedure .pfx-steps {
+        gap: 13px;
+    }
+
+    #procedure .pfx-step__no {
+        border-radius: 9px;
+        font-size: 16px;
+    }
+
+    #procedure .pfx-step__icon {
+        width: 36px;
+        height: 36px;
+    }
+
+    #procedure .pfx-step__icon svg {
+        width: 18px;
+        height: 18px;
+    }
+
+    #procedure .pfx-step__body {
+        padding: 13px 15px;
+        gap: 13px;
+    }
+
+    #procedure .pfx-step__body p {
+        font-size: 14.5px;
+        line-height: 1.6;
+    }
+}
+
+@media (max-width: 560px) {
+    #procedure .pfx-step__body {
+        grid-template-columns: 1fr;
+        gap: 11px;
+        padding: 14px 15px 15px;
+    }
+
+    /* place-items on a one-column grid would stretch the pictogram to the full
+       width of the plate; justify-self keeps it its own size, at the start */
+    #procedure .pfx-step__icon {
+        justify-self: start;
+    }
+}
+
+/* ==========================================================================
+   7. Reduced motion
+   Material stays, movement goes. The plate, the edge, the fills and the
+   contrast jump to white are all material and are kept — they are what makes
+   the hovered step readable. The 3px lift and the bracket that draws itself
+   are movement and are not.
+
+   css/page-fx.css:2696 already forces `transition: none !important` and
+   `transform: none !important` on .pfx-step itself under this preference; the
+   plate is a different element and needs saying separately.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    #procedure .pfx-step__body,
+    #procedure .pfx-step__body p,
+    #procedure .pfx-step__icon,
+    #procedure .pfx-step__no,
+    #procedure .pfx-step::after {
+        transition: none;
+    }
+
+    #procedure .pfx-step:hover .pfx-step__body,
+    #procedure .pfx-step:focus-within .pfx-step__body {
+        transform: none;
+    }
+
+    #procedure .pfx-step:hover::after {
+        width: 26px;
+        height: 26px;
+    }
+}

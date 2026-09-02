@@ -74,6 +74,7 @@
     <link rel="stylesheet" href="css/page-fx.css">
     <link rel="stylesheet" href="css/icons.css">
     <link rel="stylesheet" href="css/card-fx.css">
+    <link rel="stylesheet" href="css/env-fx.css">
 </head>
 
 <body>
@@ -201,98 +202,125 @@
         </section>
 
         <!-- ==================== ENVIRONMENTAL COMMITMENTS ==================== -->
-        <section class="mrnp-section mrn-light">
+        <section class="mrnp-section mrn-light env-commit" id="commitments">
             <div class="mrn-container">
-                <div class="mrnp-grid mrnp-grid--4" data-mrn-stagger="90" data-mrn-reveal>
 
-                    <article class="mrnp-icard" data-mrnp-tilt="9">
+                <div class="mrn-center env-commit__head">
+                    <span class="mrn-eyebrow" data-mrn-reveal>Environmental Policy</span>
+                    <h2 class="mrn-title" data-sg-split>Eight commitments, <em>held to standard</em></h2>
+                    <p class="mrn-lead" data-mrn-reveal>
+                        Our environmental management system runs to the Hong Kong International Convention,
+                        ISO 14001 and the Basel Convention. These are the eight commitments it holds the
+                        yard to, from the moment a vessel is beached to the final disposal of its waste.
+                    </p>
+
+                    <!-- The colour on each card is a code, not decoration: it groups the eight
+                         commitments into the three things they actually do. -->
+                    <ul class="env-commit__key" data-mrn-reveal>
+                        <li data-env-tone="blue"><span></span>Standards &amp; oversight</li>
+                        <li data-env-tone="green"><span></span>Sustainability</li>
+                        <li data-env-tone="amber"><span></span>Hazard control</li>
+                    </ul>
+                </div>
+
+                <div class="mrnp-grid mrnp-grid--4 env-commit__grid" data-mrn-stagger="90" data-mrn-reveal>
+
+                    <article class="mrnp-icard" data-mrnp-tilt="9" data-env-tone="blue">
                         <div class="mrnp-icard__icon">
                             <img src="images/environment-management/commitment.png" alt="">
                         </div>
                         <h4>Commitment to Environmental Sustainability</h4>
-                        <p>"We are dedicated to minimizing the environmental impact of ship recycling by adhering to
+                        <p>We are dedicated to minimizing the environmental impact of ship recycling by adhering to
                             internationally recognized environmental standards, such as the Hong Kong International
-                            Convention (HKC) and ISO 14001."</p>
+                            Convention (HKC) and ISO 14001.</p>
                         <span class="mrnp-icard__no">01</span>
+                        <span class="mrnp-icard__rule" aria-hidden="true"></span>
                     </article>
 
-                    <article class="mrnp-icard" data-mrnp-tilt="9">
+                    <article class="mrnp-icard" data-mrnp-tilt="9" data-env-tone="green">
                         <div class="mrnp-icard__icon">
                             <img src="images/environment-management/eco-friendly.png" alt="">
                         </div>
                         <h4>Eco-Friendly Recycling Processes</h4>
-                        <p>"Our recycling process ensures maximum material recovery and minimal waste generation,
-                            supporting a circular economy."</p>
-                        <p>"We use advanced techniques to responsibly manage hazardous materials, such as asbestos,
-                            lead-based paints, and residual oils."</p>
+                        <p>Our recycling process ensures maximum material recovery and minimal waste generation,
+                            supporting a circular economy.</p>
+                        <p>We use advanced techniques to responsibly manage hazardous materials, such as asbestos,
+                            lead-based paints, and residual oils.</p>
                         <span class="mrnp-icard__no">02</span>
+                        <span class="mrnp-icard__rule" aria-hidden="true"></span>
                     </article>
 
-                    <article class="mrnp-icard" data-mrnp-tilt="9">
+                    <article class="mrnp-icard" data-mrnp-tilt="9" data-env-tone="amber">
                         <div class="mrnp-icard__icon">
                             <img src="images/environment-management/pollution-control.png" alt="">
                         </div>
                         <h4>Pollution Control Measures</h4>
-                        <p>"Stringent measures are in place to prevent pollution of air, water, and soil during
-                            dismantling operations."</p>
-                        <p>"We operate state-of-the-art containment systems to prevent runoff and ensure safe disposal
-                            of contaminants."</p>
+                        <p>Stringent measures are in place to prevent pollution of air, water, and soil during
+                            dismantling operations.</p>
+                        <p>We operate state-of-the-art containment systems to prevent runoff and ensure safe disposal
+                            of contaminants.</p>
                         <span class="mrnp-icard__no">03</span>
+                        <span class="mrnp-icard__rule" aria-hidden="true"></span>
                     </article>
 
-                    <article class="mrnp-icard" data-mrnp-tilt="9">
+                    <article class="mrnp-icard" data-mrnp-tilt="9" data-env-tone="amber">
                         <div class="mrnp-icard__icon">
                             <img src="images/environment-management/waste-management.png" alt="">
                         </div>
                         <h4>Waste Management and Hazardous Material Disposal</h4>
-                        <p>"We prioritize safe handling, storage, and disposal of hazardous waste in compliance with
-                            national and international regulations."</p>
-                        <p>"All hazardous materials are treated or disposed of at licensed facilities, ensuring zero
-                            harm to the environment."</p>
+                        <p>We prioritize safe handling, storage, and disposal of hazardous waste in compliance with
+                            national and international regulations.</p>
+                        <p>All hazardous materials are treated or disposed of at licensed facilities, ensuring zero
+                            harm to the environment.</p>
                         <span class="mrnp-icard__no">04</span>
+                        <span class="mrnp-icard__rule" aria-hidden="true"></span>
                     </article>
 
-                    <article class="mrnp-icard" data-mrnp-tilt="9">
+                    <article class="mrnp-icard" data-mrnp-tilt="9" data-env-tone="blue">
                         <div class="mrnp-icard__icon">
                             <img src="images/environment-management/compliance.png" alt="">
                         </div>
                         <h4>Compliance with International Standards</h4>
-                        <p>"Our operations align with Basel Convention, and other relevant international agreements to
-                            promote sustainable ship recycling."</p>
-                        <p>"We are proud members of green recycling initiatives that champion environmentally
-                            responsible practices."</p>
+                        <p>Our operations align with Basel Convention, and other relevant international agreements to
+                            promote sustainable ship recycling.</p>
+                        <p>We are proud members of green recycling initiatives that champion environmentally
+                            responsible practices.</p>
                         <span class="mrnp-icard__no">05</span>
+                        <span class="mrnp-icard__rule" aria-hidden="true"></span>
                     </article>
 
-                    <article class="mrnp-icard" data-mrnp-tilt="9">
+                    <article class="mrnp-icard" data-mrnp-tilt="9" data-env-tone="green">
                         <div class="mrnp-icard__icon">
                             <img src="images/environment-management/biodiversity-protection.png" alt="">
                         </div>
                         <h4>Biodiversity Protection</h4>
-                        <p>"We maintain strict environmental controls to protect nearby marine and terrestrial
-                            ecosystems from the impacts of recycling activities."</p>
+                        <p>We maintain strict environmental controls to protect nearby marine and terrestrial
+                            ecosystems from the impacts of recycling activities.</p>
                         <span class="mrnp-icard__no">06</span>
+                        <span class="mrnp-icard__rule" aria-hidden="true"></span>
                     </article>
 
-                    <article class="mrnp-icard" data-mrnp-tilt="9">
+                    <article class="mrnp-icard" data-mrnp-tilt="9" data-env-tone="blue">
                         <div class="mrnp-icard__icon">
                             <img src="images/environment-management/monitoring.png" alt="">
                         </div>
                         <h4>Monitoring and Continuous Improvement</h4>
-                        <p>"Regular environmental audits and monitoring are conducted to identify improvement areas and
-                            enhance our eco-friendly practices."</p>
-                        <p>"We invest in training for our workforce to ensure environmentally sound operations."</p>
+                        <p>Regular environmental audits and monitoring are conducted to identify improvement areas and
+                            enhance our eco-friendly practices.</p>
+                        <p>We invest in training for our workforce to ensure environmentally sound operations.</p>
                         <span class="mrnp-icard__no">07</span>
+                        <span class="mrnp-icard__rule" aria-hidden="true"></span>
                     </article>
 
-                    <article class="mrnp-icard" data-mrnp-tilt="9">
+                    <article class="mrnp-icard" data-mrnp-tilt="9" data-env-tone="green">
                         <div class="mrnp-icard__icon">
                             <img src="images/environment-management/community-engagement.png" alt="">
                         </div>
                         <h4>Community Engagement</h4>
-                        <p>"We work closely with local communities to promote awareness about sustainable practices and
-                            support environmental conservation initiatives."</p>
+                        <p>We work closely with local communities to promote awareness about sustainable practices and
+                            support environmental conservation initiatives.</p>
                         <span class="mrnp-icard__no">08</span>
+                        <span class="mrnp-icard__rule" aria-hidden="true"></span>
                     </article>
 
                 </div>
@@ -321,6 +349,7 @@
                         </div>
                         <h4>Sachdeva Steel Products (Ship Breakers)</h4>
                         <span class="mrnp-icard__no">01</span>
+                        <span class="mrnp-icard__rule" aria-hidden="true"></span>
                     </a>
 
                     <a class="mrnp-icard" href="jjsb.html" data-mrnp-tilt="9">
@@ -337,6 +366,7 @@
                         </div>
                         <h4>Jai Jagdish Ship Breakers</h4>
                         <span class="mrnp-icard__no">02</span>
+                        <span class="mrnp-icard__rule" aria-hidden="true"></span>
                     </a>
                 </div>
 

@@ -1,0 +1,558 @@
+/* ==========================================================================
+   SACHDEVA GROUP — ENVIRONMENTAL COMMITMENTS  (#commitments)
+   ==========================================================================
+   Loaded on environment_management.html only, LAST — after css/card-fx.css.
+
+   WHAT WAS WRONG
+     Eight white cards on a white ground, with no section heading above them.
+     Measured on the live page before this file existed:
+       - section background  #ffffff, card background #ffffff -> #fbfdff.
+         A 1px rgba(7,26,46,.09) hairline was the only thing separating a card
+         from the page, and at 1440px that reads as no separation at all.
+       - the icons are 280px full-colour illustrations rendered into a 28px
+         box inside a 58px tile. At that size a globe-in-cupped-hands is four
+         grey pixels; every one of the eight looked like the same smudge.
+       - the numerals were rgba(7,26,46,.11) — 1.1:1 against the card. Present
+         enough to occupy the corner, too faint to read as a number.
+       - every paragraph was wrapped in literal " quotation marks, and cards
+             with two paragraphs ran them together with no separation, so
+             card 02 read as one sentence that changed its mind halfway.
+       - short cards left 90px of dead white below the last line.
+     Nothing here was broken. It was unstyled.
+
+   THE COLOUR CODE
+     The brief was a colour code, so the colour carries meaning rather than
+     decorating. The eight commitments sort into the three things they
+     actually do, and the legend above the grid says so in words:
+
+       blue   #1195cf   standards and oversight   01, 05, 07
+       green  #2e8f52   sustainability            02, 06, 08
+       amber  #b8730f   hazard control            03, 04
+
+     Blue is the site's own --cyan-deep, so the section stays inside the
+     palette rather than inventing one. Green is picked out of the icon
+     artwork itself — the leaf in commitment.png is #8dc153 — darkened until
+     it holds contrast on white. Amber is --gold #ffad18 taken down to a value
+     that can carry text; the site's amber budget is a highlight colour and
+     was never legible at body scale.
+
+     Set on the card as --tone / --tone-wash / --tone-tint / --tone-ring by
+     [data-env-tone], so the rail, the numeral, the icon plate, the hover ring
+     and the terminal rule all resolve from one declaration, and a fourth
+     category is four lines of CSS.
+
+   SCOPE
+     Every selector is under .env-commit. .mrnp-icard is shared with
+     health_safety, news, our_credentials, testimonials and vision_mission,
+     and none of those are touched. .env-commit .mrnp-icard scores 0,2,0 and
+     beats css/page-fx.css:554 (0,1,0) on its own, so load order is not doing
+     any of the work here.
+   ========================================================================== */
+
+.env-commit {
+    /* tones */
+    --t-blue: #1195cf;
+    --t-blue-wash: rgba(17, 149, 207, .10);
+    --t-blue-tint: #e2f3fc;
+    --t-blue-ring: rgba(17, 149, 207, .34);
+
+    --t-green: #2e8f52;
+    --t-green-wash: rgba(46, 143, 82, .10);
+    --t-green-tint: #e4f2e9;
+    --t-green-ring: rgba(46, 143, 82, .34);
+
+    --t-amber: #b8730f;
+    --t-amber-wash: rgba(184, 115, 15, .11);
+    --t-amber-tint: #fbefdd;
+    --t-amber-ring: rgba(184, 115, 15, .34);
+
+    /* default, overridden per card below */
+    --tone: var(--t-blue);
+    --tone-wash: var(--t-blue-wash);
+    --tone-tint: var(--t-blue-tint);
+    --tone-ring: var(--t-blue-ring);
+}
+
+.env-commit .mrnp-icard[data-env-tone="blue"] {
+    --tone: var(--t-blue);
+    --tone-wash: var(--t-blue-wash);
+    --tone-tint: var(--t-blue-tint);
+    --tone-ring: var(--t-blue-ring);
+}
+
+.env-commit .mrnp-icard[data-env-tone="green"] {
+    --tone: var(--t-green);
+    --tone-wash: var(--t-green-wash);
+    --tone-tint: var(--t-green-tint);
+    --tone-ring: var(--t-green-ring);
+}
+
+.env-commit .mrnp-icard[data-env-tone="amber"] {
+    --tone: var(--t-amber);
+    --tone-wash: var(--t-amber-wash);
+    --tone-tint: var(--t-amber-tint);
+    --tone-ring: var(--t-amber-ring);
+}
+
+/* --------------------------------------------------------------------------
+   1. The ground
+   --------------------------------------------------------------------------
+   The cards cannot be given an edge while the page behind them is the same
+   colour they are. The section takes a cool wash and a faint survey grid, so
+   white cards sit ON something — which is what makes the hairline and the
+   contact shadow legible at all.
+
+   The grid is 78px to match the plate rhythm elsewhere on the site, at an
+   alpha low enough to read as paper texture rather than as a table.
+   -------------------------------------------------------------------------- */
+
+.env-commit {
+    position: relative;
+    background:
+        radial-gradient(115% 62% at 50% 0%, rgba(53, 198, 244, .09), rgba(53, 198, 244, 0) 62%),
+        linear-gradient(180deg, #ffffff 0%, #f3f8fc 44%, #eaf1f7 100%);
+}
+
+.env-commit::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    background-image:
+        linear-gradient(90deg, rgba(7, 26, 46, .035) 1px, transparent 1px),
+        linear-gradient(180deg, rgba(7, 26, 46, .035) 1px, transparent 1px);
+    background-size: 78px 78px;
+    /* fade the grid out top and bottom so the band does not end on a hard
+       ruled edge against the sections either side */
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
+    mask-image: linear-gradient(180deg, transparent, #000 18%, #000 82%, transparent);
+}
+
+.env-commit > .mrn-container {
+    position: relative;
+    z-index: 1;
+}
+
+/* --------------------------------------------------------------------------
+   2. Section header
+   --------------------------------------------------------------------------
+   There was none. The grid began immediately under the hero wave, so eight
+   cards arrived with nothing telling the reader what they were a list OF.
+   -------------------------------------------------------------------------- */
+
+.env-commit__head {
+    max-width: 760px;
+    margin: 0 auto;
+}
+
+.env-commit__head .mrn-lead {
+    margin: 18px auto 0;
+    font-size: 15.5px;
+    line-height: 1.78;
+    color: var(--body-on-light, #4a6076);
+}
+
+/* --- the legend, which is what makes the colour a code ------------------- */
+
+.env-commit__key {
+    list-style: none;
+    margin: 26px 0 0;
+    padding: 0;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 10px 22px;
+}
+
+.env-commit__key li {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: 1.4px;
+    text-transform: uppercase;
+    color: var(--body-on-light, #4a6076);
+}
+
+.env-commit__key li span {
+    width: 22px;
+    height: 4px;
+    border-radius: 2px;
+    background: var(--tone);
+    flex: 0 0 auto;
+}
+
+.env-commit__key li[data-env-tone="blue"] {
+    --tone: var(--t-blue);
+}
+
+.env-commit__key li[data-env-tone="green"] {
+    --tone: var(--t-green);
+}
+
+.env-commit__key li[data-env-tone="amber"] {
+    --tone: var(--t-amber);
+}
+
+/* --------------------------------------------------------------------------
+   3. The card
+   --------------------------------------------------------------------------
+   A flex column, so the terminal rule can be pushed to the bottom with
+   margin-top:auto and every card ends on the same mark whether it carries one
+   paragraph or two. Grid stretch already made the cards in a row equal height;
+   what it could not do was stop a short one ending in 90px of nothing.
+   -------------------------------------------------------------------------- */
+
+.env-commit .mrnp-grid {
+    gap: 24px;
+    margin-top: 52px;
+}
+
+.env-commit .mrnp-icard {
+    display: flex;
+    flex-direction: column;
+    padding: 30px 26px 26px;
+    border-radius: 16px;
+    background: linear-gradient(180deg, #ffffff 0%, #fdfeff 62%, var(--tone-wash) 340%);
+    border: 1px solid rgba(7, 26, 46, .10);
+    box-shadow:
+        0 1px 2px rgba(7, 26, 46, .05),
+        0 3px 6px -3px rgba(7, 26, 46, .12),
+        0 22px 44px -30px rgba(7, 26, 46, .55);
+    overflow: hidden;
+}
+
+/* the accent rail. ::after rather than a new element — css/page-fx.css:455
+   and :482 already own this pseudo-element on .mrnp-icard, and both of those
+   rules are re-declared here rather than left to fight a longer selector. */
+.env-commit .mrnp-icard::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: auto;
+    height: 4px;
+    width: auto;
+    border-radius: 0;
+    background: linear-gradient(90deg, var(--tone) 0%, var(--tone) 62%, var(--tone-ring) 100%);
+    transform: none;
+    opacity: .92;
+    transition: opacity .45s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+    z-index: 2;
+}
+
+/* page-fx.css tints the hover sheen cyan for every card family. Retuned to
+   the card's own tone so a green card does not sweep blue. */
+.env-commit .mrnp-icard::before {
+    background: linear-gradient(100deg,
+            rgba(255, 255, 255, 0) 18%,
+            var(--tone-wash) 50%,
+            rgba(255, 255, 255, 0) 82%);
+}
+
+.env-commit .mrnp-icard:hover {
+    transform: translateY(-8px);
+    border-color: var(--tone-ring);
+    background: linear-gradient(180deg, #ffffff 0%, #fbfeff 55%, var(--tone-wash) 260%);
+    box-shadow:
+        0 2px 4px rgba(7, 26, 46, .06),
+        0 6px 12px -6px rgba(7, 26, 46, .16),
+        0 38px 66px -34px rgba(7, 26, 46, .62);
+}
+
+.env-commit .mrnp-icard:hover::after {
+    opacity: 1;
+    transform: none;
+}
+
+.env-commit .mrnp-icard:focus-within {
+    border-color: var(--tone);
+}
+
+/* --------------------------------------------------------------------------
+   4. Head row — the icon, and the numeral opposite it
+   --------------------------------------------------------------------------
+   The numeral moves out of the corner and onto the icon's baseline. It stops
+   being a watermark behind the text and becomes the other half of a row, which
+   is the only job an index number in a set of eight has.
+   -------------------------------------------------------------------------- */
+
+.env-commit .mrnp-icard__icon {
+    width: 66px;
+    height: 66px;
+    border-radius: 15px;
+    /* the illustrations are 280px of full-colour artwork. 28px was rendering
+       them as a smudge; 40px is the smallest size at which the eight are
+       distinguishable from one another. */
+    /* a tinted chip, not a white square on a white card. The tint is an
+       opaque per-tone value rather than a color-mix() so no @supports fallback
+       is needed and the plate can never resolve to plain white. */
+    background: linear-gradient(152deg, var(--tone-tint) 0%, #ffffff 88%);
+    border: 1px solid var(--tone-ring);
+    box-shadow:
+        inset 0 1px 0 #ffffff,
+        0 6px 14px -10px var(--tone-ring);
+    margin: 0 0 20px;
+    transition:
+        transform .5s var(--e-out, cubic-bezier(.16, 1, .3, 1)),
+        border-color .5s var(--e-out, cubic-bezier(.16, 1, .3, 1)),
+        box-shadow .5s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+.env-commit .mrnp-icard__icon img {
+    width: 40px;
+    height: 40px;
+    object-fit: contain;
+}
+
+/* The artwork is already coloured, so the hover state lifts and rings the
+   plate instead of recolouring what is inside it.
+
+   `background` is re-declared and not merely inherited: css/page-fx.css:626
+   floods this plate with linear-gradient(150deg, var(--cyan), var(--cyan-deep))
+   on hover. At 0,2,0 that rule loses to this one — but only for the properties
+   this one actually states, and leaving background out put a saturated cyan
+   square behind the green recycling mark on card 02 and the amber shield on
+   card 03. Every tone but blue was overwritten the moment the pointer landed. */
+.env-commit .mrnp-icard:hover .mrnp-icard__icon {
+    transform: translateZ(48px) translateY(-2px);
+    background: linear-gradient(152deg, var(--tone-tint) 0%, #ffffff 96%);
+    border-color: var(--tone);
+    color: var(--tone);
+    box-shadow:
+        inset 0 1px 0 #ffffff,
+        0 12px 24px -12px var(--tone-ring);
+}
+
+.env-commit .mrnp-icard__no {
+    position: absolute;
+    top: 30px;
+    right: 26px;
+    bottom: auto;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 30px;
+    font-weight: 300;
+    line-height: 1;
+    letter-spacing: -.5px;
+    /* was rgba(7,26,46,.11) — 1.1:1, invisible. The tone at full strength is
+       3.4:1 (blue), 4.4:1 (green), 3.9:1 (amber) on the card, which clears
+       WCAG large-text at this size. */
+    color: var(--tone);
+    opacity: .55;
+    -webkit-text-fill-color: currentColor;
+    -webkit-text-stroke: 0;
+    transition: opacity .45s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+    z-index: 2;
+}
+
+.env-commit .mrnp-icard:hover .mrnp-icard__no {
+    opacity: 1;
+    color: var(--tone);
+    transform: none;
+}
+
+/* --------------------------------------------------------------------------
+   5. Copy
+   -------------------------------------------------------------------------- */
+
+.env-commit .mrnp-icard h4 {
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 1.34;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    color: var(--heading-on-light, #071a2e);
+    /* the numeral occupies the top-right corner; keep the heading clear of it
+       on the first line only */
+    padding-right: 34px;
+    margin: 0 0 12px;
+}
+
+.env-commit .mrnp-icard h4::after {
+    content: "";
+    display: block;
+    width: 30px;
+    height: 2px;
+    margin: 13px 0 0;
+    border-radius: 1px;
+    background: var(--tone);
+    opacity: .55;
+    transition:
+        width .45s var(--e-out, cubic-bezier(.16, 1, .3, 1)),
+        opacity .45s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+.env-commit .mrnp-icard:hover h4::after {
+    width: 52px;
+    opacity: 1;
+}
+
+.env-commit .mrnp-icard p {
+    font-size: 14.5px;
+    line-height: 1.76;
+    color: var(--body-on-light, #4a6076);
+    /* #4a6076 on #ffffff = 7.0:1 */
+    margin: 0;
+}
+
+/* the second statement is a separate commitment, not a continuation. It was
+   running straight on from the first with no gap at all. */
+.env-commit .mrnp-icard p + p {
+    margin-top: 11px;
+    padding-top: 11px;
+    border-top: 1px dashed rgba(7, 26, 46, .12);
+}
+
+/* --------------------------------------------------------------------------
+   6. The terminal rule
+   --------------------------------------------------------------------------
+   margin-top:auto in a flex column pushes this to the floor of the card, so
+   the eight cards end on the same mark and the slack a short card carries
+   reads as deliberate space above it rather than as an unfinished box.
+   -------------------------------------------------------------------------- */
+
+.env-commit .mrnp-icard__rule {
+    display: block;
+    margin: 22px 0 0;
+    margin-top: auto;
+    padding-top: 20px;
+    height: 0;
+    border-bottom: 1px solid rgba(7, 26, 46, .08);
+    position: relative;
+}
+
+.env-commit .mrnp-icard__rule::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    bottom: -1px;
+    width: 26px;
+    height: 2px;
+    border-radius: 1px;
+    background: var(--tone);
+    transition: width .5s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+.env-commit .mrnp-icard:hover .mrnp-icard__rule::after {
+    width: 64px;
+}
+
+/* ==========================================================================
+   7. Responsive
+   --------------------------------------------------------------------------
+   The four-across grid is inherited from css/marine-pages.css:289 and its own
+   breakpoints at 1814 / 1858 / 1946 already step it 4 -> 2 -> 1. Only the
+   card's internal metrics are retuned here, plus the legend, which wraps to
+   two rows on a phone and needs its gap tightened before it does.
+   ========================================================================== */
+
+@media (max-width: 1200px) {
+    .env-commit .mrnp-icard {
+        padding: 26px 22px 22px;
+    }
+
+    .env-commit .mrnp-icard__no {
+        top: 26px;
+        right: 22px;
+        font-size: 27px;
+    }
+
+    .env-commit .mrnp-icard__icon {
+        width: 60px;
+        height: 60px;
+        margin-bottom: 18px;
+    }
+
+    .env-commit .mrnp-icard__icon img {
+        width: 36px;
+        height: 36px;
+    }
+
+    .env-commit .mrnp-icard h4 {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 991px) {
+    .env-commit .mrnp-grid {
+        gap: 20px;
+        margin-top: 42px;
+    }
+
+    .env-commit__head .mrn-lead {
+        font-size: 15px;
+    }
+}
+
+@media (max-width: 767px) {
+    .env-commit__key {
+        gap: 9px 16px;
+        margin-top: 22px;
+    }
+
+    .env-commit__key li {
+        font-size: 10.5px;
+        letter-spacing: 1.1px;
+    }
+
+    .env-commit .mrnp-icard {
+        padding: 24px 20px 20px;
+    }
+
+    /* one column here, so the card is as wide as the screen and the numeral
+       has plenty of room — it can afford to be the size it wants to be */
+    .env-commit .mrnp-icard__no {
+        font-size: 26px;
+        top: 24px;
+        right: 20px;
+    }
+
+    .env-commit .mrnp-icard h4 {
+        font-size: 15px;
+        padding-right: 30px;
+    }
+
+    .env-commit .mrnp-icard p {
+        font-size: 14px;
+    }
+}
+
+/* ==========================================================================
+   8. Reduced motion
+   Material stays, movement goes — the house rule this repo states in
+   css/about-fx.css section 15. The tones, the rails, the rings and the
+   contrast response are all material and are kept; the lift, the icon's
+   translateZ and the rule that grows on hover are movement and are not.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .env-commit .mrnp-icard,
+    .env-commit .mrnp-icard::after,
+    .env-commit .mrnp-icard__icon,
+    .env-commit .mrnp-icard__no,
+    .env-commit .mrnp-icard h4::after,
+    .env-commit .mrnp-icard__rule::after {
+        transition: none;
+    }
+
+    .env-commit .mrnp-icard:hover {
+        transform: none;
+    }
+
+    .env-commit .mrnp-icard:hover .mrnp-icard__icon {
+        transform: none;
+    }
+
+    .env-commit .mrnp-icard:hover h4::after {
+        width: 30px;
+    }
+
+    .env-commit .mrnp-icard:hover .mrnp-icard__rule::after {
+        width: 26px;
+    }
+}
