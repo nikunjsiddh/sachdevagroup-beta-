@@ -95,6 +95,7 @@
     <link rel="stylesheet" href="css/motion.css">
     <link rel="stylesheet" href="css/icons.css">
     <link rel="stylesheet" href="css/card-fx.css">
+    <link rel="stylesheet" href="css/cert-viewer.css">
 </head>
 
 <body>
@@ -617,16 +618,37 @@
                 <h2 class="mrn-title" data-anim="fade-up">Audited, certified, <em>documented</em></h2>
             </div>
             <div class="mrn-certs" data-anim="fade-up" role="group" aria-label="Certifications and approvals">
-                <div class="mrn-certs__track" data-mrn-marquee>
-                    <div class="mrn-cert" data-mrn-tilt="6"><img src="images/cert/1.jpg" alt="Certification" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"><img src="images/cert/2.jpg" alt="Certification" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"><img src="images/cert/3.jpg" alt="Certification" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"><img src="images/cert/4.jpg" alt="Certification" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"><img src="images/cert/5.jpg" alt="Certification" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"><img src="images/cert/6.jpg" alt="Certification" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"><img src="images/cert/7.jpg" alt="Certification" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"><img src="images/cert/8.jpg" alt="Certification" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"><img src="images/cert/9.jpg" alt="Certification" loading="lazy" decoding="async"></div>
+                <!-- no data-mrn-marquee: js/marine.js initMarquees() doubles a track with
+                     innerHTML, which re-parses the originals and drops every listener
+                     already bound to them. js/cert-viewer.js clones instead. -->
+                <div class="mrn-certs__track">
+                    <div class="mrn-cert" data-mrn-tilt="6"
+                        data-cert-title="ISO 9001 · 14001 · 45001"
+                        data-cert-sub="Sachdeva Steel Products (Ship Breakers) LLP — Bureau Veritas"><img src="images/cert/1.jpg" alt="Bureau Veritas certificate: Sachdeva Steel Products (Ship Breakers) LLP, ISO 9001:2015, ISO 14001:2015 and ISO 45001:2018" loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6"
+                        data-cert-title="ISO 9001 · 14001 · 45001"
+                        data-cert-sub="Sachdeva Steel Products (Ship Breakers) LLP — Bureau Veritas"><img src="images/cert/2.jpg" alt="Bureau Veritas certificate: Sachdeva Steel Products (Ship Breakers) LLP, ISO 9001:2015, ISO 14001:2015 and ISO 45001:2018" loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6"
+                        data-cert-title="ISO 30000:2009"
+                        data-cert-sub="Jai Jagdish Ship Breakers Pvt. Ltd. — Bureau Veritas"><img src="images/cert/3.jpg" alt="Bureau Veritas certificate: Jai Jagdish Ship Breakers Pvt. Ltd., ISO 30000:2009 ship recycling management" loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6"
+                        data-cert-title="ISO 30000:2009"
+                        data-cert-sub="Jai Jagdish Ship Breakers Pvt. Ltd. — Bureau Veritas"><img src="images/cert/4.jpg" alt="Bureau Veritas certificate: Jai Jagdish Ship Breakers Pvt. Ltd., ISO 30000:2009 ship recycling management" loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6"
+                        data-cert-title="EU Ship Recycling Regulation — SRF-010"
+                        data-cert-sub="Certificate of Compliance, Article 13 — ClassNK (NKK Netherlands B.V.)"><img src="images/cert/5.jpg" alt="ClassNK certificate of compliance SRF-010: Sachdeva Steel Products and Jai Jagdish Ship Breakers, EU Regulation 1257/2013 Article 13" loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6"
+                        data-cert-title="Statement of Compliance — KC19SRF-001"
+                        data-cert-sub="IMO MEPC.210(63), firms engaged in ship recycling — ClassNK"><img src="images/cert/6.jpg" alt="Nippon Kaiji Kyokai statement of compliance KC19SRF-001 for firms engaged in ship recycling, IMO Resolution MEPC.210(63)" loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6"
+                        data-cert-title="ISO 30000:2009"
+                        data-cert-sub="Jai Jagdish Ship Breakers Pvt. Ltd. — Bureau Veritas"><img src="images/cert/7.jpg" alt="Bureau Veritas certificate: Jai Jagdish Ship Breakers Pvt. Ltd., ISO 30000:2009 ship recycling management" loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6"
+                        data-cert-title="ISO 30000:2009 — Appendix"
+                        data-cert-sub="Certified sites, Plot 65 and Plot 66, Alang — Bureau Veritas"><img src="images/cert/8.jpg" alt="Bureau Veritas appendix to certificate IND20.2401/SM listing the certified sites at Plot 65 and Plot 66, Alang" loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6"
+                        data-cert-title="EU Ship Recycling Regulation — SRF-010"
+                        data-cert-sub="Certificate of Compliance, Article 13 — ClassNK (NKK Netherlands B.V.)"><img src="images/cert/9.jpg" alt="ClassNK certificate of compliance SRF-010: Sachdeva Steel Products and Jai Jagdish Ship Breakers, EU Regulation 1257/2013 Article 13" loading="lazy" decoding="async"></div>
                 </div>
             </div>
             <div class="mrn-container mrn-center">
@@ -891,6 +913,13 @@
     <script src="js/bootstrap.min.js"></script>
     <script src="js/plugins.js"></script>
     <script src="js/main.js"></script>
+    <!-- Owns the #credentials shelf: the auto-scroll and the document
+         viewer. Must load BEFORE marine.js and card-fx.js — it clones the
+         plates to make the loop seamless, and those two bind their tilt and
+         cursor-ring handlers by querying the DOM once, so the copies are
+         inert unless they already exist. DOMContentLoaded listeners run in
+         the order they were registered, which is this order. -->
+    <script src="js/cert-viewer.js"></script>
     <script src="js/marine.js"></script>
     <script src="js/card-fx.js"></script>
     <script src="js/feedback.js"></script>

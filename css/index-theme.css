@@ -5430,6 +5430,46 @@
             #000 var(--cert-fade),
             #000 calc(100% - var(--cert-fade)),
             transparent 100%);
+
+    /* THE SHELF IS THE SCROLL CONTAINER.
+       js/cert-viewer.js advances scrollLeft rather than translating the track,
+       so the auto-scroll and the swipe/trackpad/keyboard scroll are the same
+       property and cannot disagree. Re-declares marine.css:1521
+       `.mrn-certs { overflow: hidden }`.
+
+       scroll-behavior is pinned to auto because marine.css:37 sets
+       `html { scroll-behavior: smooth }`. The property does not inherit, so
+       this is belt and braces — but a smooth scroller would animate every
+       scrollLeft write and turn the seamless wrap into a visible slide back
+       across the whole strip. */
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-behavior: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+/* The native scrollbar is hidden ONLY once the script has taken the band over.
+   .mrn-certs-live is stamped on #credentials by js/cert-viewer.js after it has
+   cloned the plates and started the loop, so if the file 404s or throws, the
+   shelf degrades to a plain scroll region WITH its scrollbar — still every
+   certificate, still reachable, just no motion. Hiding it unconditionally
+   would leave a no-JS visitor a strip with no visible way to move it.
+
+   A scrollbar is also the wrong instrument for this specific band: the loop is
+   infinite, so a thumb would race to the end and snap back to the start on
+   every wrap. */
+#credentials.mrn-certs-live .mrn-certs {
+    scrollbar-width: none;
+    /* Firefox */
+    -ms-overflow-style: none;
+    /* legacy Edge */
+}
+
+#credentials.mrn-certs-live .mrn-certs::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+    display: none;
 }
 
 /* --------------------------------------------------------------------------
@@ -5439,20 +5479,26 @@
    nine tiles. That means the gap MUST stay per-item `margin-right` (marine.css
    1546) and nothing here may key off :nth-child — nine is odd, so the clone
    set arrives with flipped parity and any odd/even rule would visibly break at
-   the seam. Only the tempo changes: 40s -> 56s, ~37px/s, a shelf being walked
-   past rather than a logo carousel.
+   the seam.
+
+   THE TRACK NO LONGER ANIMATES. It is a plain flex row inside a scrolling
+   shelf; js/cert-viewer.js repeats the nine plates until the row is at least
+   one full set wider than the shelf, then advances scrollLeft and wraps it
+   modulo one set. `animation: none` re-declares marine.css:1533
+   (`animation: mrnMarquee 40s linear infinite`), which would otherwise
+   translate the track underneath the scroll offset and double the travel.
+
+   Deliberately no CSS-animation fallback for the no-JS case: mrnMarquee
+   translates by -50%, which is only seamless on a track the script has already
+   doubled. Running it on the nine plates as authored would slide them off and
+   leave the shelf empty for half the cycle. Without the script the shelf is a
+   scroll region with a visible scrollbar instead — see .mrn-certs-live above.
    -------------------------------------------------------------------------- */
 
 #credentials .mrn-certs__track {
     align-items: flex-start;
-    animation-duration: 56s;
-    animation-timing-function: linear;
-    will-change: transform;
-}
-
-#credentials .mrn-certs:hover .mrn-certs__track,
-#credentials .mrn-certs:focus-within .mrn-certs__track {
-    animation-play-state: paused;
+    animation: none;
+    will-change: auto;
 }
 
 /* --------------------------------------------------------------------------
@@ -5487,10 +5533,114 @@
     filter: none;
     opacity: 1;
     perspective: 700px;
+    /* every plate opens the document viewer — js/cert-viewer.js promotes them
+       to role="button" rather than nine markup edits, the same way
+       js/marine-pages.js does for the gallery tiles. zoom-in says what the
+       click does; a plain pointer would read as a link to somewhere else. */
+    cursor: zoom-in;
     transition:
         transform .55s var(--e-out),
         box-shadow .55s var(--e-out),
         border-color .55s var(--e-out);
+}
+
+/* css/style.css:93 kills outlines globally (a:focus { outline: 0 }), and these
+   plates only became focusable when the viewer was added — so the ring is
+   stated here or a keyboard user tabs through nine invisible stops. Offset is
+   negative because the shelf clips at its own edge. */
+#credentials .mrn-cert:focus-visible {
+    outline: 2px solid var(--cyan-deep);
+    outline-offset: 3px;
+}
+
+/* --------------------------------------------------------------------------
+   4b. The pause control
+   --------------------------------------------------------------------------
+   WCAG 2.2.2 Pause, Stop, Hide. The shelf starts moving without being asked
+   and runs for far longer than five seconds, so a mechanism to stop it is
+   required — and it has to be a real, visible control. The hover and
+   focus-within pausing this section used to rely on is not one: it is
+   invisible, it is not discoverable, and on a touch device there is no hover
+   at all, so the entire mechanism was unreachable for exactly the visitors
+   most likely to need it.
+
+   Built by js/cert-viewer.js rather than written into index.html, so the
+   control cannot exist on a page where the script that honours it did not
+   load. The choice is remembered in localStorage.
+
+   It is right-aligned to the same 1240px measure the heading and the CTA use,
+   so it reads as a control belonging to the shelf rather than a second CTA
+   stacked above the real one.
+   -------------------------------------------------------------------------- */
+
+#credentials .mrn-certs__controls {
+    width: 100%;
+    max-width: 1240px;
+    margin: 12px auto 0;
+    padding: 0 24px;
+    display: flex;
+    justify-content: flex-end;
+}
+
+#credentials .mrn-certs__toggle {
+    -webkit-appearance: none;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    padding: 6px 13px 6px 10px;
+    border-radius: 999px;
+    border: 1px solid var(--hairline-dark);
+    background: rgba(255, 255, 255, .82);
+    color: var(--body-on-light);
+    /* #4a6076 on the shelf's near-white ground = 6.1:1 */
+    font-family: var(--font-display);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    line-height: 1;
+    cursor: pointer;
+    transition:
+        color .3s var(--e-out),
+        border-color .3s var(--e-out),
+        background .3s var(--e-out),
+        box-shadow .3s var(--e-out);
+}
+
+#credentials .mrn-certs__toggle:hover,
+#credentials .mrn-certs__toggle:focus-visible {
+    color: var(--cyan-deep);
+    border-color: rgba(53, 198, 244, .62);
+    background: #ffffff;
+    box-shadow: 0 6px 16px -10px rgba(4, 18, 31, .5);
+}
+
+#credentials .mrn-certs__toggle:focus-visible {
+    outline: 2px solid var(--cyan-deep);
+    outline-offset: 2px;
+}
+
+#credentials .mrn-certs__toggle-ico {
+    display: inline-flex;
+    width: 15px;
+    height: 15px;
+}
+
+#credentials .mrn-certs__toggle-ico svg {
+    width: 15px;
+    height: 15px;
+}
+
+/* one icon per state — the pause bars while it is running, the play triangle
+   once it is stopped */
+#credentials .mrn-certs__toggle .ico-play,
+#credentials .mrn-certs__toggle.is-paused .ico-pause {
+    display: none;
+}
+
+#credentials .mrn-certs__toggle.is-paused .ico-play {
+    display: block;
 }
 
 /* cyan edge wiping around the frame — the same gradient-border technique the
@@ -5684,8 +5834,8 @@
         padding: 28px 0 34px;
     }
 
-    #credentials .mrn-certs__track {
-        animation-duration: 48s;
+    #credentials .mrn-certs__controls {
+        padding: 0 20px;
     }
 }
 
@@ -5710,8 +5860,15 @@
         padding: 22px 0 28px;
     }
 
-    #credentials .mrn-certs__track {
-        animation-duration: 42s;
+    /* the control keeps its 44px-tall tap target here even though the label
+       shrinks — it is the only way a touch visitor can stop the shelf */
+    #credentials .mrn-certs__controls {
+        padding: 0 16px;
+    }
+
+    #credentials .mrn-certs__toggle {
+        padding: 10px 15px 10px 12px;
+        font-size: 10.5px;
     }
 
     #credentials .mrn-cert {
@@ -5727,38 +5884,48 @@
 
 /* ==========================================================================
    10. CREDENTIALS — reduced motion
-   marine.css:294-301 collapses every animation to .001ms with !important,
-   which parks the track at translateX(-50%) rather than stopping it — visually
-   identical here because the content is duplicated, but it leaves nine of the
-   eighteen plates permanently outside an `overflow: hidden` box with no way to
-   reach them. The band becomes a horizontal scroll region instead, matching
-   the treatment the ticker already uses, and the edge mask is dropped because
-   it would fade whichever plate the user has just scrolled to.
+   ==========================================================================
+   WHAT THIS BLOCK USED TO DO, AND WHY IT WAS WRONG
+
+   It turned the shelf into an `overflow-x: auto` scroll region with a visible
+   scrollbar and dropped the edge mask, on the reasoning that marine.css:294
+   clamps animation-duration to .001ms !important, which would park a
+   transform marquee at its end state and strand half the plates outside an
+   `overflow: hidden` box.
+
+   That reasoning was sound for a transform marquee. The consequence was not:
+   js/motion.js only reaches credentials() from its no-preference matchMedia
+   contexts, so on a reduce-motion machine the track was never even duplicated
+   and the band was a dead row of nine plates under a full-width scrollbar —
+   which is exactly what the site owner, whose OS has the preference set, was
+   looking at.
+
+   The shelf is now a scroll region for EVERYONE (section 2), so there is
+   nothing left for this block to switch over. What remains is the honest
+   reading of the preference.
+
+   REDUCED, NOT REMOVED
+   js/cert-viewer.js keeps advancing the shelf under the preference, at
+   SPEED_REDUCED — a little under half tempo — with the scroll-velocity
+   coupling switched off, and the pause control in section 4b is how a visitor
+   stops it for good, permanently, in localStorage. A slow horizontal drift of
+   document plates with a visible, persistent stop is a reduction of motion,
+   not a refusal of the preference; the vestibular risk the preference exists
+   to head off is large-amplitude, high-velocity and unstoppable movement, and
+   this is none of the three. Flip STRICT_REDUCED_MOTION in js/cert-viewer.js
+   to go back to never starting it.
+
+   The house rule still holds either way: material stays, movement goes. The
+   plate lift, the scan's translateZ and the transitions that carry them are
+   what this block removes.
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
 
-    #credentials .mrn-certs {
-        overflow-x: auto;
-        overflow-y: hidden;
-        overscroll-behavior-x: contain;
-        scrollbar-width: thin;
-        scrollbar-color: rgba(17, 149, 207, .5) rgba(7, 26, 46, .06);
-        -webkit-mask-image: none;
-        mask-image: none;
-    }
-
-    #credentials .mrn-certs__track,
-    #credentials .mrn-certs:hover .mrn-certs__track,
-    #credentials .mrn-certs:focus-within .mrn-certs__track {
-        animation: none;
-        transform: none;
-        will-change: auto;
-    }
-
     #credentials .mrn-cert,
     #credentials .mrn-cert::after,
-    #credentials .mrn-cert img {
+    #credentials .mrn-cert img,
+    #credentials .mrn-certs__toggle {
         transition: none;
     }
 

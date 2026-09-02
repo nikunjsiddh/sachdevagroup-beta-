@@ -1,0 +1,562 @@
+/* ==========================================================================
+   SACHDEVA GROUP — CERTIFICATE DOCUMENT VIEWER  (.sgcv)
+   ==========================================================================
+   Loaded on index.html only, LAST — after css/card-fx.css. Built by
+   js/cert-viewer.js; see the header of that file for why this is not
+   css/marine-pages.css's .mrnp-lb.
+
+   WHAT IT IS FOR
+     These are A4 compliance documents — 1240x1754 scans, one at 3307x4680 —
+     not photographs. A photo lightbox asks "does it look good"; a document
+     viewer has to answer "can I read the certificate number". So the layout is
+     a reading frame, not a frameless image on a dark ground:
+
+       bar     what this document IS, and the three controls
+       stage   the page itself, fit by default, scrollable when zoomed
+       foot    where you are in the set, and how to move
+
+     Three rows of a grid, in that order, at every single width. The controls
+     never move to a different edge and never sit on top of the document — the
+     failure that makes .mrnp-lb unusable for a portrait scan on a phone, where
+     its prev/next buttons are pinned 10px from each side and land squarely on
+     the page.
+
+   THE SIZING MODEL
+     fit    the whole page on screen. The <img> is max-width and max-height
+            bound inside the stage, so an A4 portrait is height-bound on any
+            landscape viewport and width-bound on a phone held upright.
+            Nothing is ever cropped.
+     zoom   js/cert-viewer.js writes an explicit pixel width and this file
+            lifts both maxima, so the stage scrolls and the scan can be panned.
+
+     `margin: auto` on the image, inside a flex stage — NOT
+     `justify-content: center`. Centring an overflowing flex item with
+     justify-content makes its leading edge unreachable: the overflow all goes
+     one way and the top of the page cannot be scrolled back to. margin:auto
+     centres while it fits and stops centring once it does not, which is the
+     behaviour a zoomed document needs.
+
+   HEIGHT
+     `height: 100dvh` with a `100vh` fallback. On mobile Safari a fixed element
+     at inset:0 is measured against the large viewport, so the footer — the
+     nav row — sits behind the URL bar for the whole first scroll. dvh is what
+     stops the controls being unreachable on the exact devices the user asked
+     about.
+
+   Z-INDEX 10002, which clears everything this page puts in front:
+     .header.sticky_menu   998    css/style.css:648
+     #toTopBtn             999    css/style.css:333
+     .sgfb-launch         1000    css/footer-modern.css:757
+     .mrn-progress        9999    css/marine.css:1731
+     .sgfb                10001   css/footer-modern.css:833
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Scroll lock
+   --------------------------------------------------------------------------
+   css/style.css:66 gives html and body `height: 100%`, so overflow:hidden on
+   both is enough and the scroll offset survives it — no position:fixed body
+   swap, which would move the document under GSAP ScrollTrigger's feet and
+   leave every trigger on the page measuring from the wrong origin.
+   js/cert-viewer.js pads the body by the scrollbar width so the page does not
+   jump sideways as the bar disappears.
+   -------------------------------------------------------------------------- */
+
+html.sgcv-lock,
+html.sgcv-lock body {
+    overflow: hidden;
+}
+
+/* --------------------------------------------------------------------------
+   Shell
+   -------------------------------------------------------------------------- */
+
+.sgcv {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 100vh;
+    height: 100dvh;
+    z-index: 10002;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity .26s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+/* the element is hidden with the `hidden` attribute, and `display: flex`
+   above outranks the UA's [hidden] rule — so it is restated */
+.sgcv[hidden] {
+    display: none;
+}
+
+.sgcv.is-open {
+    opacity: 1;
+}
+
+.sgcv__scrim {
+    position: absolute;
+    inset: 0;
+    background: rgba(4, 18, 31, .94);
+    -webkit-backdrop-filter: blur(7px);
+    backdrop-filter: blur(7px);
+    cursor: zoom-out;
+}
+
+.sgcv__panel {
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    height: 100%;
+    display: grid;
+    /* minmax(0, 1fr) and not 1fr: a grid track's automatic minimum is its
+       content, so a tall scan would push the row past the panel and take the
+       foot off screen instead of scrolling inside the stage */
+    grid-template-rows: auto minmax(0, 1fr) auto;
+    background: linear-gradient(180deg, var(--panel, #0a2340) 0%, var(--ink, #071a2e) 100%);
+    transform: translateY(12px) scale(.99);
+    transition: transform .3s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+.sgcv.is-open .sgcv__panel {
+    transform: none;
+}
+
+/* --------------------------------------------------------------------------
+   Bar — identity and controls
+   -------------------------------------------------------------------------- */
+
+.sgcv__bar {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 12px;
+    padding-top: max(11px, env(safe-area-inset-top));
+    border-bottom: 1px solid rgba(53, 198, 244, .18);
+    background: rgba(7, 26, 46, .6);
+}
+
+.sgcv__id {
+    flex: 1 1 auto;
+    min-width: 0;
+}
+
+.sgcv__title {
+    margin: 0;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 13.5px;
+    font-weight: 600;
+    line-height: 1.28;
+    letter-spacing: .7px;
+    text-transform: uppercase;
+    color: #ffffff;
+}
+
+.sgcv__sub {
+    margin: 3px 0 0;
+    font-family: var(--font-body, "Signika Negative", sans-serif);
+    font-size: 11.5px;
+    line-height: 1.35;
+    color: rgba(255, 255, 255, .62);
+    /* 6.4:1 on the bar's ground */
+}
+
+.sgcv__sub[hidden] {
+    display: none;
+}
+
+.sgcv__tools {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.sgcv__btn {
+    -webkit-appearance: none;
+    appearance: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 7px;
+    /* 44px is the tap target these have to hit on a phone */
+    min-width: 44px;
+    height: 44px;
+    padding: 0 10px;
+    border-radius: 4px;
+    border: 1px solid rgba(53, 198, 244, .3);
+    background: rgba(10, 35, 64, .78);
+    color: #ffffff;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.3px;
+    text-transform: uppercase;
+    line-height: 1;
+    text-decoration: none;
+    cursor: pointer;
+    transition:
+        background .28s var(--e-out, cubic-bezier(.16, 1, .3, 1)),
+        border-color .28s var(--e-out, cubic-bezier(.16, 1, .3, 1)),
+        color .28s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+.sgcv__btn svg {
+    width: 19px;
+    height: 19px;
+    flex: 0 0 auto;
+}
+
+.sgcv__btn:hover,
+.sgcv__btn:focus-visible {
+    background: var(--cyan-deep, #1195cf);
+    border-color: transparent;
+    color: #ffffff;
+}
+
+.sgcv__btn:focus-visible,
+.sgcv__nav:focus-visible {
+    outline: 2px solid var(--cyan-bright, #35c6f4);
+    outline-offset: 2px;
+}
+
+/* the magnifier carries a + while it will zoom in and loses it once zoomed,
+   so one glyph covers both states without a second icon */
+.sgcv.is-zoomed .sgcv__plus {
+    display: none;
+}
+
+.sgcv.is-zoomed .sgcv__zoom {
+    background: var(--cyan-deep, #1195cf);
+    border-color: transparent;
+}
+
+/* the close button's label is for assistive tech only — the X is unambiguous
+   and the bar is the one place where horizontal room is genuinely scarce */
+.sgcv__btn-txt--hide {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    white-space: nowrap;
+}
+
+/* --------------------------------------------------------------------------
+   Stage — the document
+   -------------------------------------------------------------------------- */
+
+.sgcv__stage {
+    position: relative;
+    display: flex;
+    overflow: auto;
+    padding: 12px;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+    background:
+        radial-gradient(120% 90% at 50% 0%, rgba(53, 198, 244, .07), transparent 62%);
+}
+
+.sgcv__stage:focus-visible {
+    outline: 2px solid var(--cyan-bright, #35c6f4);
+    outline-offset: -4px;
+}
+
+.sgcv__img {
+    display: block;
+    /* see THE SIZING MODEL above — margin:auto, never justify-content */
+    margin: auto;
+    max-width: 100%;
+    max-height: 100%;
+    width: auto;
+    height: auto;
+    background: #ffffff;
+    border-radius: 2px;
+    box-shadow:
+        0 0 0 1px rgba(255, 255, 255, .16),
+        0 30px 70px -34px rgba(0, 0, 0, .95);
+    -webkit-user-select: none;
+    user-select: none;
+    -webkit-user-drag: none;
+    transition: opacity .25s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+.sgcv.is-zoomed .sgcv__img {
+    max-width: none;
+    max-height: none;
+}
+
+.sgcv.is-zoomed .sgcv__stage {
+    cursor: grab;
+}
+
+.sgcv.is-zoomed .sgcv__stage:active {
+    cursor: grabbing;
+}
+
+/* --- loading and failure ------------------------------------------------- */
+
+.sgcv.is-loading .sgcv__img {
+    opacity: .18;
+}
+
+.sgcv.is-loading .sgcv__stage::after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 34px;
+    height: 34px;
+    margin: -17px 0 0 -17px;
+    border-radius: 50%;
+    border: 2px solid rgba(53, 198, 244, .25);
+    border-top-color: var(--cyan-bright, #35c6f4);
+    animation: sgcvSpin .8s linear infinite;
+}
+
+@keyframes sgcvSpin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+.sgcv.is-failed .sgcv__stage::before {
+    content: "This certificate could not be loaded.";
+    margin: auto;
+    font-family: var(--font-body, "Signika Negative", sans-serif);
+    font-size: 13px;
+    color: rgba(255, 255, 255, .7);
+}
+
+.sgcv.is-failed .sgcv__img {
+    display: none;
+}
+
+/* --------------------------------------------------------------------------
+   Foot — position in the set
+   -------------------------------------------------------------------------- */
+
+.sgcv__foot {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    padding: 9px 12px;
+    padding-bottom: max(9px, env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(53, 198, 244, .18);
+    background: rgba(7, 26, 46, .6);
+}
+
+.sgcv__foot[hidden] {
+    display: none;
+}
+
+.sgcv__nav {
+    -webkit-appearance: none;
+    appearance: none;
+    flex: 0 0 auto;
+    width: 46px;
+    height: 46px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    border: 1px solid rgba(53, 198, 244, .3);
+    background: rgba(10, 35, 64, .78);
+    color: #ffffff;
+    cursor: pointer;
+    transition:
+        background .28s var(--e-out, cubic-bezier(.16, 1, .3, 1)),
+        border-color .28s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+.sgcv__nav svg {
+    width: 21px;
+    height: 21px;
+}
+
+.sgcv__nav:hover,
+.sgcv__nav:focus-visible {
+    background: var(--cyan-deep, #1195cf);
+    border-color: transparent;
+}
+
+.sgcv__count {
+    margin: 0;
+    min-width: 92px;
+    text-align: center;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 2.6px;
+    text-transform: uppercase;
+    color: var(--cyan-bright, #35c6f4);
+    /* #35c6f4 on #071a2e = 8.4:1 */
+}
+
+/* ==========================================================================
+   RESPONSIVE
+   --------------------------------------------------------------------------
+   The row order never changes; only the frame around it and the metrics do.
+
+     phone      full bleed. Every pixel of height goes to the document,
+                because a 1240x1754 page on a 390x844 screen is already only
+                ~390x552 in fit mode and any chrome taken off the top is a
+                line of the certificate lost.
+     tablet     the panel becomes a card with air around it, and the control
+                labels come back — at 768px there is room for words.
+     desktop    capped at 1100px wide. A4 at 88vh on a 1080-tall screen is
+                ~672px wide, so the cap is what stops a 2560px monitor
+                stretching the frame around a document that cannot fill it.
+     short      landscape phones and small laptops: the bar loses its second
+                line and both rails shrink, because at 400px of viewport the
+                document gets less than 300px of stage otherwise.
+   ========================================================================== */
+
+@media (min-width: 700px) {
+    .sgcv {
+        padding: min(4vh, 34px) min(4vw, 34px);
+    }
+
+    .sgcv__panel {
+        width: min(1100px, 100%);
+        border: 1px solid rgba(53, 198, 244, .22);
+        border-radius: 14px;
+        overflow: hidden;
+        box-shadow: 0 60px 140px -50px #000000;
+    }
+
+    /* the panel is inset from every edge now, so the notch and the home
+       indicator are already cleared by the shell's own padding */
+    .sgcv__bar {
+        padding: 13px 16px;
+    }
+
+    .sgcv__foot {
+        padding: 11px 16px;
+    }
+
+    .sgcv__title {
+        font-size: 15px;
+    }
+
+    .sgcv__sub {
+        font-size: 12.5px;
+    }
+
+    .sgcv__stage {
+        padding: 18px;
+    }
+
+    .sgcv__btn {
+        padding: 0 14px;
+    }
+}
+
+/* below 700px the labels would push the three controls into two rows */
+@media (max-width: 699px) {
+    .sgcv__btn-txt {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    .sgcv__btn {
+        padding: 0;
+        width: 44px;
+    }
+
+    .sgcv__tools {
+        gap: 6px;
+    }
+}
+
+@media (min-width: 1025px) {
+    .sgcv {
+        padding: 40px;
+    }
+
+    .sgcv__stage {
+        padding: 26px;
+    }
+
+    .sgcv__title {
+        font-size: 16px;
+        letter-spacing: .9px;
+    }
+
+    .sgcv__foot {
+        gap: 20px;
+    }
+}
+
+/* landscape phones, and laptops with the browser chrome eating the viewport */
+@media (max-height: 540px) {
+    .sgcv {
+        padding: 0;
+    }
+
+    .sgcv__panel {
+        width: 100%;
+        border: 0;
+        border-radius: 0;
+    }
+
+    .sgcv__bar {
+        padding: 7px 10px;
+    }
+
+    .sgcv__sub {
+        display: none;
+    }
+
+    .sgcv__btn,
+    .sgcv__nav {
+        height: 38px;
+        min-width: 38px;
+        width: 38px;
+    }
+
+    .sgcv__nav {
+        height: 38px;
+    }
+
+    .sgcv__foot {
+        padding: 6px 10px;
+        gap: 12px;
+    }
+
+    .sgcv__stage {
+        padding: 8px;
+    }
+}
+
+/* ==========================================================================
+   REDUCED MOTION
+   The viewer is chrome, not decoration: it appears, it does not travel. The
+   spinner is the one thing kept, because it is the only signal that a 630KB
+   scan is still on its way — css/marine.css:294 clamps its duration anyway,
+   and js/cert-viewer.js skips the close delay so nothing lingers.
+   ========================================================================== */
+
+@media (prefers-reduced-motion: reduce) {
+
+    .sgcv,
+    .sgcv__panel,
+    .sgcv__img,
+    .sgcv__btn,
+    .sgcv__nav {
+        transition: none;
+    }
+
+    .sgcv__panel {
+        transform: none;
+    }
+}

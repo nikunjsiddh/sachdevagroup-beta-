@@ -696,6 +696,21 @@
 
     /* --- #credentials — velocity-linked marquee ------------------------ */
     function credentials(full) {
+        /* HANDED OVER. js/cert-viewer.js drives this band now, with native
+           scrollLeft rather than an xPercent tween, so that the auto-scroll,
+           the touch swipe, the trackpad and the keyboard are all the same
+           property — and so that the band still moves under
+           prefers-reduced-motion, which never reaches this function at all
+           (the reduce matchMedia context below calls a different, shorter
+           branch than run(), so on a reduce-motion machine the track was
+           never even duplicated).
+
+           That file stamps the flag in its <head>-time IIFE, which is before
+           GSAP exists, so this check is safe at any point in the boot.
+           Returning null is expected by the caller: run() hands the value
+           straight to mm.add's cleanup, which null-checks it. */
+        if (doc.documentElement.getAttribute('data-sg-certs') === 'own') return null;
+
         var track = one('#credentials .mrn-certs__track');
         if (!track) return null;
 
