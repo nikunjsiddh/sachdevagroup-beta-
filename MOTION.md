@@ -279,6 +279,59 @@ entrances) resolve from a 12px blur, and the eyebrow's rule draws itself
 is still on the element, which `index-motion.js` strips when the entrance
 settles.
 
+## Motion policy — `js/motion-policy.js`
+
+Loaded **first** in `<head>` on all 13 pages. Every engine on the site stands
+down when the browser reports `prefers-reduced-motion: reduce`, and on Windows
+that flag is set by one switch (Settings › Accessibility › Visual effects ›
+Animation effects) that people turn off for performance far more often than
+for vestibular reasons. On such a machine the whole site arrived static. The
+reference sites the client compares against ignore the flag.
+
+| Mode | Set with | Behaviour |
+|---|---|---|
+| `on` (default) | `?motion=on` | motion runs. If the OS asks for reduced motion the request is overridden: `window.matchMedia` is shimmed, the reduced-motion blocks in every same-origin stylesheet are rewritten at `DOMContentLoaded`, and `<html>` gets `sg-forced`, which `js/scroll-drift.js` and `css/scroll-fx.css` read to run at 60% travel. Reduced, not removed. |
+| `auto` | `?motion=auto` | the OS setting is honoured exactly as before this file existed |
+| `off` | `?motion=off` | everything held in its reduced state whatever the OS says |
+
+The choice is remembered per browser in `localStorage['sg-motion']`. The file
+also arms `html.sfx-arm` on pages whose `<html>` carries `data-sfx-intro`, so
+the load curtain paints from the first frame, with a 2.5s failsafe that pulls
+`sfx-arm` and `sfx-lines` unless `js/scroll-fx.js` stamps `data-sfx-ready`.
+
+## The cinematic layer — `js/scroll-fx.js`
+
+Loaded last on all 13 pages, after GSAP 3.13 + ScrollTrigger + SplitText
+(all free since 3.13; pinned with SRI). Modelled on the measured vocabulary
+of studiodado.com's bundle. `index.html` takes only the footer and header
+parts because `js/motion.js` owns its sections.
+
+| Move | Markup | What happens |
+|---|---|---|
+| lines | `[data-sg-split]`, `.mrnp-hero__title`, `.mrn-eyebrow`, `.mrn-lead` — claimed by the pre-pass, which strips the other engines' attributes and adds `data-sfx-lines` | SplitText `type:'lines', mask:'lines'`; each line rises from 110% inside its clip mask, stagger .09, once, at `top 88%`. A title that follows an eyebrow waits .14s for it. Hero copy plays on load, after the curtain when there is one. A re-split (font load, resize) never replays a finished entrance. |
+| open | `[data-sfx-open]` on `.mrnp-split__frame`, `.mrnp-gal__item`, `.mrnp-certcard`, `.abt-frame`, `.abt-unit__media` | scrubbed `clip-path` from `inset(14% 10%)` to `inset(0)` while `--sfx-io` settles 1.14 → 1 and multiplies into the image scale; at progress 1 the inline clip is removed so the box-shadow returns. The pre-pass also releases `data-mrn-reveal` / `data-mrn-stagger` on the box's ancestors up to the section, so a photograph never slides in AND opens. |
+| intro | `<html data-sfx-intro>` | `body::before` curtain lifts via `--sfx-curtain` (1.1s expo.inOut) — on arrivals only (fresh load, reload, external referrer; a click between our own pages skips it); `.mrnp-hero__bg` settles from scale 1.28 / y 54 to its resting `scale(1.06)`, then `clearProps` hands it back to `page-fx.js` heroScrub. Hero lines play after the curtain, or straight away without one. |
+| footer | `.sgf-footer` | slides from −30% of its height to 0 as it enters; `css/scroll-fx.css` drops it to z-index 1 under the white yard band |
+| header | `.header` | `.sfx-head-hide` while scrolling down past 80px (= `main.js` stickyThreshold). The first hide drops animate.css's `animated fadeInDown` (its fill-mode would pin the transform) and marks the bar `.sfx-head`; from then on hide and show are one .55s transition on transform. Desktop only, and not on `index.html`, whose bar `js/motion.js` already hides with `.is-hidden`. |
+
+`css/scroll-fx.css` also folds the seven `page-fx.js` entrance directions
+(left, right, rise, tilt, sink, zoom, up) into one 28px rise for everything
+that is not a title or a photograph — the reference reads as calm because it
+has two moves in total. The image slide inside a frame is ±10% on a 1.24
+bleed (±5% on 1.14 under `sg-forced` and below 861px). `motion-policy.js`
+leaves `html.sfx-curtain` on for the whole page view whenever it drew the
+curtain, and the stylesheet keys the crumb and rule delays on that, so a
+plain click between our own pages keeps `marine-pages.css`'s own timing.
+
+**The pre-pass is the ownership boundary.** It runs synchronously at parse
+time, after `js/page-fx.js` has stamped its choreography and before
+`marine.js` / `marine-pages.js` / `index-motion.js` boot on `DOMContentLoaded`.
+An element it claims loses `data-sg-split`, `data-sg-in`, `data-sg-delay`,
+`data-mrn-reveal`, `data-mrnp-split-words` and `data-anim` in the same task
+that arms it, so nothing is animated twice and nothing flashes. Hand-marked
+hero type (`.mrn-word`) and the drop-cap lead (`.mrnp-prose--lead`) are left
+alone.
+
 ## Known gaps
 
 - **GSAP is loaded from cdnjs.** Pinned to 3.12.5. Vendoring it into `js/` would

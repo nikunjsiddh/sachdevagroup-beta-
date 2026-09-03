@@ -61,6 +61,9 @@
          Both timers are the safety net. If GSAP 404s, motion.js never stamps
          data-mo-ready and sg-anim is pulled, so nothing is left invisible; the
          same contract as before, for the same reason. -->
+    <!-- Motion policy. Must be the first script: it decides whether the
+         OS reduce-motion flag is honoured before any engine reads it. -->
+    <script src="js/motion-policy.js"></script>
     <script>(function (d, w) {
         var h = d.documentElement, C = h.classList;
         function add(c) { if (C) { C.add(c); } else { h.className += ' ' + c; } }
@@ -925,12 +928,13 @@
     <script src="js/feedback.js"></script>
     <script src="js/index-motion.js"></script>
 
-    <!-- GSAP owns scroll motion on this page. Pinned to 3.12.5 so a CDN
+    <!-- GSAP owns scroll motion on this page. Pinned to 3.13.0 so a CDN
          re-release cannot change the feel of the site overnight. If either
          request fails, js/motion.js returns at its first guard and pulls the
          sg-anim gate, so the page reads as plain static HTML. -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha512-P2IDYZfqSwjcSjX0BKeNhwRUH8zRPGlgcWl5n6gBLzdi4Y5/0O4zaXrtO4K9TZK6Hn1BenYpKowuCavNandERg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js" integrity="sha512-wOeEC+9qERAzhliwBFPDb6t8TiFFxdxG8vhK/Ygs7TuC44bpg8pg/X2/U/u+0X4fK05wb9id1EIipnF02+CFQw==" crossorigin="anonymous"></script>
     <script src="js/motion.js"></script>
 
     <!-- Additive scrub layer. motion.js owns the background/media parallax and
@@ -938,6 +942,7 @@
          that the reference build uses on every section and we had nowhere. It
          sets no engine flag, so nothing stands down because of it. -->
     <script src="js/scroll-drift.js"></script>
+    <script src="js/scroll-fx.js"></script>
 </body>
 
 </html>

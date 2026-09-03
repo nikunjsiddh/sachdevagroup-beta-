@@ -1,19 +1,24 @@
 /* ==========================================================================
    SACHDEVA GROUP — SCROLL FX
-   The CSS half of js/scroll-drift.js for every page except index.html
+   The CSS half of js/scroll-drift.js and js/scroll-fx.js for every page
+   except index.html
    ==========================================================================
    Load order : LAST — after css/page-fx.css and any page-specific *-fx.css.
                 index.html does not load this; css/motion.css does its job.
-   Engine     : GSAP 3 + ScrollTrigger via js/scroll-drift.js, which writes
-                exactly two custom properties and no layout property at all:
+   Engines    : GSAP 3.13 + ScrollTrigger + SplitText via js/scroll-drift.js
+                and js/scroll-fx.js, which write these custom properties and
+                no layout property at all:
 
-     --sfx-gy   px,  on a [data-drift] section     ground layer travel
-     --sfx-iy   -1..1, on a [data-drift-img] box   image travel, unitless
+     --sfx-gy       px,    on a [data-drift] section    ground layer travel
+     --sfx-iy       -1..1, on a [data-drift-img] box    image travel
+     --sfx-io       1.14..1, on a [data-sfx-open] box   the "open" settle
+     --sfx-curtain  0..100%, on <body>                  the load curtain
 
    Every rule below resolves to its resting value when the property is
-   missing, so a page without the script — blocked CDN, old browser, reduced
-   motion — renders exactly as it did before this file existed. Nothing here
-   hides anything.
+   missing, so a page without the scripts — blocked CDN, old browser, motion
+   switched off — renders exactly as it did before this file existed. The
+   only two things hidden ahead of time are the curtain and the line-reveal
+   targets, and both sit behind gates js/motion-policy.js pulls on a timer.
 
    WHY THE HOVER ZOOM IS A REGISTERED PROPERTY
      The photograph's transform is now written every frame from --sfx-iy. A
@@ -30,14 +35,23 @@
 
 :root {
     /* how far a photograph slides inside its box, as a share of its height.
-       Paired with the scale below: 1.18 bleeds 9% top and bottom, so a 7%
-       slide leaves 2% of guard before an edge could show. */
-    --sfx-img-amp: 7%;
-    --sfx-img-scale: 1.18;
+       Paired with the scale below: 1.24 bleeds 12% top and bottom, so a 10%
+       slide leaves 2% of guard before an edge could show. The reference runs
+       ±20% on a 120%-tall image; ±10% is the most a box that also drifts
+       ±26px against the page can carry before the two read as one move. */
+    --sfx-img-amp: 10%;
+    --sfx-img-scale: 1.24;
 
     /* the ground layers are stretched this far past the section top and
        bottom; js/scroll-drift.js moves them +/-34px inside that */
     --sfx-ground-over: 64px;
+}
+
+/* js/motion-policy.js sets this when it is overriding an OS reduce-motion
+   request: motion runs, at smaller travel — reduced, not removed */
+html.sg-forced {
+    --sfx-img-amp: 5%;
+    --sfx-img-scale: 1.14;
 }
 
 @property --sfx-iz {
@@ -85,16 +99,18 @@
 
 /* ==========================================================================
    3. IMAGES — the photograph slides inside its frame
-   The frame itself carries the entrance (page-fx.js stamps data-sg-in="clip"
-   on .mrnp-split__frame) and the tilt sits on .mrnp-split__media, so the
-   <img> is the free layer on every one of these components.
+   The frame carries the scrubbed "open" (js/scroll-fx.js) and the tilt sits
+   on .mrnp-split__media, so the <img> is the free layer on every one of
+   these components. Its scale is three factors: the bleed for the slide
+   (--sfx-iz at rest), the hover zoom (--sfx-iz on :hover) and the open
+   settle (--sfx-io, 1.14 → 1 as the box scrolls in).
    ========================================================================== */
 
 /* --- 3.1 the split-section frame ------------------------------------------ */
 
 .mrnp-split__frame[data-drift-img] img {
     --sfx-iz: var(--sfx-img-scale);
-    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(var(--sfx-iz));
+    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(calc(var(--sfx-iz) * var(--sfx-io, 1)));
     transition: filter .8s var(--e-out), --sfx-iz 1.1s var(--e-out);
     will-change: transform;
     backface-visibility: hidden;
@@ -102,7 +118,7 @@
 
 .mrnp-split__media:hover .mrnp-split__frame[data-drift-img] img {
     --sfx-iz: 1.26;
-    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(var(--sfx-iz));
+    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(calc(var(--sfx-iz) * var(--sfx-io, 1)));
 }
 
 /* --- 3.2 gallery tiles ----------------------------------------------------- */
@@ -112,7 +128,7 @@
 
 #yard-details .mrnp-gal__item[data-drift-img] img {
     --sfx-iz: 1.16;
-    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(var(--sfx-iz));
+    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(calc(var(--sfx-iz) * var(--sfx-io, 1)));
     transition: filter .7s var(--e-out), --sfx-iz 1s var(--e-out);
     will-change: transform;
     backface-visibility: hidden;
@@ -121,7 +137,7 @@
 #yard-details .mrnp-gal__item[data-drift-img]:hover img,
 #yard-details .mrnp-gal__item[data-drift-img]:focus-visible img {
     --sfx-iz: 1.24;
-    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(var(--sfx-iz));
+    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(calc(var(--sfx-iz) * var(--sfx-io, 1)));
 }
 
 /* --- 3.3 about_us.html ----------------------------------------------------- */
@@ -129,7 +145,7 @@
 
 #profile .abt-frame[data-drift-img] img {
     --sfx-iz: var(--sfx-img-scale);
-    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(var(--sfx-iz));
+    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(calc(var(--sfx-iz) * var(--sfx-io, 1)));
     transition: filter .8s var(--ab-ease), --sfx-iz 1.2s var(--ab-ease);
     will-change: transform;
     backface-visibility: hidden;
@@ -137,12 +153,12 @@
 
 #profile .abt-split__media:hover .abt-frame[data-drift-img] img {
     --sfx-iz: 1.25;
-    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(var(--sfx-iz));
+    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(calc(var(--sfx-iz) * var(--sfx-io, 1)));
 }
 
 #units .abt-unit__media[data-drift-img] img {
     --sfx-iz: 1.2;
-    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(var(--sfx-iz));
+    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(calc(var(--sfx-iz) * var(--sfx-io, 1)));
     transition: filter .9s var(--ab-ease), --sfx-iz 1.3s var(--ab-ease);
     will-change: transform;
     backface-visibility: hidden;
@@ -150,20 +166,51 @@
 
 #units .abt-unit:hover .abt-unit__media[data-drift-img] img {
     --sfx-iz: 1.3;
-    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(var(--sfx-iz));
+    transform: translate3d(0, calc(var(--sfx-iy, 0) * var(--sfx-img-amp)), 0) scale(calc(var(--sfx-iz) * var(--sfx-io, 1)));
+}
+
+/* --- 3.4 certificate cards ------------------------------------------------- */
+/* they open (clip) but do not slide — a document should sit still */
+.mrnp-certcard[data-sfx-open] img {
+    transform: scale(var(--sfx-io, 1));
+    transition: filter .6s var(--e-out);
+}
+
+.mrnp-certcard[data-sfx-open]:hover img {
+    transform: scale(calc(var(--sfx-io, 1) * 1.03));
 }
 
 /* ==========================================================================
-   4. ENTRANCES — two refinements to the index-theme.css section 9 vocabulary
-   Both match only while the element still carries its data-sg-* attribute,
-   which js/index-motion.js strips the moment the entrance settles — so
-   nothing below can outlive the entrance or fight a later hover.
+   4. ENTRANCES — the index-theme.css section 9 vocabulary, calmed
+   Every rule here matches only while the element still carries its
+   data-sg-* attribute, which js/index-motion.js strips the moment the
+   entrance settles — so nothing below can outlive the entrance or fight a
+   later hover.
    ========================================================================== */
 
-/* 4.1 Media arrives from soft focus. `clip` is the photograph frames and
-   `zoom` the gallery tiles, certificates and flip cards — the elements whose
-   entrance is a picture resolving rather than a block of copy arriving.
-   Kept off the text entrances: blurring type is a cost with no reward. */
+/* 4.0 One move for everything that is not a title or a photograph.
+   js/page-fx.js hands out seven directions (left, right, rise, tilt, sink,
+   zoom, up) across cards, lists and facts. The reference site has two moves
+   in total — lines that rise and boxes that open — and reads as calm
+   because of it. Next to the masked titles, a card sliding in from the side
+   or tipping in on a 3D hinge now reads as noise, so every direction folds
+   into one short rise; zoom keeps a whisper of scale for the tiles and
+   stamps that still use it. The stagger and timing are untouched. */
+html.sg-motion [data-sg-in],
+html.sg-motion [data-sg-in="left"],
+html.sg-motion [data-sg-in="right"],
+html.sg-motion [data-sg-in="rise"],
+html.sg-motion [data-sg-in="tilt"],
+html.sg-motion [data-sg-in="sink"] {
+    --sg-from: translate3d(0, 28px, 0);
+}
+
+html.sg-motion [data-sg-in="zoom"] {
+    --sg-from: translate3d(0, 18px, 0) scale(.985);
+}
+
+/* 4.1 Media that is not taken over by the scrubbed open (flip cards, stamps)
+   still arrives from soft focus. Kept off the text entrances. */
 html.sg-motion [data-sg-in="clip"],
 html.sg-motion [data-sg-in="zoom"] {
     filter: blur(12px);
@@ -198,7 +245,89 @@ html.sg-calm.sg-motion .mrn-eyebrow[data-sg-in]::before {
 }
 
 /* ==========================================================================
-   5. RESPONSIVE
+   5. LINES — the masked line reveal (js/scroll-fx.js section 2)
+   SplitText wraps each visual line in a mask it sets to overflow:clip; the
+   line rises from 110% of its own height inside it. The mask gets a little
+   padding below and the same negative margin, so descenders are not shaved
+   off by the clip on tight display line-heights.
+   ========================================================================== */
+
+/* armed by the pre-pass only once GSAP + SplitText are present; cleared per
+   element the moment its lines are split, by the failsafe otherwise */
+html.sfx-lines [data-sfx-lines]:not(.sfx-split) {
+    visibility: hidden;
+}
+
+.sfx-mask {
+    padding-bottom: .14em;
+    margin-bottom: -.14em;
+}
+
+/* the hero sub-heading used to fade itself in from opacity:0 (marine-pages.css)
+   — its lines carry the entrance now, so the box must start visible */
+.mrnp-hero__sub[data-sfx-lines] {
+    opacity: 1;
+    animation: none;
+}
+
+/* when a curtain was drawn for this page view (html.sfx-curtain, set by
+   js/motion-policy.js and never removed) the crumb and rule wait for it to
+   clear; on a plain click between our own pages there is no curtain and
+   they keep marine-pages.css's own timing, so the hero still arrives
+   top-down */
+html.sfx-curtain .mrnp-crumb {
+    animation-delay: .6s;
+}
+
+html.sfx-curtain .mrnp-hero__rule {
+    animation-delay: 1.35s;
+}
+
+/* ==========================================================================
+   6. CURTAIN — the load intro (js/scroll-fx.js section 4)
+   Drawn from the very first frame on pages whose <html> carries
+   data-sfx-intro, because js/motion-policy.js sets html.sfx-arm in <head>.
+   The bottom inset is --sfx-curtain on <body>, tweened 0 → 100% so the
+   sheet lifts upward and the hero photograph settles in behind it.
+   ========================================================================== */
+
+html.sfx-arm body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: 2147483000;
+    pointer-events: none;
+    background: linear-gradient(160deg, #071a2e 0%, #0a2340 100%);
+    -webkit-clip-path: inset(0 0 var(--sfx-curtain, 0%) 0);
+    clip-path: inset(0 0 var(--sfx-curtain, 0%) 0);
+}
+
+/* ==========================================================================
+   7. FOOTER + HEADER (js/scroll-fx.js sections 5 and 6)
+   ========================================================================== */
+
+/* the footer starts 30% of its height UNDER the yard band, which paints
+   white at z-index 2 — so the footer must sit below it in the stack */
+.sfx-footer {
+    z-index: 1;
+}
+
+/* js/main.js makes the bar sticky with animate.css's fadeInDown, whose
+   fill-mode pins transform for as long as .animated is on the element.
+   js/scroll-fx.js drops that class the first time the bar has to hide and
+   marks the bar .sfx-head; from then on both moves are one transition on
+   transform — up and out of the way, back down the moment you scroll up. */
+.header.sticky_menu.sfx-head {
+    animation: none !important;
+    transition: transform .55s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+}
+
+.header.sticky_menu.sfx-head-hide {
+    transform: translate3d(0, -110%, 0);
+}
+
+/* ==========================================================================
+   8. RESPONSIVE
    The section drift is desktop-only in the JS. The image slide runs on every
    width, at a smaller amplitude and bleed — a phone screen is short, so the
    same 7% would cross the frame in one thumb gesture.
@@ -207,8 +336,8 @@ html.sg-calm.sg-motion .mrn-eyebrow[data-sg-in]::before {
 @media (max-width: 860px) {
 
     :root {
-        --sfx-img-amp: 4%;
-        --sfx-img-scale: 1.12;
+        --sfx-img-amp: 5%;
+        --sfx-img-scale: 1.14;
     }
 
     #yard-details .mrnp-gal__item[data-drift-img] img {
@@ -228,15 +357,18 @@ html.sg-calm.sg-motion .mrn-eyebrow[data-sg-in]::before {
 }
 
 /* ==========================================================================
-   6. REDUCED MOTION
-   js/scroll-drift.js returns at its guard, so neither property is ever
-   written; these rules exist for the case where the preference flips while
-   the page is open and a value is already parked on the element.
+   9. REDUCED MOTION
+   Only reached when js/motion-policy.js is in "auto" or "off" mode (the
+   default "on" rewrites these blocks away). The scripts then return at their
+   own guards, so nothing below is ever written; these rules exist for the
+   case where the preference flips while the page is open and a value is
+   already parked on an element.
    ========================================================================== */
 
 @media (prefers-reduced-motion: reduce) {
 
-    [data-drift-img] img {
+    [data-drift-img] img,
+    .mrnp-certcard[data-sfx-open] img {
         transform: none !important;
         transition: filter .7s !important;
         will-change: auto !important;
@@ -245,6 +377,29 @@ html.sg-calm.sg-motion .mrn-eyebrow[data-sg-in]::before {
     .mrnp-section[data-drift]::before,
     .mrnp-section[data-drift]::after {
         transform: none !important;
+    }
+
+    [data-sfx-open] {
+        clip-path: none !important;
+    }
+
+    html.sfx-lines [data-sfx-lines] {
+        visibility: visible !important;
+    }
+
+    .sfx-line {
+        transform: none !important;
+    }
+
+    html.sfx-arm body::before {
+        display: none;
+    }
+
+    .sfx-footer,
+    .header.sticky_menu.sfx-head,
+    .header.sticky_menu.sfx-head-hide {
+        transform: none !important;
+        transition: none !important;
     }
 
     html.sg-motion [data-sg-in] {

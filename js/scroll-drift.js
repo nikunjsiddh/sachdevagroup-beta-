@@ -95,6 +95,11 @@
     var EASE_CONTENT = 'power1.inOut';
     var EASE_BG = 'none';      /* the reference uses linear for the bg layer */
 
+    /* js/motion-policy.js sets html.sg-forced when it is overriding an OS
+       reduce-motion request. Travel is cut to 60% there — reduced, not
+       removed, which is what that preference is actually asking for. */
+    var K = (' ' + doc.documentElement.className + ' ').indexOf(' sg-forced ') > -1 ? 0.6 : 1;
+
     function num(v, fallback) {
         var n = parseFloat(v);
         return isFinite(n) ? n : fallback;
@@ -143,7 +148,7 @@
            .mrn-dark, and the ambient bloom it adds to .mrn-light. Sections
            with none of those pay one custom-property write per frame. */
         if (section.getAttribute('data-drift-ground') !== 'off') {
-            var g = num(section.getAttribute('data-drift-ground'), GROUND_AMP);
+            var g = num(section.getAttribute('data-drift-ground'), GROUND_AMP) * K;
             if (g) {
                 gsap.fromTo(section,
                     { '--sfx-gy': (-g) + 'px' },
@@ -153,7 +158,7 @@
 
         /* --- background layer(s) --- */
         list('[data-drift-bg]', section).forEach(function (el) {
-            var amp = num(el.getAttribute('data-drift-bg'), BG_AMP);
+            var amp = num(el.getAttribute('data-drift-bg'), BG_AMP) * K;
 
             /* A layer that travels +/-amp% of its own height needs that much
                bleed or the drift just walks its edge into view at both ends
@@ -181,7 +186,7 @@
             content.hasAttribute('data-mrnp-tilt') ||
             content.hasAttribute('data-sg-parallax')) return;
 
-        var amp = num(section.getAttribute('data-drift'), CONTENT_AMP);
+        var amp = num(section.getAttribute('data-drift'), CONTENT_AMP) * K;
         if (!amp) return;
 
         gsap.fromTo(content,

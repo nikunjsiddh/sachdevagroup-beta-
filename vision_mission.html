@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en">
+<html lang="en" data-sfx-intro>
 
 <head>
   <script>
@@ -48,6 +48,9 @@
          is no flash of un-animated content. The timer is the safety net: if
          index-motion.js never loads or never finishes booting, the class is
          pulled and every element is simply visible. -->
+    <!-- Motion policy. Must be the first script: it decides whether the
+         OS reduce-motion flag is honoured before any engine reads it. -->
+    <script src="js/motion-policy.js"></script>
     <script>(function(d){var h=d.documentElement,C=h.classList;if(C){C.add('sg-motion');}else{h.className+=' sg-motion';}setTimeout(function(){if(h.getAttribute('data-sg-ready'))return;if(C){C.remove('sg-motion');}else{h.className=(' '+h.className+' ').split(' sg-motion ').join(' ');}},4000);})(document);</script>
 
     <title>Sachdeva Group of Industries Leading Ship Recycling Companies in Alang Gujarat, India</title>
@@ -206,7 +209,7 @@
             <div class="mrn-container">
                 <div class="mrnp-split mrnp-split--wide-left">
                     <div class="mrnp-split__media" data-mrn-tilt="8" data-mrn-reveal="left">
-                        <div class="mrnp-split__frame" data-drift-img>
+                        <div class="mrnp-split__frame" data-drift-img data-sfx-open>
                             <img src="images/ship_recycling.jpg"
                                 alt="Aerial view of the Sachdeva Group ship recycling yard at Alang">
                         </div>
@@ -238,7 +241,7 @@
                     </div>
 
                     <div class="mrnp-split__media" data-mrn-tilt="8" data-mrn-reveal="right">
-                        <div class="mrnp-split__frame" data-drift-img>
+                        <div class="mrnp-split__frame" data-drift-img data-sfx-open>
                             <img src="images/Environmental-Concerns.jpg"
                                 alt="End-of-life vessels beached at the waterline of a ship recycling yard">
                         </div>
@@ -538,9 +541,11 @@
          no such flag, so it adds the scrubbed drift without taking anything
          away. If either request fails, the file returns at its first guard
          and the page keeps exactly the motion it has today. -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha512-P2IDYZfqSwjcSjX0BKeNhwRUH8zRPGlgcWl5n6gBLzdi4Y5/0O4zaXrtO4K9TZK6Hn1BenYpKowuCavNandERg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js" integrity="sha512-wOeEC+9qERAzhliwBFPDb6t8TiFFxdxG8vhK/Ygs7TuC44bpg8pg/X2/U/u+0X4fK05wb9id1EIipnF02+CFQw==" crossorigin="anonymous"></script>
     <script src="js/scroll-drift.js"></script>
+    <script src="js/scroll-fx.js"></script>
 </body>
 
 </html>
