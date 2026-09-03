@@ -139,7 +139,7 @@ bar, i.e. invisible). Keep all of those fixed.
 
     <!-- PAGE HERO -->
     <section class="mrnp-hero">
-      <div class="mrnp-hero__bg" style="background-image:url('images/about/about-head-bg3.jpg')"></div>
+      <div class="mrnp-hero__bg" style="background-image:url('images/about/hero-yard.jpg')"></div>
       <div class="mrnp-hero__scrim"></div>
       <div class="mrnp-hero__grid"></div>
       <span class="mrnp-hero__orb mrnp-hero__orb--a"></span>
@@ -170,8 +170,30 @@ bar, i.e. invisible). Keep all of those fixed.
 </body>
 ```
 
-Hero background image: pick from `images/about/about-head-bg0|1|3|4|5|6.jpg|png` — use the same one
-the page's old `page-titleN` class used, so the visual identity of each page is preserved.
+Hero background image: `images/about/` holds exactly three, and each one comes with the grade it
+needs. The shared `.mrnp-hero__bg` filter in `css/page-fx.css` section 3 —
+`saturate(.42) brightness(.62)` — is a rescue written for a bright, warm, stock-daylight yard
+photo. Point it at a frame that is already dark and already in the palette and it subtracts from a
+picture with nothing left to give. So the image and the hook travel together:
+
+| Image | Hook on the `<section>` | Pages |
+| --- | --- | --- |
+| `hero-yard.jpg` 1920×1088 | none — this is the frame the shared grade was written for | contact_us, gallery, news, jjsb, sspsb, testimonials, vision_mission |
+| `credentials-banner-audit-desk.webp` 1536×1024 | `crd-hero`, in `page-fx.css` section 3 | our_credentials, health_safety, environment_management, waste_management |
+| `about-banner-night-yard.webp` 1536×1024 | `abt-hero`, in `css/about-fx.css` section 5 | about_us |
+
+`abt-hero` is the one that does not travel: `about-fx.css` is loaded by `about_us.html` alone, so
+that class is inert anywhere else and the image would fall back to the rescue grade it was chosen
+to avoid. Move the rule before you move the picture.
+
+For a new page, reach for `background-position` before reaching for a new file — `hero-yard.jpg`
+crops to a visibly different banner at `35% 46%` than at `70% 50%`, which is how seven pages share
+one photograph without reading as one page.
+
+The `about-head-bg0|1|3|4|5|6` files this section used to name are gone: `about-head-bg0.jpg` in
+`83785c2`, the rest in `6addfa9`. `6addfa9` left nine pages pointing at 404s, which is what this
+list is now written to prevent — **check that the file exists before you ship the reference.**
+
 The wave `fill` must match the background colour of the section that follows the hero
 (`#ffffff` for `mrn-light`, `#f5f7fa`-ish for `mrn-soft` — use `#ffffff` if unsure).
 
@@ -347,9 +369,13 @@ component** — the file was pruned once already to keep that true.
 ### The About banner
 
 `about_us.html` uses the shared `.mrnp-hero` component like every other inner page — a **still
-photograph**, not footage. The image is `images/about/about-head-bg1.png`, the About banner the
-page originally shipped with, and the only asset in `images/about/` shaped as a banner strip
-(2050×688). It is a 1.6 MB PNG; converting it to WebP would be worth doing.
+photograph**, not footage. The image is `images/about/about-banner-night-yard.webp` (1536×1024,
+118 KB): the berth after dark, cranes in silhouette against a teal sky over amber sodium lamps.
+
+It replaced `about-head-bg1.png`, the 2050×688 banner strip the page originally shipped with —
+a 1.6 MB PNG, deleted in `6addfa9`. The frame now arrives already in the palette instead of merely
+compatible with it, which is why About grades for itself rather than taking the shared rescue.
+`css/about-fx.css` section 5, on the `.abt-hero` hook, has the argument.
 
 What it adds over a standard page hero is two pieces borrowed from index's hero —
 `.mrn-hero__badge` and `.mrn-hero__actions`. Both are class-scoped in `index-theme.css`, so they
