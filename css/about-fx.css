@@ -242,9 +242,11 @@
    for itself. None of this is a nudge of the shared rule; it is a different
    intent, which is why it re-states rather than adjusts.
 
-   Only About moves. our_credentials.html, testimonials.html and
-   vision_mission.html still run about-head-bg1.png through the shared grade,
-   and it still suits them.
+   Only About moves. vision_mission.html and sspsb.html now carry this same
+   photograph, and testimonials.html a yard frame of its own, but all of them
+   run through the shared page-fx grade — which is the point: the shared rule
+   is built to rescue an arbitrary yard photograph, and this one does not need
+   rescuing.
 
    WHAT IS DELIBERATELY LEFT ALONE
      transform          js/page-fx.js heroScrub() writes it inline every frame

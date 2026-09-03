@@ -55,6 +55,11 @@
 
     <!-- Place favicon.ico in the root directory -->
 
+    <!-- The banner photograph is the LCP element, and it is a CSS background
+         set from an inline style — invisible to the preload scanner. Without
+         this its request waits on every stylesheet plus hero layout. -->
+    <link rel="preload" as="image" href="images/about/hero-yard.jpg" fetchpriority="high">
+
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
     <link rel="stylesheet" href="css/animate.min.css">
@@ -170,7 +175,7 @@
 
         <!-- ============================ PAGE HERO ============================ -->
         <section class="mrnp-hero">
-            <div class="mrnp-hero__bg" style="background-image:url('images/about/about-head-bg5.jpg')"></div>
+            <div class="mrnp-hero__bg" style="background-image:url('images/about/hero-yard.jpg');background-position:center 38%"></div>
             <div class="mrnp-hero__scrim"></div>
             <div class="mrnp-hero__grid"></div>
             <span class="mrnp-hero__orb mrnp-hero__orb--a" aria-hidden="true"></span>

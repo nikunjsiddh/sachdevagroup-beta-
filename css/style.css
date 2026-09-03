@@ -1951,10 +1951,7 @@ ul.food-list li::before {
   Footer section
   ====================*/
 .footer {
-  background: #2d3538 url(../images/footer-bg.jpg);
-  background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
+  background: #2d3538;
 }
 
 .normal-btn {
