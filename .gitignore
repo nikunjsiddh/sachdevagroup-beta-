@@ -20,6 +20,7 @@ _backup_pages/
 _sgtest*.html
 _icon-*.html
 _t-*.html
+_t-css/
 *.js.bak
 
 # local server / editor noise

@@ -5,7 +5,9 @@ One engine: **GSAP 3.12.5 + ScrollTrigger**, driven by the single Lenis instance
 `js/motion.js`, with its base states and tokens in `css/motion.css`.
 
 > **Scope.** This applies to `index.html` only. The 12 inner pages still run
-> `js/marine.js` + `js/index-motion.js` + `js/page-fx.js` and are untouched.
+> `js/marine.js` + `js/index-motion.js` + `js/page-fx.js` for their reveals,
+> plus `js/scroll-drift.js` with `css/scroll-fx.css` for scrubbed depth — see
+> [The inner pages](#the-inner-pages--jsscroll-driftjs--cssscroll-fxcss).
 > Read [Why nothing was deleted](#why-nothing-was-deleted) before changing
 > either of the shared files.
 
@@ -242,6 +244,40 @@ is added by `js/marine.js` for `[data-mrn-reveal]` elements — and `index.html`
 has none, so it never arrived. **Every visitor not running reduce-motion saw
 four empty cards.** `js/motion.js` adds the class the CSS was already waiting
 for. If you ever remove that, put the reveal back some other way first.
+
+## The inner pages — `js/scroll-drift.js` + `css/scroll-fx.css`
+
+The 12 inner pages keep their reveal engines (`marine.js` + `index-motion.js`
++ `page-fx.js`) and add one scrubbed layer on top: GSAP + ScrollTrigger loaded
+at the foot of the page for `js/scroll-drift.js` **only**. That file never sets
+`SG_MOTION_ENGINE`, so nothing stands down. `css/scroll-fx.css` is its CSS half
+and is loaded last on those pages; `index.html` does not load it.
+
+Every section gets three layers scrubbed over one travel
+(`top bottom` → `bottom top`):
+
+| Layer | Driven by | Moves |
+|---|---|---|
+| ground — the blueprint grid / bloom the section already paints | `--sfx-gy` on the `[data-drift]` section, ±34px, linear | down, with the page |
+| `[data-drift-bg]` | `yPercent` ±8 | down |
+| content — `.mrn-container` or `[data-drift-content]` | `y` ±26 (or `data-drift="N"`), power1.inOut | up, against |
+
+Photographs get their own layer: `[data-drift-img]` on a clipped box drives
+`--sfx-iy` from −1 to 1 across the box's own travel, and the stylesheet turns
+that into `translate3d(0, calc(var(--sfx-iy) * 7%), 0) scale(1.18)` on the
+`<img>`. The hover zoom survives because it rides a registered property
+(`--sfx-iz`) that transitions on its own, while the translate reads live.
+
+Where it is in the markup: every `.mrnp-section` and `.sgf-yard` carries
+`data-drift`; every `.mrnp-split__frame`, `.mrnp-gal__item`, `.abt-frame` and
+`.abt-unit__media` carries `data-drift-img`. Section drift is desktop-only
+(≥861px); the image slide runs at every width at 4% under 861px.
+
+`scroll-fx.css` also refines two entrances: `clip` and `zoom` (the media
+entrances) resolve from a 12px blur, and the eyebrow's rule draws itself
+260ms after the label lands. Both match only while the `data-sg-*` attribute
+is still on the element, which `index-motion.js` strips when the entrance
+settles.
 
 ## Known gaps
 

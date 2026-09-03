@@ -75,6 +75,7 @@
     <link rel="stylesheet" href="css/icons.css">
     <link rel="stylesheet" href="css/card-fx.css">
     <link rel="stylesheet" href="css/flow-fx.css">
+    <link rel="stylesheet" href="css/scroll-fx.css">
 </head>
 
 <body>
@@ -201,11 +202,11 @@
         </section>
 
         <!-- ======================= ON-BOARD HAZARDOUS MATERIALS ======================= -->
-        <section class="mrnp-section mrn-light" id="hazards">
+        <section class="mrnp-section mrn-light" id="hazards" data-drift="34">
             <div class="mrn-container">
                 <div class="mrnp-split mrnp-split--wide-left">
                     <div class="mrnp-split__media" data-mrn-tilt="8" data-mrn-reveal="left">
-                        <div class="mrnp-split__frame">
+                        <div class="mrnp-split__frame" data-drift-img>
                             <img src="images/gallery/3.jpg"
                                 alt="Beached vessel opened up during dismantling at the Alang yard">
                         </div>
@@ -224,7 +225,7 @@
         </section>
 
         <!-- ============================ CHAIN OF CUSTODY ============================ -->
-        <section class="mrnp-section mrn-dark" id="procedure">
+        <section class="mrnp-section mrn-dark" id="procedure" data-drift="32">
             <div class="mrn-container">
                 <div class="mrn-center">
                     <span class="mrn-eyebrow" data-sg-in="up">Waste Management</span>
@@ -300,8 +301,8 @@
         </section>
 
         <!-- ======================= YARD ADDRESS BAND ======================= -->
-        <section class="sgf-yard" id="yard-address">
-            <div class="sgf-yard__inner">
+        <section class="sgf-yard" id="yard-address" data-drift="22">
+            <div class="sgf-yard__inner" data-drift-content>
                 <div class="sgf-yard__card" data-mrn-reveal data-mrn-tilt="3">
                     <span class="sgf-yard__glow" aria-hidden="true"></span>
                     <svg class="sgf-yard__swell" viewBox="0 0 1140 260" preserveAspectRatio="none" aria-hidden="true"
@@ -496,6 +497,16 @@
     <script src="js/card-fx.js"></script>
     <script src="js/feedback.js"></script>
     <script src="js/index-motion.js"></script>
+    <!-- GSAP is loaded here for js/scroll-drift.js ONLY. js/motion.js is
+         deliberately absent: it sets SG_MOTION_ENGINE='gsap', which stands
+         js/marine.js and js/index-motion.js down from their scroll work — and
+         every reveal on this page comes from those two. scroll-drift.js sets
+         no such flag, so it adds the scrubbed drift without taking anything
+         away. If either request fails, the file returns at its first guard
+         and the page keeps exactly the motion it has today. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous"></script>
+    <script src="js/scroll-drift.js"></script>
 </body>
 
 </html>

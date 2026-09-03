@@ -26,7 +26,7 @@
    WHY NOT PUT THIS IN js/motion.js
      motion.js sets window.SG_MOTION_ENGINE = 'gsap', which is the signal that
      stands js/marine.js and js/index-motion.js down from their own scroll
-     work. index.html wants that. about_us.html does NOT — it is built on
+     work. index.html wants that. The inner pages do NOT — they are built on
      marine.js + index-motion.js + page-fx.js, and stripping those out would
      take every reveal on the page with them. So this file is deliberately
      additive: it never sets SG_MOTION_ENGINE, never claims an element another
@@ -40,13 +40,33 @@
      position exactly when the section is centred, and only borrows space at
      the edges of the travel.
 
+   THREE LAYERS PER SECTION, ALL SCRUBBED OVER THE SAME TRAVEL
+     ground    the section's own blueprint grid / bloom (a pseudo-element, so
+               it is driven through a custom property — see css/scroll-fx.css)
+               moves DOWN relative to the page, ease linear
+     bg        an explicit [data-drift-bg] element, same direction, yPercent
+     content   the copy and cards, moves UP relative to the page, power1.inOut
+     Opposed directions are the entire trick. Two layers moving the same way
+     at different speeds read as a scroll bug; moving apart they read as depth.
+
+   IMAGES
+     [data-drift-img] on any overflow:hidden box drives --sfx-iy from -1 at
+     the bottom of the viewport to +1 at the top. css/scroll-fx.css turns that
+     into the photograph sliding inside its frame at a different rate from the
+     frame itself — the reference's "view images while scrolling" — and keeps
+     the hover zoom alive through a second, registered property. Nothing is
+     written to `transform` here, so the CSS hover rules stay in charge.
+
    MARKUP
      <section data-drift>              content drifts +/-26px (the default)
      <section data-drift="40">         ...+/-40px instead
+     <section data-drift data-drift-ground="off">   ground layer stays put
+     <section data-drift data-drift-ground="20">    ...+/-20px instead of 34
        <div data-drift-bg>             background layer, +/-8% yPercent
        <div data-drift-bg="14">        ...+/-14% instead
        <div data-drift-content>        explicit content layer; without one the
                                        section's own .mrn-container is used
+     <div data-drift-img>              a clipped image box, anywhere on the page
 
    SAFETY
      Reduced motion, no GSAP, no ScrollTrigger, or an already-initialised
@@ -69,6 +89,9 @@
 
     var CONTENT_AMP = 26;      /* px  */
     var BG_AMP = 8;            /* %   */
+    var GROUND_AMP = 34;       /* px — css/scroll-fx.css overscans the ground
+                                  layer by 64px each side, so 34 leaves 30px
+                                  of guard at every section height */
     var EASE_CONTENT = 'power1.inOut';
     var EASE_BG = 'none';      /* the reference uses linear for the bg layer */
 
@@ -96,17 +119,37 @@
         gsap.ticker.lagSmoothing(0);
     }
 
-    /* ----------------------------------------------------------------------
-       THE TWO LAYERS
-       ---------------------------------------------------------------------- */
-    function build(section) {
-        var travel = {
-            trigger: section,
+    /* the one trigger shape, shared by every layer of a section */
+    function travelOf(el) {
+        return {
+            trigger: el,
             start: 'top bottom',
             end: 'bottom top',
             scrub: true,
             invalidateOnRefresh: true
         };
+    }
+
+    /* ----------------------------------------------------------------------
+       THE SECTION LAYERS
+       ---------------------------------------------------------------------- */
+    function build(section) {
+        var travel = travelOf(section);
+
+        /* --- ground layer --- */
+        /* A pseudo-element cannot be tweened, so the section carries the
+           value and css/scroll-fx.css moves whatever ground it paints —
+           the blueprint grid on .mrn-soft / .mrn-dark, the corner bloom on
+           .mrn-dark, and the ambient bloom it adds to .mrn-light. Sections
+           with none of those pay one custom-property write per frame. */
+        if (section.getAttribute('data-drift-ground') !== 'off') {
+            var g = num(section.getAttribute('data-drift-ground'), GROUND_AMP);
+            if (g) {
+                gsap.fromTo(section,
+                    { '--sfx-gy': (-g) + 'px' },
+                    { '--sfx-gy': g + 'px', ease: EASE_BG, scrollTrigger: travel });
+            }
+        }
 
         /* --- background layer(s) --- */
         list('[data-drift-bg]', section).forEach(function (el) {
@@ -146,23 +189,51 @@
             { y: -amp, ease: EASE_CONTENT, scrollTrigger: travel, overwrite: 'auto' });
     }
 
+    /* ----------------------------------------------------------------------
+       THE IMAGE LAYER
+       Measured on the box's OWN travel, not its section's, so the photograph
+       sits exactly where the stylesheet put it when the box is centred and
+       the offset is symmetric whatever the section around it is doing.
+       The value is unitless (-1..1); the amplitude is a CSS token
+       (--sfx-img-amp) so it can shrink at phone widths without a JS branch.
+       ---------------------------------------------------------------------- */
+    function buildImage(box) {
+        gsap.fromTo(box,
+            { '--sfx-iy': -1 },
+            { '--sfx-iy': 1, ease: EASE_BG, scrollTrigger: travelOf(box) });
+    }
+
     function init() {
         wireLenis();
 
         var sections = list('[data-drift]');
-        if (!sections.length) return;
+        var images = list('[data-drift-img]');
+        if (!sections.length && !images.length) return;
+
+        var mm = gsap.matchMedia();
 
         /* Desktop only. On a phone the viewport is short enough that the
            section's full travel is most of a scroll gesture, so the same
            amplitude reads as the layout wobbling rather than as depth — and
            it is the one place the extra compositing cost is felt. */
-        var mm = gsap.matchMedia();
-        mm.add('(min-width: 861px) and (prefers-reduced-motion: no-preference)', function () {
-            sections.forEach(build);
-            ST.refresh();
-        });
+        if (sections.length) {
+            mm.add('(min-width: 861px) and (prefers-reduced-motion: no-preference)', function () {
+                sections.forEach(build);
+                ST.refresh();
+            });
+        }
 
-        win.SGScrollDrift = { sections: sections.length, mm: mm };
+        /* Every width. The image never leaves its clip box, so it cannot
+           wobble the layout, and it is one composited layer per photograph.
+           css/scroll-fx.css halves the amplitude under 861px. */
+        if (images.length) {
+            mm.add('(prefers-reduced-motion: no-preference)', function () {
+                images.forEach(buildImage);
+                ST.refresh();
+            });
+        }
+
+        win.SGScrollDrift = { sections: sections.length, images: images.length, mm: mm };
     }
 
     if (doc.readyState === 'loading') {

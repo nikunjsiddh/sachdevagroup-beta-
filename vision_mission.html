@@ -75,6 +75,7 @@
     <link rel="stylesheet" href="css/page-fx.css">
     <link rel="stylesheet" href="css/icons.css">
     <link rel="stylesheet" href="css/card-fx.css">
+    <link rel="stylesheet" href="css/scroll-fx.css">
 </head>
 
 <body>
@@ -201,11 +202,11 @@
         </section>
 
         <!-- ============================ VISION ============================ -->
-        <section class="mrnp-section mrn-light" id="vision">
+        <section class="mrnp-section mrn-light" id="vision" data-drift="34">
             <div class="mrn-container">
                 <div class="mrnp-split mrnp-split--wide-left">
                     <div class="mrnp-split__media" data-mrn-tilt="8" data-mrn-reveal="left">
-                        <div class="mrnp-split__frame">
+                        <div class="mrnp-split__frame" data-drift-img>
                             <img src="images/ship_recycling.jpg"
                                 alt="Aerial view of the Sachdeva Group ship recycling yard at Alang">
                         </div>
@@ -224,7 +225,7 @@
         </section>
 
         <!-- ============================ MISSION ============================ -->
-        <section class="mrnp-section mrn-dark" id="mission">
+        <section class="mrnp-section mrn-dark" id="mission" data-drift="32">
             <div class="mrn-container">
                 <div class="mrnp-split mrnp-split--wide-right">
                     <div data-mrn-reveal="left">
@@ -237,7 +238,7 @@
                     </div>
 
                     <div class="mrnp-split__media" data-mrn-tilt="8" data-mrn-reveal="right">
-                        <div class="mrnp-split__frame">
+                        <div class="mrnp-split__frame" data-drift-img>
                             <img src="images/Environmental-Concerns.jpg"
                                 alt="End-of-life vessels beached at the waterline of a ship recycling yard">
                         </div>
@@ -247,7 +248,7 @@
         </section>
 
         <!-- ============================ OUR COMPANIES ============================ -->
-        <section class="mrnp-section mrn-soft" id="units">
+        <section class="mrnp-section mrn-soft" id="units" data-drift="38">
             <div class="mrn-container">
                 <div class="mrn-center">
                     <h2 class="mrn-title" data-sg-split>Our Companies</h2>
@@ -282,7 +283,7 @@
         </section>
 
         <!-- ============================ CONTACT ============================ -->
-        <section class="mrnp-section mrn-light" id="reach">
+        <section class="mrnp-section mrn-light" id="reach" data-drift="30">
             <div class="mrn-container">
                 <div class="mrn-center">
                     <h2 class="mrn-title" data-sg-split>Contact Us</h2>
@@ -335,8 +336,8 @@
         </section>
 
         <!-- ======================= YARD ADDRESS BAND ======================= -->
-        <section class="sgf-yard" id="yard-address">
-            <div class="sgf-yard__inner">
+        <section class="sgf-yard" id="yard-address" data-drift="22">
+            <div class="sgf-yard__inner" data-drift-content>
                 <div class="sgf-yard__card" data-mrn-reveal data-mrn-tilt="3">
                     <span class="sgf-yard__glow" aria-hidden="true"></span>
                     <svg class="sgf-yard__swell" viewBox="0 0 1140 260" preserveAspectRatio="none" aria-hidden="true"
@@ -530,6 +531,16 @@
     <script src="js/card-fx.js"></script>
     <script src="js/feedback.js"></script>
     <script src="js/index-motion.js"></script>
+    <!-- GSAP is loaded here for js/scroll-drift.js ONLY. js/motion.js is
+         deliberately absent: it sets SG_MOTION_ENGINE='gsap', which stands
+         js/marine.js and js/index-motion.js down from their scroll work — and
+         every reveal on this page comes from those two. scroll-drift.js sets
+         no such flag, so it adds the scrubbed drift without taking anything
+         away. If either request fails, the file returns at its first guard
+         and the page keeps exactly the motion it has today. -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" integrity="sha512-7eHRwcbYkK4d9g/6tD/mhkf++eoTHwpNM9woBxtPUBWm67zeAfFC+HrdoE2GanKeocly/VxeLvIqwvCdk7qScg==" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" integrity="sha512-onMTRKJBKz8M1TnqqDuGBlowlH0ohFzMXYRNebz+yOcc5TQr/zAKsthzhuv0hiyUKEiQEQXEynnXCvNTOk50dg==" crossorigin="anonymous"></script>
+    <script src="js/scroll-drift.js"></script>
 </body>
 
 </html>
