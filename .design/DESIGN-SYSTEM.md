@@ -178,21 +178,27 @@ picture with nothing left to give. So the image and the hook travel together:
 
 | Image | Hook on the `<section>` | Pages |
 | --- | --- | --- |
-| `hero-yard.jpg` 1920×1088 | none — this is the frame the shared grade was written for | contact_us, gallery, news, jjsb, sspsb, testimonials, vision_mission |
-| `credentials-banner-audit-desk.webp` 1536×1024 | `crd-hero`, in `page-fx.css` section 3 | our_credentials, health_safety, environment_management, waste_management |
-| `about-banner-night-yard.webp` 1536×1024 | `abt-hero`, in `css/about-fx.css` section 5 | about_us |
+| `hero-yard.jpg` 1920×1088 | none — this is the frame the shared grade was written for | contact_us, gallery, jjsb |
+| `credentials-banner-audit-desk.webp` 1536×1024 | `crd-hero`, in `page-fx.css` section 3 | our_credentials |
+| `about-banner-night-yard.webp` 1536×1024 | `abt-hero`, in `css/about-fx.css` section 5 | about_us; sspsb and vision_mission carry the same file with no hook, through the shared grade |
+| `images/gallery/2-6.jpg` (daylight yard frames) | none — the shared grade is built for exactly these | testimonials (2), news (3), health_safety (4), waste_management (5), environment_management (6) |
 
 `abt-hero` is the one that does not travel: `about-fx.css` is loaded by `about_us.html` alone, so
 that class is inert anywhere else and the image would fall back to the rescue grade it was chosen
 to avoid. Move the rule before you move the picture.
 
 For a new page, reach for `background-position` before reaching for a new file — `hero-yard.jpg`
-crops to a visibly different banner at `35% 46%` than at `70% 50%`, which is how seven pages share
-one photograph without reading as one page.
+crops to a visibly different banner at `35% 46%` than at `70% 50%`, so one photograph can serve
+several pages without them reading as one page.
 
 The `about-head-bg0|1|3|4|5|6` files this section used to name are gone: `about-head-bg0.jpg` in
 `83785c2`, the rest in `6addfa9`. `6addfa9` left nine pages pointing at 404s, which is what this
 list is now written to prevent — **check that the file exists before you ship the reference.**
+
+The hero image is the page's LCP element, and it is set from an inline style the preload scanner
+cannot see. Preload it in `<head>` with `<link rel="preload" as="image" href="…" fetchpriority="high">`
+and keep that `href` identical to the hero's `background-image`, so a swapped picture is swapped in
+both places.
 
 The wave `fill` must match the background colour of the section that follows the hero
 (`#ffffff` for `mrn-light`, `#f5f7fa`-ish for `mrn-soft` — use `#ffffff` if unsure).

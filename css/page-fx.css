@@ -358,13 +358,12 @@
    page carrying another, which is why it is opt-in on a class rather than
    stated on .mrnp-hero.
 
-   Four pages opt in: our_credentials.html, and — since 6addfa9 deleted
-   about-head-bg3.jpg out from under them — health_safety.html,
-   environment_management.html and waste_management.html. The image earns its
-   place on all four: a hazardous-materials inventory, a checklist, a helmet
-   and a gloved hand is what those pages are about. css/about-fx.css section 5
-   does the same job for the About banner; it has a page stylesheet to live
-   in, and this does not.
+   One page opts in: our_credentials.html. health_safety.html,
+   environment_management.html and waste_management.html carried this frame
+   briefly after 6addfa9 deleted about-head-bg3.jpg out from under them; they
+   now take daylight yard frames from images/gallery through the shared grade
+   above, with no hook. css/about-fx.css section 5 does the same job for the
+   About banner; it has a page stylesheet to live in, and this does not.
 
    transform is untouched: js/page-fx.js heroScrub() writes it inline for the
    parallax and marine-pages.css:26 supplies the overscan it travels inside.

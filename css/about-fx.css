@@ -242,18 +242,11 @@
    for itself. None of this is a nudge of the shared rule; it is a different
    intent, which is why it re-states rather than adjusts.
 
-   Only About moves — but the neighbours this comment used to name have all
-   moved since. about-head-bg1.png, the frame testimonials.html and
-   vision_mission.html shared with this page, went in 6addfa9; that commit
-   deleted five banners at once and left nine heroes loading 404s. Those two
-   now take images/about/hero-yard.jpg through the shared grade, which is the
-   kind of frame that grade was written for. our_credentials.html went the
-   other way, to the audit-desk photograph on .crd-hero.
-
-   So the rule is no longer "About is the odd one out". It is: a frame that
-   arrives dark and already in the palette needs a grade of its own, and there
-   are two of those now — .abt-hero here, .crd-hero in page-fx.css section 3.
-   The shared filter still owns hero-yard.jpg on the seven pages carrying it.
+   Only About moves. vision_mission.html and sspsb.html now carry this same
+   photograph, and testimonials.html a yard frame of its own, but all of them
+   run through the shared page-fx grade — which is the point: the shared rule
+   is built to rescue an arbitrary yard photograph, and this one does not need
+   rescuing.
 
    WHAT IS DELIBERATELY LEFT ALONE
      transform          js/page-fx.js heroScrub() writes it inline every frame
