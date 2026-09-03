@@ -191,7 +191,14 @@ body {
     overflow: hidden;
     text-decoration: none;
     isolation: isolate;
-    transition: transform .45s var(--ease-out), box-shadow .45s var(--ease-out), color .35s;
+    transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out), color .18s;
+}
+
+/* js/marine.js initMagnetic() adds this while the pointer is on a
+   [data-mrn-magnetic] button: same list minus transform, so the magnet
+   tracks the cursor 1:1 instead of chasing it through a tween. */
+.mrn-btn.mrn-magnet-on {
+    transition: box-shadow .2s var(--ease-out), color .18s;
 }
 
 .mrn-btn--gold {
@@ -218,8 +225,14 @@ body {
     inset: 0;
     z-index: -1;
     background: var(--grad-brand);
+    /* the parent clips with overflow:hidden, but a transform-animated child
+       gets its own compositing layer and Chrome clips that to the layer's
+       RECTANGLE — so the fill's square top corners cleared the 60px pill ends
+       on the way up. Rounding the fill itself means there are no square
+       corners left to leak, whether or not the parent clip holds. */
+    border-radius: inherit;
     transform: translateY(101%);
-    transition: transform .5s var(--ease-out);
+    transition: transform .28s var(--ease-out);
 }
 
 .mrn-btn--navy::before {
@@ -248,7 +261,7 @@ body {
 
 .mrn-btn i,
 .mrn-btn svg {
-    transition: transform .4s var(--ease-out);
+    transition: transform .24s var(--ease-out);
 }
 
 .mrn-btn:hover i,
@@ -289,6 +302,17 @@ body {
     opacity: 1;
     transform: none;
     clip-path: inset(0 0 0 0);
+}
+
+/* Give a revealed button its own hover transition back. [data-mrn-reveal]
+   above and .mrn-btn are both (0,1,0), and the reveal rule is the later of
+   the two, so it won: a revealed button hovered on `transform 1.1s` plus the
+   inline --mrn-delay initStagger() writes and never clears — a staggered one
+   sat out its whole delay before the lift even started. .mrn-in is added once
+   and never removed, so it is the safe place to hand the button back. */
+.mrn-btn[data-mrn-reveal].mrn-in {
+    transition: transform .2s var(--ease-out), box-shadow .2s var(--ease-out), color .18s;
+    transition-delay: 0s;
 }
 
 @media (prefers-reduced-motion: reduce) {

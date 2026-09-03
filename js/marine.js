@@ -393,14 +393,54 @@
         if (reduced || window.matchMedia('(pointer: coarse)').matches) return;
         var nodes = document.querySelectorAll('[data-mrn-magnetic]');
 
+        /* getBoundingClientRect() reports the box AFTER transforms, so reading
+           it inside the mousemove fed the button's own displacement back into
+           the next offset. Two things came out of that, both of which read as
+           the button drifting on its own:
+
+             - the magnet settled at 0.18x the intended pull, not 0.22x, and it
+               took five or six samples to converge, so each move wobbled;
+             - .mrn-btn transitions transform, so every sample landed mid-tween
+               and produced a fresh target. Under a still cursor the button
+               kept creeping instead of settling.
+
+           Subtract the live translation to recover the layout box, and take
+           transform out of the transition while the pointer owns the element
+           so the follow is 1:1. The eased return comes back on mouseleave. */
+        function translation(el) {
+            var t = window.getComputedStyle(el).transform;
+            if (!t || t === 'none') return [0, 0];
+            var n = t.slice(t.indexOf('(') + 1, -1).split(',');
+            return t.indexOf('matrix3d') === 0
+                ? [parseFloat(n[12]) || 0, parseFloat(n[13]) || 0]
+                : [parseFloat(n[4]) || 0, parseFloat(n[5]) || 0];
+        }
+
         Array.prototype.forEach.call(nodes, function (el) {
+            var frame = 0, px = 0, py = 0;
+
+            function write() {
+                frame = 0;
+                el.style.transform = 'translate(' + px.toFixed(2) + 'px,' + py.toFixed(2) + 'px)';
+            }
+
+            el.addEventListener('mouseenter', function () {
+                el.classList.add('mrn-magnet-on');
+            });
+
             el.addEventListener('mousemove', function (e) {
                 var r = el.getBoundingClientRect();
-                var x = e.clientX - r.left - r.width / 2;
-                var y = e.clientY - r.top - r.height / 2;
-                el.style.transform = 'translate(' + x * 0.22 + 'px,' + (y * 0.3 - 4) + 'px)';
+                var d = translation(el);
+                var cx = r.left - d[0] + el.offsetWidth / 2;
+                var cy = r.top - d[1] + el.offsetHeight / 2;
+                px = (e.clientX - cx) * 0.22;
+                py = (e.clientY - cy) * 0.3 - 4;
+                if (!frame) frame = window.requestAnimationFrame(write);
             });
+
             el.addEventListener('mouseleave', function () {
+                if (frame) { window.cancelAnimationFrame(frame); frame = 0; }
+                el.classList.remove('mrn-magnet-on');
                 el.style.transform = '';
             });
         });

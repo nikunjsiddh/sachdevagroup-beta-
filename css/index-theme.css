@@ -8074,6 +8074,18 @@ html.sg-plx .mrn-cta .mrn-cta__bg {
     will-change: auto;
 }
 
+/* ...and an interactive element gets its own transition back, not just its
+   delay. `.sg-anim [data-anim="fade-up"]` above is a transition SHORTHAND at
+   (0,2,0); .mrn-btn in marine.css is (0,1,0). So every revealed button was
+   hovering on the reveal's `transform 1.1s` instead of its own .2s, while
+   box-shadow and colour snapped with no transition at all because neither
+   appears in the reveal's list. Zeroing --d fixed the delay and left the
+   duration, which is the part that read as a button that would not answer.
+   Five buttons on index.html carry [data-anim], including both hero CTAs. */
+.sg-anim .mrn-btn[data-anim].settled {
+    transition: transform .2s var(--e-out), box-shadow .2s var(--e-out), color .18s;
+}
+
 /* CALM TIER for the [data-anim] vocabulary — the index-page twin of section
    9.9 above. js/motion.js used to resolve every reveal instantly under
    reduced motion, which left index.html as static as about_us.html was.

@@ -340,15 +340,19 @@ a.btn-custom:hover::after,
   -webkit-box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.5);
   box-shadow: 0px 0px 2px 0px rgba(0, 0, 0, 0.5);
   border-radius: 50%;
-  -webkit-transition: all 0.6s;
-  -o-transition: all 0.6s;
-  transition: all 0.6s;
+  /* was `all 0.6s`: every animatable property went through the tween,
+     including the opacity/visibility js/main.js toggles on scroll, so the
+     button crawled in and out and the hover took 600ms to answer. Scope it to
+     what actually changes and bring it to button speed. */
+  -webkit-transition: background-color 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
+  -o-transition: background-color 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
+  transition: background-color 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
 }
 
 #toTopBtn i {
-  -webkit-transition: all 0.6s;
-  -o-transition: all 0.6s;
-  transition: all 0.6s;
+  -webkit-transition: transform 0.25s ease;
+  -o-transition: transform 0.25s ease;
+  transition: transform 0.25s ease;
 }
 
 #toTopBtn:hover {

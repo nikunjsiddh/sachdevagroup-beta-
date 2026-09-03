@@ -59,7 +59,7 @@
 
 /* answers css/footer-modern.css:191 `.sgf-yard__btn i` */
 .sgf-yard__btn svg {
-    transition: transform .35s var(--sgf-ease, cubic-bezier(.16, 1, .3, 1));
+    transition: transform .24s var(--sgf-ease, cubic-bezier(.16, 1, .3, 1));
 }
 
 .sgf-yard__btn:hover svg {
@@ -68,7 +68,7 @@
 
 /* answers css/index-theme.css:6499 `.mrn-cta .mrn-btn i` */
 .mrn-cta .mrn-btn svg {
-    transition: transform .45s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+    transition: transform .24s var(--e-out, cubic-bezier(.16, 1, .3, 1));
 }
 
 /* answers css/style.css:348 `#toTopBtn i`.
@@ -78,7 +78,7 @@
    button is display:none until JS shows it, and a display rule here would
    fight that. */
 #toTopBtn svg {
-    transition: transform .6s var(--e-out, cubic-bezier(.16, 1, .3, 1));
+    transition: transform .24s var(--e-out, cubic-bezier(.16, 1, .3, 1));
     vertical-align: -.28em;
 }
 

@@ -428,7 +428,7 @@
     border: 0;
     color: #fff;
     box-shadow: var(--ab-lift);
-    transition: transform .45s var(--ab-ease), box-shadow .45s var(--ab-ease);
+    transition: transform .2s var(--ab-ease), box-shadow .2s var(--ab-ease);
 }
 
 #profile .abt-split__body .mrn-btn:hover {
