@@ -342,21 +342,29 @@
     height: 74px;
 }
 
-/* --- .crd-hero — our_credentials.html only -------------------------------
+/* --- .crd-hero — the audit-desk grade ------------------------------------
    The grade above is built for a daylight yard photograph: saturate(.42) and
    brightness(.62) duotone a warm, bright, outdoor frame down into the cyan
-   chrome. our_credentials.html now carries
-   images/about/credentials-banner-audit-desk.webp — an audit desk shot from
-   above, at night, lit by one lamp. It arrives already dark and already in
-   the palette, so the shared grade is subtraction from a frame that has
-   nothing left to give: at .62 the documents stop being legible as documents
-   and the picture reads as a black rectangle with an orange smear.
+   chrome. images/about/credentials-banner-audit-desk.webp is an audit desk
+   shot from above, at night, lit by one lamp. It arrives already dark and
+   already in the palette, so the shared grade is subtraction from a frame
+   that has nothing left to give: at .62 the documents stop being legible as
+   documents and the picture reads as a black rectangle with an orange smear.
 
-   This block is scoped to a class that exists on exactly one page, so it is
-   safe to keep in the shared file — the same job css/about-fx.css section 5
-   does for the About banner, which has a page stylesheet to put it in.
-   our_credentials.html does not, and one 30-line scoped block is cheaper than
-   a tenth stylesheet on every inner page.
+   This block is keyed to the photograph, not to the page. Every value below
+   is measured against that one frame — the crop against where the desk sits,
+   the wash against where the lamp and the window fall, ::before against the
+   lamp's own throw. So it belongs on any page carrying that image and on no
+   page carrying another, which is why it is opt-in on a class rather than
+   stated on .mrnp-hero.
+
+   Four pages opt in: our_credentials.html, and — since 6addfa9 deleted
+   about-head-bg3.jpg out from under them — health_safety.html,
+   environment_management.html and waste_management.html. The image earns its
+   place on all four: a hazardous-materials inventory, a checklist, a helmet
+   and a gloved hand is what those pages are about. css/about-fx.css section 5
+   does the same job for the About banner; it has a page stylesheet to live
+   in, and this does not.
 
    transform is untouched: js/page-fx.js heroScrub() writes it inline for the
    parallax and marine-pages.css:26 supplies the overscan it travels inside.
