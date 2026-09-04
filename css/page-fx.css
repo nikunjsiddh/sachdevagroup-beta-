@@ -2029,12 +2029,7 @@
 }
 
 .pfx-jump {
-    /* replaced at runtime with the measured .sticky_menu header height */
-    --pfx-jump-top: 71px;
-    position: sticky;
-    top: var(--pfx-jump-top);
-    z-index: 40;
-    /* 998 is the sticky header (css/header-modern.css); stay under it */
+    position: relative;
     background: rgba(7, 26, 46, .95);
     -webkit-backdrop-filter: blur(14px) saturate(1.15);
     backdrop-filter: blur(14px) saturate(1.15);
@@ -2976,11 +2971,6 @@ html.sg-motion [data-sg-delay="10"] {
         margin: 0 auto;
     }
 
-    /* the mobile bar is the slicknav strip, which stands taller than the
-       desktop sticky header */
-    .pfx-jump {
-        --pfx-jump-top: 64px;
-    }
 
     .pfx-jump a {
         padding: 16px 15px;

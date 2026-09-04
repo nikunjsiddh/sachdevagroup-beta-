@@ -217,12 +217,14 @@
     position: relative;
     background: var(--sgf-ink);
     color: var(--sgf-body);
-    overflow: hidden;
+    /* overflow removed — it was clipping .sgf-footer__wave's negative top
+       and preventing the wave from overlapping the section above. */
 }
 
 .sgf-footer__wave {
     position: absolute;
-    top: -1px;
+    top: -20px;
+    /* push up enough to overlap the section above and kill the gap */
     left: 0;
     width: 100%;
     line-height: 0;
@@ -233,7 +235,8 @@
 .sgf-footer__wave svg {
     display: block;
     width: 100%;
-    height: 92px;
+    height: 122px;
+    /* increased to compensate for the extra -30px top offset */
 }
 
 .sgf-footer__wave path {
@@ -247,6 +250,8 @@
     max-width: 1240px;
     margin: 0 auto;
     padding: 0 24px;
+    overflow: hidden;
+    /* moved here from .sgf-footer to contain internal content */
 }
 
 .sgf-footer__grid {
@@ -277,7 +282,7 @@
    (The logo renders 82x74 from a 110x99 file — it is scaling DOWN, so
    sharpness was never the problem here.) */
 
-.sgf-col--brand > a {
+.sgf-col--brand>a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -294,7 +299,7 @@
         border-color .45s cubic-bezier(.16, 1, .3, 1);
 }
 
-.sgf-col--brand > a:hover {
+.sgf-col--brand>a:hover {
     transform: translateY(-3px);
     border-color: rgba(240, 165, 0, .55);
     box-shadow:
@@ -672,7 +677,8 @@ a.sgf-contact__value:focus {
     }
 
     .sgf-footer__wave svg {
-        height: 52px;
+        height: 82px;
+        /* 52px base + 30px to compensate for top: -30px offset */
     }
 
     .sgf-footer__grid {
@@ -908,7 +914,7 @@ a.sgf-contact__value:focus {
     pointer-events: none;
 }
 
-.sgfb__panel > * {
+.sgfb__panel>* {
     position: relative;
     z-index: 1;
 }
@@ -1100,14 +1106,14 @@ a.sgf-contact__value:focus {
     background: rgba(8, 32, 58, .8);
 }
 
-.sgfb-type input:checked + .sgfb-type__box {
+.sgfb-type input:checked+.sgfb-type__box {
     border-color: var(--cyan-bright, #35c6f4);
     background: linear-gradient(165deg, rgba(53, 198, 244, .18), rgba(53, 198, 244, .04));
     box-shadow: 0 0 0 1px rgba(53, 198, 244, .35) inset,
         var(--glow-cyan, 0 22px 50px -26px rgba(34, 179, 230, .85));
 }
 
-.sgfb-type input:checked + .sgfb-type__box .sgfb-type__ico {
+.sgfb-type input:checked+.sgfb-type__box .sgfb-type__ico {
     background: linear-gradient(150deg, var(--cyan-bright, #35c6f4), var(--cyan-deep, #1195cf));
     border-color: transparent;
     color: #041724;
@@ -1115,14 +1121,14 @@ a.sgf-contact__value:focus {
         var(--glow-cyan, 0 22px 50px -26px rgba(34, 179, 230, .85));
 }
 
-.sgfb-type input:checked + .sgfb-type__box .sgfb-type__tick {
+.sgfb-type input:checked+.sgfb-type__box .sgfb-type__tick {
     opacity: 1;
     transform: none;
 }
 
 /* the ring goes on the BOX — the input it belongs to is 1px and clipped, so
    its own focus ring would be invisible */
-.sgfb-type input:focus-visible + .sgfb-type__box {
+.sgfb-type input:focus-visible+.sgfb-type__box {
     outline: 2px solid var(--cyan-bright, #35c6f4);
     outline-offset: 3px;
 }
@@ -1205,10 +1211,10 @@ a.sgf-contact__value:focus {
 /* placeholder=" " — a single space — is what makes :not(:placeholder-shown)
    mean "this field has a value". js/feedback.js writes it on every input and
    textarea; without it the label never lifts. */
-.sgfb-field input:focus + label,
-.sgfb-field textarea:focus + label,
-.sgfb-field input:not(:placeholder-shown) + label,
-.sgfb-field textarea:not(:placeholder-shown) + label {
+.sgfb-field input:focus+label,
+.sgfb-field textarea:focus+label,
+.sgfb-field input:not(:placeholder-shown)+label,
+.sgfb-field textarea:not(:placeholder-shown)+label {
     transform: translateY(-18px) scale(.76);
     color: var(--cyan-bright, #35c6f4);
     letter-spacing: 2.2px;
@@ -1227,8 +1233,8 @@ a.sgf-contact__value:focus {
     transition: transform .45s var(--e-out);
 }
 
-.sgfb-field input:focus ~ .sgfb-field__line,
-.sgfb-field textarea:focus ~ .sgfb-field__line {
+.sgfb-field input:focus~.sgfb-field__line,
+.sgfb-field textarea:focus~.sgfb-field__line {
     transform: scaleX(1);
 }
 
