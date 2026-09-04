@@ -1,12 +1,147 @@
+# ===========================================================================
+# SACHDEVA GROUP — server delivery rules
+# ===========================================================================
+# Three jobs, in order: compress text, cache static assets, keep secrets out
+# of the document root.
+# ===========================================================================
+
+
+# ---------------------------------------------------------------------------
+# 1. COMPRESSION
+# ---------------------------------------------------------------------------
+# Every page pulls 13-15 stylesheets and 13-15 scripts. Uncompressed that is
+# roughly 1 MB of CSS and 600 KB of JS on a first visit. gzip takes the text
+# payload down by about 75-80%, and it is the single largest win available
+# here because it costs nothing at author time: no bundling, no build step,
+# and no cache-busting scheme to maintain.
+#
+# AddOutputFilterByType is used rather than the SetEnvIf/mod_filter spelling
+# because it is the one form that works on both Apache 2.2 and 2.4.
+# ---------------------------------------------------------------------------
+<IfModule mod_deflate.c>
+    AddOutputFilterByType DEFLATE text/html text/plain text/xml text/css
+    AddOutputFilterByType DEFLATE text/javascript application/javascript application/x-javascript
+    AddOutputFilterByType DEFLATE application/json application/ld+json
+    AddOutputFilterByType DEFLATE application/xml application/xhtml+xml application/rss+xml
+    AddOutputFilterByType DEFLATE image/svg+xml
+    AddOutputFilterByType DEFLATE font/ttf font/otf application/vnd.ms-fontobject
+
+    # Never re-compress a format that is already compressed. Doing so burns
+    # CPU and can make the response marginally larger than the original.
+    SetEnvIfNoCase Request_URI \.(?:jpe?g|png|gif|webp|avif|mp4|webm|woff2?|zip|gz|pdf)$ no-gzip dont-vary
+
+    # Proxies have to key their stored copy on the encoding, or a gzipped
+    # response gets handed to a client that never asked for one.
+    <IfModule mod_headers.c>
+        Header append Vary Accept-Encoding
+    </IfModule>
+</IfModule>
+
+
+# ---------------------------------------------------------------------------
+# 2. CACHING
+# ---------------------------------------------------------------------------
+# What changed here, and why.
+#
+# The previous rule sent `Cache-Control: no-cache, must-revalidate` on EVERY
+# css and js file. That was added so stylesheet edits during development were
+# never masked by the browser heuristic cache — a real problem, correctly
+# solved at the time. The cost is that a repeat visitor re-validates around
+# 28 files on every single page view. Each one is a round trip that has to
+# finish before the page can render; on a phone connection that is most of a
+# second of blank screen, on every page, on every visit.
+#
+# The policy below keeps the development loop workable while ending the
+# per-view round trips:
+#
+#   html    no-cache  content must always be fresh, and it is a small file
+#   css/js  1 hour    long enough to serve a whole visit — somebody reading
+#                     four pages now fetches the stylesheets once instead of
+#                     re-validating 28 files four times — and short enough
+#                     that an edit is live within the hour without anyone
+#                     having to remember anything. A hard refresh (Ctrl+F5,
+#                     or the devtools "Disable cache" box) shows it at once
+#                     while you are actively working.
+#   media   1 year    images, fonts, video and the yard PDF are referenced by
+#                     stable filenames and never change in place; replacing
+#                     one means giving it a new name
+#
+# Deliberately NOT used here: a `?v=123` query string on every asset with a
+# one-year cache behind it. It is faster in theory, but it only works while
+# somebody remembers to bump the number on every release, and the failure
+# mode when they forget is a year of stale CSS for everyone who has already
+# visited. An hour is the version of this that cannot rot.
+# ---------------------------------------------------------------------------
+<IfModule mod_expires.c>
+    ExpiresActive On
+    ExpiresDefault                          "access plus 1 month"
+
+    ExpiresByType text/html                 "access plus 0 seconds"
+
+    ExpiresByType text/css                  "access plus 1 day"
+    ExpiresByType text/javascript           "access plus 1 day"
+    ExpiresByType application/javascript    "access plus 1 day"
+
+    ExpiresByType image/jpeg                "access plus 1 year"
+    ExpiresByType image/png                 "access plus 1 year"
+    ExpiresByType image/gif                 "access plus 1 year"
+    ExpiresByType image/webp                "access plus 1 year"
+    ExpiresByType image/avif                "access plus 1 year"
+    ExpiresByType image/svg+xml             "access plus 1 year"
+    ExpiresByType image/x-icon              "access plus 1 year"
+
+    ExpiresByType video/mp4                 "access plus 1 year"
+    ExpiresByType video/webm                "access plus 1 year"
+
+    ExpiresByType font/ttf                  "access plus 1 year"
+    ExpiresByType font/otf                  "access plus 1 year"
+    ExpiresByType font/woff                 "access plus 1 year"
+    ExpiresByType font/woff2                "access plus 1 year"
+    ExpiresByType application/vnd.ms-fontobject "access plus 1 year"
+
+    ExpiresByType application/pdf           "access plus 1 year"
+</IfModule>
+
 <IfModule mod_headers.c>
-    # Always revalidate CSS/JS with the server instead of relying on browser
-    # heuristic caching (no Cache-Control was being sent at all, so edits
-    # during active development could look "invisible" until a hard refresh).
-    <FilesMatch "\.(css|js)$">
+    # mod_expires already writes Expires plus Cache-Control:max-age. These
+    # state the intent on top of it, and cover the case where mod_expires is
+    # not compiled in.
+    <FilesMatch "\.(?:css|js)$">
+        Header set Cache-Control "public, max-age=86400"
+    </FilesMatch>
+
+    <FilesMatch "\.(?:jpe?g|png|gif|webp|avif|svg|ico|mp4|webm|woff2?|ttf|otf|eot|pdf)$">
+        Header set Cache-Control "public, max-age=31536000, immutable"
+    </FilesMatch>
+
+    <FilesMatch "\.(?:html|php)$">
         Header set Cache-Control "no-cache, must-revalidate"
     </FilesMatch>
 </IfModule>
 
+
+# ---------------------------------------------------------------------------
+# 3. MIME TYPES
+# ---------------------------------------------------------------------------
+# Older Apache builds do not know webp/avif/woff2 and serve them as
+# application/octet-stream, which quietly defeats both the compression rules
+# above and the ExpiresByType rules that key off the real type.
+# ---------------------------------------------------------------------------
+<IfModule mod_mime.c>
+    AddType image/webp                      .webp
+    AddType image/avif                      .avif
+    AddType image/svg+xml                   .svg
+    AddType video/mp4                       .mp4
+    AddType video/webm                      .webm
+    AddType font/woff                       .woff
+    AddType font/woff2                      .woff2
+    AddType font/ttf                        .ttf
+    AddType application/vnd.ms-fontobject   .eot
+</IfModule>
+
+
+# ---------------------------------------------------------------------------
+# 4. SECRETS — carried over unchanged
 # ---------------------------------------------------------------------------
 # The mail credentials are never served, whatever happens to PHP.
 # mail-config.php only returns an array, so a normal request for it already

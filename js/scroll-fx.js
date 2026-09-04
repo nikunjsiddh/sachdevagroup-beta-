@@ -262,15 +262,48 @@
     /* ----------------------------------------------------------------------
        5. FOOTER — slides out from under the yard band
        .sgf-yard paints white at z-index 2; css/scroll-fx.css drops the footer
-       to z-index 1 once it carries .sfx-footer, so the 30% it starts hidden
-       by is hidden BEHIND the band, not above it.
+       to z-index 1 once it carries .sfx-footer, so the distance it starts
+       lifted by is hidden BEHIND the band, not above it.
+
+       THE LIFT HAS TO BE BOUNDED BY THE BAND, NOT BY THE FOOTER
+         The original figure was a flat 30% of the footer's own height. That
+         reads fine on a desktop, where the footer is around 560px tall and
+         the yard band is 330px: a 168px lift tucks neatly behind it.
+
+         It inverts on a phone. The footer's four columns stack, so it grows
+         to roughly 1500px while the yard band SHRINKS to about 480px. 30% is
+         then a 450px lift — very nearly the whole band — so the footer rides
+         up over the yard address card instead of behind it, and
+         .sgf-footer__wave, which lives at the footer's top edge, spends the
+         entire scroll parked behind .sgf-yard's white background where it is
+         never seen. The wave only resolves at the very last pixel of the
+         page, by which point nobody is looking at it. That is the "footer
+         wave is a mess" report, and it is on all 13 pages.
+
+         So the lift is measured against the thing doing the hiding. It can
+         never exceed 55% of the preceding band, is capped at 170px outright,
+         and is skipped below 861px — the same breakpoint buildHeader uses,
+         and the point where the footer's stacked layout makes any lift more
+         intrusive than it is worth.
        ---------------------------------------------------------------------- */
+    var FOOTER_LIFT_MAX = 170;   /* px — never more than this, at any size   */
+    var FOOTER_LIFT_BAND = 0.55; /* of the band above, which does the hiding */
+    var FOOTER_LIFT_SELF = 0.3;  /* of the footer, the original figure       */
+
+    function footerLift(footer) {
+        var band = footer.previousElementSibling;
+        var bandH = band ? band.offsetHeight : 0;
+        var lift = footer.offsetHeight * FOOTER_LIFT_SELF;
+        if (bandH) lift = Math.min(lift, bandH * FOOTER_LIFT_BAND);
+        return Math.round(Math.min(lift, FOOTER_LIFT_MAX));
+    }
+
     function buildFooter() {
         var footer = doc.querySelector('.sgf-footer');
         if (!footer) return;
         addC(footer, 'sfx-footer');
         gsap.fromTo(footer,
-            { y: function () { return -Math.round(footer.offsetHeight * 0.3); } },
+            { y: function () { return -footerLift(footer); } },
             {
                 y: 0, ease: 'none',
                 scrollTrigger: {
@@ -278,6 +311,10 @@
                     scrub: true, invalidateOnRefresh: true
                 }
             });
+        /* matchMedia reverts the tween on its own; the class is ours to undo,
+           and a footer left at z-index 1 with nothing lifting it would sit
+           under .sgf-yard for no reason. */
+        return function () { delC(footer, 'sfx-footer'); };
     }
 
     /* ----------------------------------------------------------------------
@@ -331,7 +368,12 @@
             lineEls.forEach(buildLines);
             openEls.forEach(buildOpen);
             if (!isIndex) buildIntro();
-            buildFooter();
+            /* Both of these are desktop-only, for the same reason: below 861px
+               the stacked layouts make the movement land on top of content
+               rather than beside it. matchMedia reverts the tween — and with
+               it the parked transform — when the query stops matching, which
+               a plain width check at boot would not do on a rotate or resize. */
+            gsap.matchMedia().add('(min-width: 861px)', buildFooter);
             gsap.matchMedia().add('(min-width: 861px)', buildHeader);
             html.setAttribute('data-sfx-ready', '1');
         } catch (e) {

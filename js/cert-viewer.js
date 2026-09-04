@@ -274,6 +274,7 @@
             userPaused = !userPaused;
             store(STORE_KEY, userPaused ? 'paused' : 'playing');
             paintToggle();
+            kick();
         });
 
         /* --- everything else that can hold the strip still ----------------- */
@@ -294,14 +295,26 @@
            now how the viewer is opened, so it would happen immediately, to
            everyone. The pointer query is the same gate js/marine.js initTilt and
            js/card-fx.js already use for this class of problem. */
+        /* Each of these releases a hold, so each has to wake the loop — see
+           kick() below. Taking a hold never needs one: frame() notices on its
+           next tick and parks itself. */
         if (win.matchMedia && win.matchMedia('(hover: hover)').matches) {
             on(scroller, 'mouseenter', function () { hovering = true; });
-            on(scroller, 'mouseleave', function () { hovering = false; });
+            on(scroller, 'mouseleave', function () { hovering = false; kick(); });
         }
         on(scroller, 'focusin', function () { focused = true; });
-        on(scroller, 'focusout', function () { focused = false; });
+        on(scroller, 'focusout', function () { focused = false; kick(); });
 
-        function poke() { interacting = nowMs(); }
+        /* A poke is the one hold that expires on a clock rather than an event:
+           running() stays false for 1400ms after the last one. Nothing would
+           otherwise be listening when that window closes, so the wake-up is
+           scheduled — one timer, reset on each poke, not one per poke. */
+        var pokeTimer = null;
+        function poke() {
+            interacting = nowMs();
+            if (pokeTimer) { win.clearTimeout(pokeTimer); }
+            pokeTimer = win.setTimeout(function () { pokeTimer = null; kick(); }, 1450);
+        }
         on(scroller, 'pointerdown', poke, { passive: true });
         on(scroller, 'touchstart', poke, { passive: true });
         on(scroller, 'wheel', poke, { passive: true });
@@ -310,11 +323,16 @@
         if ('IntersectionObserver' in win) {
             new win.IntersectionObserver(function (entries) {
                 onscreen = entries[0].isIntersecting;
+                if (onscreen) { kick(); }
             }, { rootMargin: '120px 0px' }).observe(band);
         }
 
-        /* document.hidden is read live inside running() rather than latched on
-           a visibilitychange listener — one fewer thing to keep in sync */
+        /* document.hidden is still read live inside running(), so this listener
+           is only here to wake a loop that parked itself while the tab was in
+           the background. Without it the strip would come back dead. */
+        on(doc, 'visibilitychange', function () {
+            if (!doc.hidden) { kick(); }
+        });
 
         function running() {
             if (userPaused) return false;
@@ -345,9 +363,33 @@
             return base + d;
         }
 
+        /* THE LOOP PARKS ITSELF WHEN THERE IS NOTHING TO DO.
+
+           This used to re-arm unconditionally on its first line, before any
+           guard. running() was consulted only to decide what to do inside the
+           frame, never whether to have one — so the band kept a 60fps rAF
+           alive for the life of the page even when it was scrolled far off
+           screen, the tab was in the background, the user had hit pause, or
+           the viewer was open over the top of it. Every one of those frames
+           read scroller.scrollLeft, which forces layout.
+
+           Now frame() re-arms only while it is actually advancing the strip.
+           The moment running() goes false it settles the wrap once, drops the
+           handle and stops. kick() is what brings it back, and it is called
+           from every state change that could make running() true again. */
+        function kick() {
+            if (raf === null) {
+                last = 0;
+                raf = win.requestAnimationFrame(frame);
+            }
+        }
+
         function frame(t) {
-            raf = win.requestAnimationFrame(frame);
-            if (!last) { last = t; return; }
+            if (!last) {
+                last = t;
+                raf = win.requestAnimationFrame(frame);
+                return;
+            }
 
             var dt = Math.min(t - last, 60) / 1000;
             last = t;
@@ -365,14 +407,22 @@
             if (running() && setWidth > 0) {
                 pos = wrap(pos + dir * (speed() * (1 + boost)) * dt);
                 scroller.scrollLeft = pos;
-            } else {
-                var w = wrap(scroller.scrollLeft);
-                if (Math.abs(w - scroller.scrollLeft) > 0.5) {
-                    scroller.scrollLeft = w;
-                }
-                pos = w;
+                applied = scroller.scrollLeft;
+                raf = win.requestAnimationFrame(frame);
+                return;
             }
+
+            /* held: put the offset back inside one period so the resume is
+               seamless, then let go of the frame budget entirely */
+            var w = wrap(scroller.scrollLeft);
+            if (Math.abs(w - scroller.scrollLeft) > 0.5) {
+                scroller.scrollLeft = w;
+            }
+            pos = w;
             applied = scroller.scrollLeft;
+            boost = 0;
+            raf = null;
+            last = 0;
         }
 
         function speed() { return reduced ? SPEED_REDUCED : SPEED_FULL; }
@@ -416,7 +466,7 @@
             scroller: scroller,
             track: track,
             originals: originals,
-            hold: function (state) { viewerOpen = state; }
+            hold: function (state) { viewerOpen = state; if (!state) { kick(); } }
         };
     }
 

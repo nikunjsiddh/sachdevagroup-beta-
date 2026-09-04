@@ -34,15 +34,77 @@
       $(".loader").fadeOut();
     });
     /*====================================
-		scroll to top js
-		======================================*/
-    $mainwindow.on("scroll", function () {
-      if ($(this).scrollTop() > 250) {
-        $("#toTopBtn").fadeIn(200);
-      } else {
-        $("#toTopBtn").fadeOut(200);
+        scroll to top + sticky header
+    ======================================*/
+    /* These were two separate jQuery .on("scroll") handlers. jQuery 1.12
+       has no way to pass {passive:true}, so the browser had to treat both
+       as potentially calling preventDefault() and could not start the
+       scroll until they had returned — on every event, on all thirteen
+       pages. Each one also re-ran a selector query per event, and the
+       back-to-top button kicked a .fadeIn(200)/.fadeOut(200) animation
+       queue every time rather than once per state change.
+
+       They are now one native passive listener that does nothing but store
+       the scroll position, with all the reading and writing batched into a
+       single rAF callback and skipped entirely when neither state changed.
+
+       Behaviour is identical, minus the fade: the button is shown and
+       hidden through .is-visible, which css/style.css transitions on
+       opacity — a compositor property, where the jQuery fade was animating
+       inline styles frame by frame off the main thread's timer. */
+    var toTopBtn = document.getElementById("toTopBtn");
+    var navbar = $(".header");
+    var navbarEl = navbar[0];
+    var scrolled = false;
+    var topShown = false;
+    /* threshold kept below the header's own (unscrolled) height so it
+       switches to fixed before it would otherwise scroll out of view */
+    var stickyThreshold = 80;
+    var TO_TOP_THRESHOLD = 250;
+    var scrollTicking = false;
+    var lastScrollY = 0;
+
+    function onScrollFrame() {
+      scrollTicking = false;
+      var y = lastScrollY;
+
+      if (toTopBtn) {
+        var wantTop = y > TO_TOP_THRESHOLD;
+        if (wantTop !== topShown) {
+          topShown = wantTop;
+          toTopBtn.classList.toggle("is-visible", wantTop);
+        }
       }
-    });
+
+      if (navbarEl) {
+        var wantSticky = y > stickyThreshold;
+        if (wantSticky !== scrolled) {
+          scrolled = wantSticky;
+          if (wantSticky) {
+            navbarEl.classList.add("sticky_menu", "animated", "fadeInDown");
+          } else {
+            navbarEl.classList.remove("sticky_menu", "animated", "fadeInDown");
+          }
+          navbarEl.style.marginTop = "0px";
+        }
+      }
+    }
+
+    window.addEventListener(
+      "scroll",
+      function () {
+        lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+        if (!scrollTicking) {
+          scrollTicking = true;
+          requestAnimationFrame(onScrollFrame);
+        }
+      },
+      { passive: true }
+    );
+    /* set the initial state for a load that starts part-way down the page */
+    lastScrollY = window.pageYOffset || document.documentElement.scrollTop;
+    onScrollFrame();
+
     $("#toTopBtn").on("click", function () {
       $("html, body").animate(
         {
@@ -51,28 +113,6 @@
         "slow"
       );
       return false;
-    });
-    /*====================================
-        Sticky js
-    ======================================*/
-    var navbar = $(".header");
-    var scrolled = false;
-    /* threshold kept below the header's own (unscrolled) height so it
-       switches to fixed before it would otherwise scroll out of view */
-    var stickyThreshold = 80;
-    $mainwindow.on("scroll", function () {
-      if (stickyThreshold < $mainwindow.scrollTop() && !scrolled) {
-        navbar.addClass("sticky_menu animated fadeInDown").animate({
-          "margin-top": "0px",
-        });
-        scrolled = true;
-      }
-      if (stickyThreshold > $mainwindow.scrollTop() && scrolled) {
-        navbar
-          .removeClass("sticky_menu animated fadeInDown")
-          .css("margin-top", "0px");
-        scrolled = false;
-      }
     });
     /*====================================
             slick nav
@@ -95,271 +135,24 @@
         '<svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5.5 9 6.5 6.5 6.5-6.5"/></svg>',
       brand: '<img src="' + logo_path + '" class="img-responsive" alt="logo">',
     });
-    /*====================================
-		main slider
-		======================================*/
-    $(".testy-slider").each(function () {
-      var carousel = $(this),
-        loop = carousel.data("loop"),
-        items = carousel.data("items"),
-        margin = carousel.data("margin"),
-        stagePadding = carousel.data("stage-padding"),
-        autoplay = carousel.data("autoplay"),
-        autoplayTimeout = carousel.data("autoplay-timeout"),
-        smartSpeed = carousel.data("smart-speed"),
-        dots = carousel.data("dots"),
-        nav = carousel.data("nav"),
-        navSpeed = carousel.data("nav-speed"),
-        rXsmall = carousel.data("r-x-small"),
-        rXsmallNav = carousel.data("r-x-small-nav"),
-        rXsmallDots = carousel.data("r-x-small-dots"),
-        rXmedium = carousel.data("r-x-medium"),
-        rXmediumNav = carousel.data("r-x-medium-nav"),
-        rXmediumDots = carousel.data("r-x-medium-dots"),
-        rSmall = carousel.data("r-small"),
-        rSmallNav = carousel.data("r-small-nav"),
-        rSmallDots = carousel.data("r-small-dots"),
-        rMedium = carousel.data("r-medium"),
-        rMediumNav = carousel.data("r-medium-nav"),
-        rMediumDots = carousel.data("r-medium-dots"),
-        rLarge = carousel.data("r-large"),
-        rLargeNav = carousel.data("r-large-nav"),
-        rLargeDots = carousel.data("r-large-dots"),
-        center = carousel.data("center");
-      carousel.owlCarousel({
-        loop: loop ? true : false,
-        items: items ? items : 1,
-        lazyLoad: true,
-        margin: margin ? margin : 0,
-        autoplay: autoplay ? true : false,
-        autoplayTimeout: autoplayTimeout ? autoplayTimeout : 1000,
-        smartSpeed: smartSpeed ? smartSpeed : 250,
-        dots: dots ? true : false,
-        nav: nav ? true : false,
-        navText: [
-          "<svg class=\"sg-ico\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m15 5.5-6.5 6.5 6.5 6.5\"/></svg>",
-          "<svg class=\"sg-ico\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m9 5.5 6.5 6.5-6.5 6.5\"/></svg>",
-        ],
-        navSpeed: navSpeed ? true : false,
-        center: center ? true : false,
-        responsiveClass: true,
-        responsive: {
-          0: {
-            items: rXsmall ? rXsmall : 1,
-            nav: rXsmallNav ? true : false,
-            dots: rXsmallDots ? true : false,
-          },
-          480: {
-            items: rXmedium ? rXmedium : 1,
-            nav: rXmediumNav ? true : false,
-            dots: rXmediumDots ? true : false,
-          },
-          768: {
-            items: rSmall ? rSmall : 1,
-            nav: rSmallNav ? true : false,
-            dots: rSmallDots ? true : false,
-          },
-          992: {
-            items: rMedium ? rMedium : 1,
-            nav: rMediumNav ? true : false,
-            dots: rMediumDots ? true : false,
-          },
-          1199: {
-            items: rLarge ? rLarge : 1,
-            nav: rLargeNav ? true : false,
-            dots: rLargeDots ? true : false,
-          },
-        },
-      });
-    });
-    // drinks sort
-    $(".food-menu-section").imagesLoaded(function () {
-      // init Isotope
-      var $grid = $(".drinks-items").isotope({
-        itemSelector: ".grid-item",
-        percentPosition: true,
-        masonry: {
-          columnWidth: ".grid-item",
-        },
-      });
-      // filter items on button click
-      $(".sort-drinks").on("click", ".filter-button", function () {
-        var filterValue = $(this).attr("data-filter");
-        $grid.isotope({
-          filter: filterValue,
-        });
-      });
-      $(".sort-drinks li").on("click", function (event) {
-        $(".filter-button").removeClass("active");
-        $(this).addClass("active");
-        event.preventDefault();
-      });
-    });
-    // desserts sort
-    $(".food-menu-section").imagesLoaded(function () {
-      // init Isotope
-      var $grid = $(".dessert-items").isotope({
-        itemSelector: ".grid-item",
-        percentPosition: true,
-        masonry: {
-          columnWidth: ".grid-item",
-        },
-      });
-      // filter items on button click
-      $(".sort-desserts").on("click", ".filter-button", function () {
-        var filterValue = $(this).attr("data-filter");
-        $grid.isotope({
-          filter: filterValue,
-        });
-      });
-      $(".sort-desserts li").on("click", function (event) {
-        $(".filter-button").removeClass("active");
-        $(this).addClass("active");
-        event.preventDefault();
-      });
-    });
-    // food slider
-    var $foodslider = $(".food-slider");
-    $foodslider.owlCarousel({
-      margin: 0,
-      items: 1,
-      loop: true,
-      autoplay: true,
-      dots: true,
-      autoplayTimeout: 5000,
-      autoplaySpeed: 500,
-      nav: false,
-      addClassActive: false,
-    });
-    // food slider
-    var $foodthumbslider = $(".food-thumb-slider");
-    $foodthumbslider.owlCarousel({
-      margin: 0,
-      items: 1,
-      loop: true,
-      autoplay: true,
-      dots: true,
-      navText: [
-        "<svg class=\"sg-ico\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m15 5.5-6.5 6.5 6.5 6.5\"/></svg>",
-        "<svg class=\"sg-ico\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"2\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\" focusable=\"false\"><path d=\"m9 5.5 6.5 6.5-6.5 6.5\"/></svg>",
-      ],
-      autoplayTimeout: 5000,
-      autoplaySpeed: 500,
-      nav: true,
-      addClassActive: false,
-      responsiveClass: false,
-      responsive: {
-        0: {
-          items: 1,
-        },
-        600: {
-          items: 2,
-        },
-        1000: {
-          items: 3,
-        },
-      },
-    });
-    $foodthumbslider.on("change.owl.carousel", function (event) {
-      $foodslider.trigger("to.owl.carousel", [event.item.index, 300, true]);
-    });
-    /*====================================
-		    project portfolio section
-		======================================*/
-    $(".food-menu-section").imagesLoaded(function () {
-      // init Isotope
-      var $grid = $(".food-items").isotope({
-        itemSelector: ".grid-item",
-        percentPosition: true,
-        masonry: {
-          columnWidth: ".grid-item",
-        },
-      });
-      // filter items on button click
-      $(".sort-foods").on("click", ".filter-button", function () {
-        var filterValue = $(this).attr("data-filter");
-        $grid.isotope({
-          filter: filterValue,
-        });
-      });
-      $(".sort-foods li").on("click", function (event) {
-        $(".filter-button").removeClass("active");
-        $(this).addClass("active");
-        event.preventDefault();
-      });
-    });
-    /*====================================
-		    gallery measonary
-		======================================*/
-    $(".gallery-measonary").imagesLoaded(function () {
-      // init Isotope
-      var $grid = $(".gal-items").isotope({
-        itemSelector: ".grid-item",
-        percentPosition: true,
-        masonry: {
-          columnWidth: ".grid-item",
-        },
-      });
-    });
-    /*====================================
-		    footer pop up gallery - Magnific popup
-		======================================*/
-    $(".magni-link").magnificPopup({
-      type: "image",
-      gallery: {
-        enabled: true,
-      },
-      zoom: {
-        enabled: true,
-        duration: 300,
-        easing: "ease-in-out",
-        opener: function (openerElement) {
-          return openerElement.is("img")
-            ? openerElement
-            : openerElement.find("img");
-        },
-      },
-    });
-    $(".gallery-popup").magnificPopup({
-      type: "image",
-      gallery: {
-        enabled: true,
-      },
-    });
-    /*====================================
-            Counter up
-        ======================================*/
-    $(".count").counterUp({
-      delay: 10,
-      time: 1500,
-    });
+
+    /* Everything that used to follow this point has been removed:
+       the Owl Carousel init on .testy-slider, the imagesLoaded/Isotope
+       filtered grid on .food-menu-section + .drinks-items, both Magnific
+       Popup galleries on .magni-link and .gallery-popup, the counterUp call
+       on .count, and the Google Maps initializer on #map.
+
+       All six were inherited from the restaurant template this site started
+       from, and not one of their selectors exists in any of the thirteen
+       pages — so every call was a jQuery query that matched nothing and an
+       .each() over an empty set. The #map block was worse than inert: it was
+       ready to throw ReferenceError: google is not defined the moment an
+       element with that id appeared, because no Maps script is loaded.
+
+       The libraries behind them came out of js/plugins.js in the same pass,
+       which took that file from 141 KB to 9 KB. See the header there. */
   });
 })(jQuery);
-/*  ======================================
-           Google map
-        ====================================== */
-if (document.getElementById("map")) {
-  var myCenter = new google.maps.LatLng(-37.813628, 144.963058);
-
-  function initialize() {
-    var mapProp = {
-      center: myCenter,
-      scrollwheel: false,
-      zoom: 13,
-      mapTypeId: google.maps.MapTypeId.ROADMAP,
-    };
-    var map = new google.maps.Map(document.getElementById("map"), mapProp);
-    var marker = new google.maps.Marker({
-      position: myCenter,
-      animation: google.maps.Animation.BOUNCE,
-      icon: "images/map-chef-icon.png",
-      map: map,
-    });
-    marker.setMap(map);
-  }
-  google.maps.event.addDomListener(window, "load", initialize);
-}
-// map initialization code  ends
 
 // lenis
 

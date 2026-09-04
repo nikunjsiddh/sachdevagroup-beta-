@@ -562,6 +562,37 @@ a.sgf-contact__value:focus {
     box-shadow: 0 14px 30px -12px rgba(34, 179, 230, .95) !important;
 }
 
+/* Show/hide, moved off jQuery.
+   css/style.css:326 parks the button at `display: none`, and js/main.js used
+   to bring it back with .fadeIn(200)/.fadeOut(200) — a main-thread animation
+   queue kicked on every scroll event, writing inline display and opacity
+   frame by frame. main.js now toggles .is-visible once per state change and
+   the transition below carries it, on opacity and transform only, both of
+   which the compositor can run without the main thread.
+
+   `display` stays block throughout because it cannot be transitioned;
+   visibility can, and it is what keeps the hidden button out of the tab
+   order and off the hit-test. The transition on style.css:346 already lists
+   opacity and transform, so this inherits the right timing. */
+#toTopBtn {
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: background-color .25s ease, opacity .25s ease,
+                transform .25s ease, visibility 0s linear .25s;
+}
+
+#toTopBtn.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    transition: background-color .25s ease, opacity .25s ease,
+                transform .25s ease, visibility 0s linear 0s;
+}
+
 #toTopBtn:hover {
     background: linear-gradient(135deg, var(--sgf-cyan-deep) 0%, var(--sgf-cyan-bright) 100%) !important;
 }

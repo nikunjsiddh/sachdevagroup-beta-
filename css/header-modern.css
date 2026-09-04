@@ -50,10 +50,24 @@
     padding: 2px 0;
 }
 
+/* The blur that used to live here has been removed.
+
+   .sgh-header.sticky_menu is position:fixed and full-width, so a
+   backdrop-filter makes the compositor re-sample and re-blur everything
+   passing underneath the bar on every scrolled frame — the most expensive
+   thing on the page, running on all thirteen pages, for the entire length of
+   every scroll. It was also switched on at exactly the wrong moment: the
+   unscrolled state above sets `backdrop-filter: none`, so the cost appeared
+   the instant scrolling began.
+
+   And it bought almost nothing. The gradient below it is 97% opaque, so at
+   most 3% of the backdrop was ever visible through it — a blur nobody can
+   see, priced at a full-width repaint per frame. The 3% is now folded into
+   the gradient instead. */
 .sgh-header.sticky_menu {
-    background: linear-gradient(150deg, rgba(255, 255, 255, .97) 0%, rgba(233, 241, 248, .97) 100%) !important;
-    -webkit-backdrop-filter: blur(12px);
-    backdrop-filter: blur(12px);
+    background: linear-gradient(150deg, rgba(255, 255, 255, .985) 0%, rgba(233, 241, 248, .985) 100%) !important;
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
     border-bottom: 1px solid rgba(34, 179, 230, .30);
     box-shadow: 0 16px 38px -26px rgba(7, 26, 46, .65) !important;
     padding: 2px 0;
@@ -462,4 +476,71 @@
     opacity: 1;
     transform: translateY(0);
     transition-delay: 0s;
+}
+
+
+/* ==========================================================================
+   ANIMATE.CSS, THE 0.6 KB OF IT THIS SITE ACTUALLY USES
+   ==========================================================================
+   css/animate.min.css was 73 KB — around 613 rules and 78 keyframe sets —
+   loaded as a render-blocking stylesheet on all thirteen pages.
+
+   Exactly two of its classes are ever applied anywhere on this site, both by
+   js/main.js on the sticky header, and both on the same line:
+
+       navbarEl.classList.add("sticky_menu", "animated", "fadeInDown");
+
+   No page applies an animate.css class in its markup. Nothing else in js/
+   references one. (js/scroll-fx.js buildHeader() then *removes* both again on
+   the inner pages, the first time the bar has to hide, because the fill-mode
+   below would otherwise pin the transform.)
+
+   So the two rules and the one keyframe set are reproduced here verbatim, and
+   the file is no longer requested. Copied exactly, prefixes included, so the
+   header entrance is frame-for-frame what it was.
+
+   If a second animate.css effect is ever wanted, copy that one in too rather
+   than restoring the file.
+   ========================================================================== */
+
+.animated {
+    -webkit-animation-duration: 1s;
+    animation-duration: 1s;
+    -webkit-animation-fill-mode: both;
+    animation-fill-mode: both;
+}
+
+@-webkit-keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateY(-20px);
+        transform: translateY(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        transform: translateY(0);
+    }
+}
+
+@keyframes fadeInDown {
+    0% {
+        opacity: 0;
+        -webkit-transform: translateY(-20px);
+        -ms-transform: translateY(-20px);
+        transform: translateY(-20px);
+    }
+
+    100% {
+        opacity: 1;
+        -webkit-transform: translateY(0);
+        -ms-transform: translateY(0);
+        transform: translateY(0);
+    }
+}
+
+.fadeInDown {
+    -webkit-animation-name: fadeInDown;
+    animation-name: fadeInDown;
 }

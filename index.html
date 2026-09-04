@@ -80,11 +80,8 @@
 
     <!-- Stylesheets -->
     <link rel="stylesheet" href="css/bootstrap.min.css">
-    <link rel="stylesheet" href="css/animate.min.css">
     <link rel="stylesheet" href="css/slicknav.min.css">
     <link rel="stylesheet" href="css/style.css">
-    <link href="https://fonts.googleapis.com/css?family=Aldrich" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css?family=Signika+Negative" rel="stylesheet">
 
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -192,8 +189,12 @@
         <!-- ============================ HERO ============================ -->
         <section class="mrn-hero" id="home">
             <div class="mrn-hero__media" data-sg-parallax="far">
-                <video autoplay muted loop playsinline preload="metadata" poster="images/gallery/5.jpg">
-                    <source src="images/banner/banner.mp4" type="video/mp4">
+                <!-- src is deliberately data-src: js/hero-video.js attaches it
+                     after load, and only on a wide screen with a connection
+                     worth spending 9.3 MB on. Until then the poster is the
+                     hero. See the header of that file. -->
+                <video autoplay muted loop playsinline preload="none" poster="images/gallery/5.jpg">
+                    <source data-src="images/banner/banner.mp4" type="video/mp4">
                 </video>
             </div>
             <div class="mrn-hero__scrim"></div>
@@ -912,37 +913,41 @@
         </footer>
 
     </div>
-    <script src="js/jquery.1.12.4.js"></script>
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/plugins.js"></script>
-    <script src="js/main.js"></script>
+    <script defer src="js/jquery.1.12.4.js"></script>
+    <script defer src="js/bootstrap.min.js"></script>
+    <script defer src="js/plugins.js"></script>
+    <script defer src="js/main.js"></script>
     <!-- Owns the #credentials shelf: the auto-scroll and the document
          viewer. Must load BEFORE marine.js and card-fx.js — it clones the
          plates to make the loop seamless, and those two bind their tilt and
          cursor-ring handlers by querying the DOM once, so the copies are
          inert unless they already exist. DOMContentLoaded listeners run in
          the order they were registered, which is this order. -->
-    <script src="js/cert-viewer.js"></script>
-    <script src="js/marine.js"></script>
-    <script src="js/card-fx.js"></script>
-    <script src="js/feedback.js"></script>
-    <script src="js/index-motion.js"></script>
+    <script defer src="js/cert-viewer.js"></script>
+    <script defer src="js/marine.js"></script>
+    <script defer src="js/card-fx.js"></script>
+    <script defer src="js/feedback.js"></script>
+    <script defer src="js/index-motion.js"></script>
 
     <!-- GSAP owns scroll motion on this page. Pinned to 3.13.0 so a CDN
          re-release cannot change the feel of the site overnight. If either
          request fails, js/motion.js returns at its first guard and pulls the
          sg-anim gate, so the page reads as plain static HTML. -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha512-P2IDYZfqSwjcSjX0BKeNhwRUH8zRPGlgcWl5n6gBLzdi4Y5/0O4zaXrtO4K9TZK6Hn1BenYpKowuCavNandERg==" crossorigin="anonymous"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js" integrity="sha512-wOeEC+9qERAzhliwBFPDb6t8TiFFxdxG8vhK/Ygs7TuC44bpg8pg/X2/U/u+0X4fK05wb9id1EIipnF02+CFQw==" crossorigin="anonymous"></script>
-    <script src="js/motion.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha512-P2IDYZfqSwjcSjX0BKeNhwRUH8zRPGlgcWl5n6gBLzdi4Y5/0O4zaXrtO4K9TZK6Hn1BenYpKowuCavNandERg==" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js" integrity="sha512-wOeEC+9qERAzhliwBFPDb6t8TiFFxdxG8vhK/Ygs7TuC44bpg8pg/X2/U/u+0X4fK05wb9id1EIipnF02+CFQw==" crossorigin="anonymous"></script>
+    <script defer src="js/motion.js"></script>
 
     <!-- Additive scrub layer. motion.js owns the background/media parallax and
          the SG_MOTION_ENGINE handoff; this only adds the content counter-drift
          that the reference build uses on every section and we had nowhere. It
          sets no engine flag, so nothing stands down because of it. -->
-    <script src="js/scroll-drift.js"></script>
-    <script src="js/scroll-fx.js"></script>
+    <script defer src="js/scroll-drift.js"></script>
+    <script defer src="js/scroll-fx.js"></script>
+
+    <!-- Attaches the 9.3 MB hero video after load, and only where it is worth
+         the bytes. Last, because it must not delay anything above it. -->
+    <script defer src="js/hero-video.js"></script>
 </body>
 
 </html>

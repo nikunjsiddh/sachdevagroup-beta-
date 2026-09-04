@@ -973,6 +973,19 @@ body {
     overflow: hidden;
 }
 
+/* `background-attachment: fixed` was removed from this rule.
+
+   Two reasons, either of which is enough. First, it is the classic
+   scroll-jank source: a fixed-attachment background cannot be promoted to a
+   compositor layer, so the whole band repaints on every scroll frame, and
+   mobile Safari has never implemented it correctly anyway.
+
+   Second, and decisive: this element carries data-sg-parallax="band"
+   (index.html:349) and js/index-motion.js writes a transform into it on
+   every frame. A transformed ancestor establishes a containing block, which
+   silently redefines what `fixed` is fixed to — so the effect the property
+   was asking for was not happening. The JS parallax is what actually moves
+   this background, and it still does. */
 .mrn-stats__bg {
     position: absolute;
     inset: 0;
@@ -980,7 +993,6 @@ body {
     background-image: url("../images/ship-bg.webp");
     background-size: cover;
     background-position: center;
-    background-attachment: fixed;
 }
 
 .mrn-stats__grid {
@@ -1746,16 +1758,30 @@ body {
    12. Header behaviour + scroll progress + back-to-top
    ========================================================================== */
 
+/* The bar is full width and scaled, rather than zero width and grown.
+
+   js/marine.js used to write `style.width` on this element on every scrolled
+   frame, which puts a fixed-position element through layout and paint sixty
+   times a second for the whole length of every scroll, on twelve pages. It
+   now writes transform: scaleX() instead — same picture, but a compositor
+   property, so the main thread is not involved.
+
+   transform-origin has to be left, or the bar would grow from its centre.
+   The transition is on transform for the same reason it was on width: it
+   smooths the gap between rAF ticks. */
 .mrn-progress {
     position: fixed;
     top: 0;
     left: 0;
     height: 3px;
-    width: 0;
+    width: 100%;
     z-index: 9999;
     background: var(--grad-gold);
     box-shadow: 0 0 14px rgba(255, 173, 24, .8);
-    transition: width .1s linear;
+    transform: scaleX(0);
+    transform-origin: 0 50%;
+    will-change: transform;
+    transition: transform .1s linear;
 }
 
 .header {

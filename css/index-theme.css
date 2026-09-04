@@ -1132,8 +1132,18 @@
         opacity: .5;
     }
 
+    /* MOBILE LABEL TYPE HAS AN 11px FLOOR.
+       Eight all-caps micro-labels in the phone breakpoints were authored
+       between 9.5px and 10.5px: .mrn-hero__badge, .mrn-hero__rail-item > span,
+       #about .ab-cap__id, #about .ab-spec__head, .mrn-stats .mrn-stat__label,
+       #companies .mrn-unit__meta > div > span, #credentials .mrn-certs__toggle,
+       and .env-commit__key li over in css/env-fx.css. The wide letter-spacing
+       they all carry helps, but not enough — 9.5px caps on a phone is below
+       what most people can read comfortably, and these are the labels naming
+       the numbers. All eight are 11px now. Nothing else about them changed. */
+
     .mrn-hero__badge {
-        font-size: 10px;
+        font-size: 11px;
         letter-spacing: 2.4px;
         margin-bottom: 20px;
     }
@@ -1190,7 +1200,7 @@
 
     .mrn-hero__rail-item > span {
         margin-top: 7px;
-        font-size: 10px;
+        font-size: 11px;
         letter-spacing: 1.8px;
     }
 
@@ -2058,7 +2068,7 @@
 
     #about .ab-cap__id {
         padding: 4px 8px;
-        font-size: 10px;
+        font-size: 11px;
         letter-spacing: 1.8px;
     }
 
@@ -2109,7 +2119,7 @@
     }
 
     #about .ab-spec__head {
-        font-size: 10.5px;
+        font-size: 11px;
         letter-spacing: 2.4px;
     }
 }
@@ -2636,7 +2646,7 @@
     }
 
     .mrn-stats .mrn-stat__label {
-        font-size: 10.5px;
+        font-size: 11px;
         letter-spacing: 1.9px;
         margin-top: 16px;
         padding-top: 11px;
@@ -3197,7 +3207,7 @@
     }
 
     #companies .mrn-unit__meta > div > span {
-        font-size: 9.5px;
+        font-size: 11px;
         letter-spacing: 1.6px;
     }
 }
@@ -5911,7 +5921,7 @@
 
     #credentials .mrn-certs__toggle {
         padding: 10px 15px 10px 12px;
-        font-size: 10.5px;
+        font-size: 11px;
     }
 
     #credentials .mrn-cert {

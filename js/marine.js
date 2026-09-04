@@ -218,11 +218,24 @@
         var bar = document.getElementById('mrnProgress');
         if (!bar) return;
         var ticking = false;
+        var travel = 0;
+
+        /* scrollHeight is a layout read, and it was being taken inside the
+           rAF on every scrolled frame on all twelve inner pages. It only
+           changes when the document does, so it is cached here and refreshed
+           on resize instead. */
+        function remeasure() {
+            travel = document.documentElement.scrollHeight - window.innerHeight;
+        }
 
         function update() {
             var y = window.pageYOffset || document.documentElement.scrollTop;
-            var docH = document.documentElement.scrollHeight - window.innerHeight;
-            bar.style.width = (docH > 0 ? (y / docH) * 100 : 0) + '%';
+            var p = travel > 0 ? y / travel : 0;
+            if (p < 0) { p = 0; } else if (p > 1) { p = 1; }
+            /* scaleX, not width. Width is a layout property: every frame put
+               the bar through layout and paint. A transform on a fixed,
+               already-composited element is handled off the main thread. */
+            bar.style.transform = 'scaleX(' + p.toFixed(4) + ')';
             ticking = false;
         }
 
@@ -230,6 +243,16 @@
             if (!ticking) { requestAnimationFrame(update); ticking = true; }
         }, { passive: true });
 
+        var rt = null;
+        window.addEventListener('resize', function () {
+            clearTimeout(rt);
+            rt = setTimeout(function () { remeasure(); update(); }, 150);
+        }, { passive: true });
+
+        /* the document keeps growing as images and fonts land */
+        window.addEventListener('load', function () { remeasure(); update(); }, false);
+
+        remeasure();
         update();
     }
 
@@ -416,33 +439,55 @@
                 : [parseFloat(n[4]) || 0, parseFloat(n[5]) || 0];
         }
 
+        /* THE CENTRE IS MEASURED ONCE PER HOVER, NOT ONCE PER POINTER MOVE.
+
+           The mousemove handler used to take four separate layout readings
+           every time the pointer moved a pixel: getBoundingClientRect(),
+           getComputedStyle().transform via translation(), offsetWidth and
+           offsetHeight. Each one flushes pending style and layout, and they
+           were interleaved with the transform write from the previous frame,
+           so the browser was forced to re-layout on every event — the textbook
+           read/write thrash, on the hottest input path there is.
+
+           None of those four values can change while the pointer is inside
+           the button. Its layout box is fixed, and the only thing writing its
+           transform is this handler. So they are captured on mouseenter and
+           reused, which leaves the move handler doing arithmetic and nothing
+           else. The listener is also passive now: it never called
+           preventDefault, but without the flag the browser had to assume it
+           might. */
         Array.prototype.forEach.call(nodes, function (el) {
             var frame = 0, px = 0, py = 0;
+            var cx = 0, cy = 0;
 
             function write() {
                 frame = 0;
                 el.style.transform = 'translate(' + px.toFixed(2) + 'px,' + py.toFixed(2) + 'px)';
             }
 
-            el.addEventListener('mouseenter', function () {
-                el.classList.add('mrn-magnet-on');
-            });
-
-            el.addEventListener('mousemove', function (e) {
+            function measure() {
                 var r = el.getBoundingClientRect();
                 var d = translation(el);
-                var cx = r.left - d[0] + el.offsetWidth / 2;
-                var cy = r.top - d[1] + el.offsetHeight / 2;
+                cx = r.left - d[0] + el.offsetWidth / 2;
+                cy = r.top - d[1] + el.offsetHeight / 2;
+            }
+
+            el.addEventListener('mouseenter', function () {
+                el.classList.add('mrn-magnet-on');
+                measure();
+            }, { passive: true });
+
+            el.addEventListener('mousemove', function (e) {
                 px = (e.clientX - cx) * 0.22;
                 py = (e.clientY - cy) * 0.3 - 4;
                 if (!frame) frame = window.requestAnimationFrame(write);
-            });
+            }, { passive: true });
 
             el.addEventListener('mouseleave', function () {
                 if (frame) { window.cancelAnimationFrame(frame); frame = 0; }
                 el.classList.remove('mrn-magnet-on');
                 el.style.transform = '';
-            });
+            }, { passive: true });
         });
     }
 
