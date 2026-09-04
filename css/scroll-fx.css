@@ -283,6 +283,18 @@ html.sfx-curtain .mrnp-hero__rule {
     animation-delay: 1.35s;
 }
 
+/* when the load mark was drawn (html.sgl-drawn, js/motion-policy.js, never
+   removed) its sheet lifts at 1.55s from first paint, so the same two
+   entrances wait that much longer — the crumb .6s after the lift and the
+   rule 1.35s after it, the beats they keep under the plain curtain */
+html.sgl-drawn .mrnp-crumb {
+    animation-delay: 2.15s;
+}
+
+html.sgl-drawn .mrnp-hero__rule {
+    animation-delay: 2.9s;
+}
+
 /* ==========================================================================
    6. CURTAIN — the load intro (js/scroll-fx.js section 4)
    Drawn from the very first frame on pages whose <html> carries

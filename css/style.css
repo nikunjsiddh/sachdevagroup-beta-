@@ -359,16 +359,6 @@ a.btn-custom:hover::after,
   background-color: #2a577e;
 }
 
-.loader {
-  background-color: #ffad18;
-  position: fixed;
-  height: 100vh;
-  width: 100vw;
-  top: 0;
-  left: 0;
-  z-index: 99999;
-}
-
 /*==================
       main-title
   ==================*/
@@ -5303,23 +5293,6 @@ li {
   }
 }
 
-/*====================
-    Preloader
-  ====================*/
-
-.loader h1 {
-  position: relative;
-  margin: 0 auto;
-  top: 25vh;
-  width: 100vw;
-  text-align: center;
-  font-family: "Oswald", sans-serif;
-  font-size: 6vh;
-  color: #333;
-  opacity: 0.75;
-  -webkit-animation: pulse 2.5s linear infinite;
-  animation: pulse 2.5s linear infinite;
-}
 
 #cooking {
   position: relative;
@@ -5557,22 +5530,6 @@ li {
   }
 }
 
-@keyframes pulse {
-  0% {
-    transform: scale(1, 1);
-    opacity: 0.25;
-  }
-
-  50% {
-    transform: scale(1.2, 1);
-    opacity: 1;
-  }
-
-  100% {
-    transform: scale(1, 1);
-    opacity: 0.25;
-  }
-}
 
 
 

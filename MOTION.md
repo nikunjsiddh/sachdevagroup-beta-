@@ -299,6 +299,57 @@ also arms `html.sfx-arm` on pages whose `<html>` carries `data-sfx-intro`, so
 the load curtain paints from the first frame, with a 2.5s failsafe that pulls
 `sfx-arm` and `sfx-lines` unless `js/scroll-fx.js` stamps `data-sfx-ready`.
 
+## The load mark — the logo loader
+
+Every one of the 13 pages carries the mark inline: a `<style id="sgl-css">`
+in `<head>` and a `.sgl` block as the first child of `<body>`, so it paints on
+the very first frame with nothing to fetch. It is `display:none` unless
+`js/motion-policy.js` sets `html.sgl-on`, so **with no JS nothing is ever
+hidden** — the same contract as the other gates.
+
+**When it draws.** On arrivals only (a fresh load, a reload, a visit from
+another site — the curtain's own rule, now computed once and exported as
+`SG_MOTION_POLICY.arrival`), and only while motion is wanted. A click between
+our own pages never shows it.
+
+**What it does.** The mark is the logo rebuilt as inline SVG on a sheet
+painted in the curtain's navy: the wheel draws on in gold while turning a
+quarter-turn to starboard, the anchor draws on in cyan, the wordmark rises
+inside a clip mask, a cyan→gold hairline extends. Then the mark fades up and
+the sheet lifts with the site's `expo.inOut` clip-path gesture. Two moves —
+draw, lift. No web font: Oswald arrives late, and a mark that reflows
+mid-draw reads as a fault.
+
+**Who owns the clock.** The stylesheet. Every timing is a CSS keyframe delay
+from first paint: the sheet lifts at **1.55s** and is gone at **2.65s**
+whatever happens in JavaScript. `motion-policy.js` only listens for the
+lift's `animationstart` / `animationend`, publishes `window.SG_LOADER`
+(`active`, `lifted`, `done`, `onLift(fn)`, `onDone(fn)`) and the events
+`sg:loader:lift` / `sg:loader:done`, holds the scroll (`html.sgl-lock`,
+plus `lenis.stop()`) until the lift, and removes the element when it is gone.
+A 3.5s failsafe does all of that anyway if the events never come.
+
+| Class | Set | Cleared | Keyed on it |
+|---|---|---|---|
+| `sgl-on` | head, on an arrival | when the sheet is gone | the mark's `display` |
+| `sgl-lock` | head, on an arrival | at the lift | `html, body { overflow: hidden }` |
+| `sgl-drawn` | head, on an arrival | never | `css/scroll-fx.css` delays the crumb and rule past the lift |
+
+**How the engines wait for it.** Nothing plays under the sheet. On the inner
+pages `scroll-fx.js` reads `SG_LOADER` at boot: when it is active the mark's
+sheet *is* the curtain, so `sfx-arm` is dropped there and then, and the hero
+photograph settle and the hero line tweens are built paused and released on
+`onLift` — keeping the curtain's own beats (title +0.75s, copy +1.0s) after
+the lift. On `index.html`, `motion.js` builds the title timeline paused and
+releases it the same way, and `revealBatch()` holds back any `[data-anim]`
+inside `#home` until the lift while the rest of the batch runs. A page the
+mark did not draw on takes exactly the paths it took before.
+
+**A hidden tab.** Chrome freezes CSS and rAF clocks while a tab is hidden. A
+page opened in a background tab therefore reaches the 3.5s failsafe first:
+the mark is removed unseen and the hero is released, so the visitor who
+switches to it gets the page, not a stale loader. Deliberate.
+
 ## The cinematic layer — `js/scroll-fx.js`
 
 Loaded last on all 13 pages, after GSAP 3.13 + ScrollTrigger + SplitText
@@ -310,7 +361,7 @@ parts because `js/motion.js` owns its sections.
 |---|---|---|
 | lines | `[data-sg-split]`, `.mrnp-hero__title`, `.mrn-eyebrow`, `.mrn-lead` — claimed by the pre-pass, which strips the other engines' attributes and adds `data-sfx-lines` | SplitText `type:'lines', mask:'lines'`; each line rises from 110% inside its clip mask, stagger .09, once, at `top 88%`. A title that follows an eyebrow waits .14s for it. Hero copy plays on load, after the curtain when there is one. A re-split (font load, resize) never replays a finished entrance. |
 | open | `[data-sfx-open]` on `.mrnp-split__frame`, `.mrnp-gal__item`, `.mrnp-certcard`, `.abt-frame`, `.abt-unit__media` | scrubbed `clip-path` from `inset(14% 10%)` to `inset(0)` while `--sfx-io` settles 1.14 → 1 and multiplies into the image scale; at progress 1 the inline clip is removed so the box-shadow returns. The pre-pass also releases `data-mrn-reveal` / `data-mrn-stagger` on the box's ancestors up to the section, so a photograph never slides in AND opens. |
-| intro | `<html data-sfx-intro>` | `body::before` curtain lifts via `--sfx-curtain` (1.1s expo.inOut) — on arrivals only (fresh load, reload, external referrer; a click between our own pages skips it); `.mrnp-hero__bg` settles from scale 1.28 / y 54 to its resting `scale(1.06)`, then `clearProps` hands it back to `page-fx.js` heroScrub. Hero lines play after the curtain, or straight away without one. |
+| intro | `<html data-sfx-intro>` | `body::before` curtain lifts via `--sfx-curtain` (1.1s expo.inOut) — on arrivals only (fresh load, reload, external referrer; a click between our own pages skips it); `.mrnp-hero__bg` settles from scale 1.28 / y 54 to its resting `scale(1.06)`, then `clearProps` hands it back to `page-fx.js` heroScrub. Hero lines play after the curtain, or straight away without one. When the load mark was drawn its sheet is the curtain: `sfx-arm` is dropped at boot and the settle and the hero lines wait for `SG_LOADER.onLift`. |
 | footer | `.sgf-footer` | slides from −30% of its height to 0 as it enters; `css/scroll-fx.css` drops it to z-index 1 under the white yard band |
 | header | `.header` | `.sfx-head-hide` while scrolling down past 80px (= `main.js` stickyThreshold). The first hide drops animate.css's `animated fadeInDown` (its fill-mode would pin the transform) and marks the bar `.sfx-head`; from then on hide and show are one .55s transition on transform. Desktop only, and not on `index.html`, whose bar `js/motion.js` already hides with `.is-hidden`. |
 
