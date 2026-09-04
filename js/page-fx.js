@@ -73,14 +73,6 @@
         return out;
     }
 
-    function hasClass(el, c) {
-        return (' ' + (el.className || '') + ' ').indexOf(' ' + c + ' ') > -1;
-    }
-
-    function addClass(el, c) {
-        if (!hasClass(el, c)) el.className += (el.className ? ' ' : '') + c;
-    }
-
     /* identical to index-motion.js ownedByMarine() minus data-mrn-reveal,
        which is an entrance we are replacing rather than a behaviour we must
        not disturb */
@@ -306,10 +298,20 @@
         });
     }
 
-    /* 2.2 Section rail scrollspy.
-       For .pfx-jump — the sticky in-page bar that replaced the About dropdown.
+    /* 2.2 Section rail scrollspy + exit.
+       For .pfx-jump — the in-page bar under the About Us hero.
        js/marine-pages.js already ships a scrollspy but it is hard-bound to
        .mrnp-pagenav, the sidebar variant, so this is the horizontal one.
+
+       The rail is NOT sticky, and undoing that is what this pass changed.
+       Parked under the header it put two menu bars on screen at once with a
+       32px white band between them: js/main.js switches .header to
+       position:fixed at scrollTop 80, and the height read here to place the
+       rail was taken while that bar's fadeInDown was still running — 103px
+       captured, 71px settled — and then latched, so the band never closed.
+       Chasing that measurement was the wrong fix. The rail now scrolls away
+       with the page: the reader gets it once, on the way past the hero, and
+       from there down only the site header follows them.
 
        It reads section tops once and re-reads on resize rather than every
        frame: SGMotion.onScroll fires on the shared loop, and doing layout
@@ -321,39 +323,6 @@
         var links = list('a[href^="#"]', rail);
         if (!links.length) return;
 
-        /* UNBLOCK position:sticky.
-           .wrapper carries `overflow: hidden` (css/style.css), which makes it
-           the sticky element's scrollport — and that box never scrolls, so the
-           rail scrolled away with the page. Measured: its top ran to -1803px.
-           `overflow-x: clip` clips exactly the same way WITHOUT establishing a
-           scroll container, which is the whole difference. Verified on this
-           page: the rail parks correctly and not one element starts
-           overflowing horizontally that was not already clipped.
-           The class is added here rather than in the markup so it can never
-           outlive the rail, and css/page-fx.css guards it behind
-           @supports — a browser without `clip` keeps `overflow: hidden` and
-           simply does not get a sticky rail, rather than getting a stray
-           vertical scrollbar from a half-applied pair. */
-        var wrap = rail.parentNode;
-        while (wrap && wrap.nodeType === 1 && !hasClass(wrap, 'wrapper')) wrap = wrap.parentNode;
-        if (wrap && wrap.nodeType === 1) addClass(wrap, 'has-jump-rail');
-
-        /* the bar the rail parks under is js/main.js's .sticky_menu header,
-           which is a different height from the one in normal flow — so it can
-           only be measured once it is actually sticky */
-        var header = doc.querySelector('.header');
-        var headMeasured = false;
-
-        function syncTop() {
-            if (headMeasured || !header) return;
-            if (!hasClass(header, 'sticky_menu')) return;
-            var h = Math.round(header.getBoundingClientRect().height);
-            if (h < 30 || h > 200) return;
-            headMeasured = true;
-            rail.style.setProperty('--pfx-jump-top', h + 'px');
-            remeasure();
-        }
-
         var items = [], i, t;
         for (i = 0; i < links.length; i++) {
             t = doc.getElementById(links[i].getAttribute('href').slice(1));
@@ -363,22 +332,21 @@
 
         var current = null;
         var offset = 0;
+        var fadeFrom = 0, fadeTo = 0, lastFade = -1;
 
         function remeasure() {
-            /* the rail parks itself under the site header, so a section counts
-               as current once its top passes the underside of the rail */
-            var railH = rail.getBoundingClientRect().height;
-
-            /* marine.css:38 sets scroll-padding-top:96px for the sticky header
-               alone. This page stacks the rail on top of it, so an anchor
-               would land under the rail — including a cross-page one like the
-               footer's about_us.html#vision. Restate it with the rail counted
-               in. index-motion.js's padTop() reads this same property, so the
-               animated in-page tween and the browser's own jump agree. */
-            var parked = parseFloat(getComputedStyle(rail).top);
-            if (isNaN(parked)) parked = 0;
-            var pad = Math.round(parked + railH + 24);
-            html.style.scrollPaddingTop = pad + 'px';
+            /* An anchor only has to clear the fixed site header now that the
+               rail no longer parks under it, and css/marine.css:38 already
+               states that distance as scroll-padding-top:96px — for the
+               sticky header alone, which is again the whole story. Read it
+               instead of restating it: index-motion.js's padTop() reads the
+               same property, so the animated in-page tween and the browser's
+               own jump agree, and there is no second number left to drift.
+               It also un-overshoots cross-page anchors like the footer's
+               about_us.html#vision, which the old rail-inclusive value
+               pushed 34px too far down. */
+            var pad = parseFloat(getComputedStyle(html).scrollPaddingTop);
+            if (isNaN(pad) || pad <= 0) pad = 96;
 
             /* The spy threshold is that same landing position plus a few px of
                tolerance — derived from it rather than guessed, so clicking a
@@ -386,10 +354,39 @@
                left the previous section highlighted by ~5px. */
             offset = pad + 12;
 
+            /* Exit window, in viewport coordinates, off that same number:
+               fadeTo is the underside of the fixed header, fadeFrom is 120px
+               of travel above it. Nothing here is measured off .header
+               itself — that live read, taken mid-animation, is exactly what
+               produced the white band this rail used to sit below. */
+            fadeTo = pad - 24;
+            fadeFrom = fadeTo + 120;
+
             var y = SG.scrollY();
             for (var k = 0; k < items.length; k++) {
                 items[k].top = items[k].el.getBoundingClientRect().top + y;
             }
+        }
+
+        /* The rail is removed on the way up rather than clipped. .header is
+           rgba(255,255,255,.97) over a backdrop blur, so a navy bar sliding
+           beneath it reads as a grey smear through the white for the length
+           of its own height. Dissolve it across the last stretch of travel
+           instead — opacity only, no transform, and under reduced motion the
+           CSS transition is off, so this becomes a clean cut at the header
+           line rather than a blend. */
+        function fadeOut(top) {
+            var v;
+            if (top >= fadeFrom) v = 1;
+            else if (top <= fadeTo) v = 0;
+            else v = (top - fadeTo) / (fadeFrom - fadeTo);
+            v = Math.round(v * 100) / 100;
+            if (v === lastFade) return;
+            lastFade = v;
+            rail.style.opacity = String(v);
+            /* and out of the a11y tree and the tab order once it has gone, so
+               a keyboard reader is not landing on invisible chips */
+            rail.style.visibility = v > 0 ? '' : 'hidden';
         }
 
         function paint(y) {
@@ -412,12 +409,35 @@
             }
         }
 
-        remeasure();
-        paint(SG.scrollY());
-        SG.onResize(function () { headMeasured = false; syncTop(); remeasure(); paint(SG.scrollY()); });
-        SG.onScroll(function (y) { syncTop(); paint(y); });
+        /* One layout read per frame, taken BEFORE either writer touches the
+           DOM so the two never thrash against each other — paint() only
+           rewrites a className and fadeOut() only an opacity, neither of
+           which moves anything, so the next frame's read is off a clean
+           layout. Reading the rail's live box beats caching its document
+           offset in remeasure(): the entrance reveals and the drift parallax
+           both shift this bar afterwards, and on a 375px viewport the cached
+           value was already 75px stale by the time the rail reached the
+           header — enough to leave it half-lit as it went under. */
+        function sync(y) {
+            var top = rail.getBoundingClientRect().top;
+            paint(y);
+            fadeOut(top);
+        }
+
+        /* A resize moves the fade window, so the opacity fadeOut() last wrote
+           may now be the wrong one for the same rail position. Clearing the
+           cached value defeats its no-op guard and forces one real write. */
+        function relayout() {
+            lastFade = -1;
+            remeasure();
+            sync(SG.scrollY());
+        }
+
+        relayout();
+        SG.onResize(relayout);
+        SG.onScroll(sync);
         if (win.addEventListener) {
-            win.addEventListener('load', function () { remeasure(); paint(SG.scrollY()); }, false);
+            win.addEventListener('load', relayout, false);
         }
     }
 

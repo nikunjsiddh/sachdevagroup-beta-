@@ -1999,37 +1999,35 @@
     height: 74px;
 }
 
-/* --- 6.6 section rail — the sticky in-page nav -------------------------
+/* --- 6.6 section rail — the in-page nav under the hero -----------------
    Caller: about_us.html.
 
    The About material used to be split across three nav entries (Group
    Profile / Vision & Mission / Testimonials) even though about_us.html
    already contained all of it. The dropdown is now a single link and this
-   rail is what replaced it: the page's own table of contents, parked under
-   the header, tracking the reader's position.
+   rail is what replaced it: the page's own table of contents, sitting
+   between the hero and the first section.
 
-   `top` has to clear the site header, which main.js switches to
-   position:fixed at scrollTop 80 — measured 59px tall in that state. */
+   It is deliberately NOT sticky, and that is the whole design of this
+   block. Parked under the header it put two menu bars on screen at once
+   with a white band between them — js/main.js switches .header to
+   position:fixed at scrollTop 80, and the height read to place the rail was
+   taken while that bar's fadeInDown was still running, so the rail pinned
+   itself at the transient 103px instead of the settled 71px. The rail now
+   scrolls away with the page: you get it once, on the way past, and from
+   there down only the site header follows the reader. js/page-fx.js
+   railSpy() dissolves it across the last stretch of that travel so it
+   leaves as a deliberate exit rather than sliding under a 97%-opaque bar.
 
-/* .wrapper ships `overflow: hidden`, which makes it the scrollport for any
-   sticky descendant — and it never scrolls, so the rail scrolled away with the
-   page. `overflow-x: clip` clips identically without establishing a scroll
-   container. js/page-fx.js adds .has-jump-rail only when a rail is present.
-
-   The @supports guard is load-bearing, not decoration: without `clip` a
-   browser would drop overflow-x and keep overflow-y:visible, and a pair where
-   one axis is visible and the other is not computes the visible one to `auto`
-   — i.e. the wrapper would sprout its own vertical scrollbar. Guarded, such a
-   browser keeps `overflow: hidden` and merely does without a sticky rail. */
-@supports (overflow-x: clip) {
-    .wrapper.has-jump-rail {
-        overflow-x: clip;
-        overflow-y: visible;
-    }
-}
-
+   No overflow override on .wrapper any more either. It carried
+   `overflow-x: clip` purely to stop `overflow: hidden` acting as this
+   rail's sticky scrollport; with nothing sticky left on the page the
+   wrapper keeps the plain `overflow: hidden` css/style.css gives it. */
 .pfx-jump {
     position: relative;
+    /* railSpy() drives opacity on the way out; the transition only has to
+       cover the frame gaps in the scroll loop, not animate the exit. */
+    transition: opacity .18s linear;
     background: rgba(7, 26, 46, .95);
     -webkit-backdrop-filter: blur(14px) saturate(1.15);
     backdrop-filter: blur(14px) saturate(1.15);
@@ -3228,6 +3226,13 @@ html.sg-motion [data-sg-delay="10"] {
     .mrnp-hero .mrn-hero__badge {
         opacity: 1 !important;
         animation: none !important;
+    }
+
+    /* the rail still has to disappear on the way out — railSpy() cuts its
+       opacity outright under reduced motion, so the transition that would
+       smooth that step is what goes, not the step itself */
+    .pfx-jump {
+        transition: none !important;
     }
 
     .pfx-jump a::after {
