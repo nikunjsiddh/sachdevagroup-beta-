@@ -1471,6 +1471,18 @@
     text-transform: none;
 }
 
+/* the "+" suffix, matching #profile .mrnp-strip strong i above. index-theme
+   sizes this band at 34px, so the mark is set in em and follows the figure
+   through the 29px mobile step at the bottom of this file. */
+#units .abt-unit__meta strong i {
+    font-style: normal;
+    font-weight: inherit;
+    font-size: .55em;
+    line-height: 1;
+    letter-spacing: 0;
+    vertical-align: super;
+}
+
 /* the count is the figure that moves; the year is a constant. Colouring them
    apart is what makes the pair read as two kinds of fact rather than two
    numbers. */

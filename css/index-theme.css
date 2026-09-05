@@ -1916,8 +1916,8 @@
     background: rgba(34, 179, 230, .10);
     border: 1px solid rgba(34, 179, 230, .42);
     box-shadow: none;
-    opacity: 0;
-    transform: scale(.6);
+    opacity: 1;
+    transform: scale(1);
     transform-origin: 50% 50%;
     transition:
         transform .6s var(--e-out) var(--mrn-delay, 0ms),
@@ -1933,26 +1933,37 @@
     height: 4px;
     border-left: 1.6px solid var(--cyan-deep);
     border-bottom: 1.6px solid var(--cyan-deep);
-    opacity: 0;
-    transform: rotate(-45deg) scale(.5);
+    opacity: 1;
+    transform: rotate(-45deg) scale(1);
     transition:
         transform .55s var(--e-out) calc(var(--mrn-delay, 0ms) + 90ms),
         opacity .45s var(--e-out) calc(var(--mrn-delay, 0ms) + 90ms),
         border-color .35s var(--e-out);
 }
 
-/* `data-mrn-stagger="120"` on the <ul> writes --mrn-delay onto each <li>, but
-   the <li>s carry no data-mrn-reveal so the delay was inert. Driving the tick
-   off the <ul>'s own .mrn-in class puts it back to work — and only the tick
-   animates, so the row text is legible even if the observer never fires. */
-#about .mrn-about__points.mrn-in li::before {
-    opacity: 1;
-    transform: scale(1);
+/* THE CHECKBOX IS THE RESTING STATE; the entrance is layered on top of it.
+   It used to be the other way round — both halves started at opacity 0 and
+   waited for `.mrn-in` on the <ul> — and nothing on this page adds that class:
+   js/marine.js:29 observes [data-mrn-reveal] only, and index.html carries none
+   (js/marine.js:21 says so itself). So all six ticks were invisible to every
+   visitor and "Operating standards" rendered as six lines of bare text. The
+   prefers-reduced-motion block at the foot of this section was the one thing
+   landing them, which is why the list looked correct with the preference set
+   and blank without it.
+
+   Hidden is the ARMED state now, scoped to html.sg-anim — the gate the head
+   shim pulls after 4s unless js/motion.js reports ready (index.html:250), so a
+   blocked or 404'd GSAP can no longer leave the ticks blank. `.in` is what
+   js/motion.js:255 actually writes onto a [data-anim] element; `.mrn-in` is
+   kept for the js/marine.js path on any page that reuses this list. */
+html.sg-anim #about .mrn-about__points:not(.in):not(.mrn-in) li::before {
+    opacity: 0;
+    transform: scale(.6);
 }
 
-#about .mrn-about__points.mrn-in li::after {
-    opacity: 1;
-    transform: rotate(-45deg) scale(1);
+html.sg-anim #about .mrn-about__points:not(.in):not(.mrn-in) li::after {
+    opacity: 0;
+    transform: rotate(-45deg) scale(.5);
 }
 
 #about .mrn-about__points li:hover {

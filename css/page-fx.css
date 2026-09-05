@@ -1401,6 +1401,154 @@
     box-shadow: var(--lift-3, 0 34px 70px -30px rgba(4, 18, 31, .78));
 }
 
+
+/* --- 5.10b the location tag on the map -----------------------------------
+   The grade moves off the card and onto the map itself. It used to sit on
+   .mrnp-map (here and at marine-pages.css:1758), but the tag below is a
+   SIBLING of the iframe, so a filter on their shared parent desaturated the
+   red Google pin to slate until you hovered the card — the one element on it
+   that has to stay Google red. */
+.mrnp-map {
+    filter: none;
+}
+
+.mrnp-map__canvas {
+    filter: grayscale(.55) saturate(.85) contrast(1.05);
+    transition: filter .6s var(--e-out);
+}
+
+.mrnp-map:hover .mrnp-map__canvas {
+    filter: none;
+}
+
+/* the marker itself — Google's pin, the yard's name, and the way out to the
+   full listing. Top-right is the only corner Google leaves alone: the place
+   card takes the top-left, the Street View thumbnail and the "Google" wordmark
+   the bottom-left, and the attribution strip and zoom cluster the bottom-right.
+   Attribution has to stay legible, so the tag does not go near it. */
+.mrnp-map__tag {
+    position: absolute;
+    right: 22px;
+    top: 22px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: min(430px, calc(100% - 44px));
+    padding: 11px 20px 11px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .96);
+    border: 1px solid rgba(4, 18, 31, .10);
+    box-shadow: 0 16px 36px -18px rgba(4, 18, 31, .6);
+    text-decoration: none;
+    transition: transform .4s var(--e-out), box-shadow .4s var(--e-out),
+        border-color .4s var(--e-out);
+}
+
+.mrnp-map__tag:hover,
+.mrnp-map__tag:focus-visible {
+    transform: translateY(-3px);
+    border-color: rgba(234, 67, 53, .38);
+    box-shadow: 0 24px 48px -20px rgba(4, 18, 31, .66);
+}
+
+.mrnp-map__pin {
+    position: relative;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+}
+
+.mrnp-map__pin svg {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 30px;
+    height: 30px;
+    filter: drop-shadow(0 3px 5px rgba(234, 67, 53, .38));
+}
+
+/* the halo that says "this one" — motion only where it is welcome */
+.mrnp-map__pin::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 62%;
+    width: 26px;
+    height: 26px;
+    margin: -13px 0 0 -13px;
+    border-radius: 50%;
+    background: rgba(234, 67, 53, .22);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .mrnp-map__pin::before {
+        animation: mrnp-map-ping 2.4s var(--e-out, ease-out) infinite;
+    }
+}
+
+@keyframes mrnp-map-ping {
+    0% { transform: scale(.5); opacity: .75; }
+    70% { transform: scale(1.9); opacity: 0; }
+    100% { transform: scale(1.9); opacity: 0; }
+}
+
+.mrnp-map__tagtext {
+    display: block;
+    min-width: 0;
+}
+
+.mrnp-map__tagtext strong {
+    display: block;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 15.5px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: .3px;
+    color: var(--heading-on-light, #071a2e);
+}
+
+.mrnp-map__tagtext > span {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    letter-spacing: .5px;
+    line-height: 1.35;
+    color: var(--body-on-light, #4a6076);
+}
+
+/* Google's place card pins itself to the top-left and stops shrinking at about
+   300px, so on a narrow map there is no room for both up there. The tag drops
+   to the foot of the card — raised 34px, which is what keeps the "Google"
+   wordmark and the attribution strip readable underneath it. 992px is where
+   that starts: below it the card and a top-right tag overlap. */
+@media (max-width: 991.98px) {
+    .mrnp-map__tag {
+        left: 16px;
+        right: 16px;
+        top: auto;
+        bottom: 34px;
+        max-width: none;
+        border-radius: 18px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .mrnp-map__tag {
+        left: 12px;
+        right: 12px;
+        bottom: 30px;
+        border-radius: 16px;
+        padding: 11px 14px 11px 11px;
+    }
+
+    .mrnp-map__tagtext strong {
+        font-size: 14px;
+    }
+}
+
 /* --- 5.11 stat strip ---------------------------------------------------- */
 
 .mrnp-strip {
@@ -2825,6 +2973,19 @@
     line-height: 1;
     letter-spacing: .4px;
     color: var(--heading-on-light, #071a2e);
+}
+
+/* the "+" on the ships figure. Gold is the hover accent here and only clears
+   3:1 on this near-white plate, so the mark takes the AA-safe cyan the tick
+   uses at rest instead. */
+.pfx-figure > strong i {
+    font-style: normal;
+    font-weight: inherit;
+    font-size: .55em;
+    line-height: 1;
+    letter-spacing: 0;
+    vertical-align: super;
+    color: #0b6d97;
 }
 
 .pfx-figure > span {

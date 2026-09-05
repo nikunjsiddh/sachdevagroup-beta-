@@ -1344,6 +1344,19 @@ body {
     font-weight: 600;
 }
 
+/* the "+" on an approximate count. Same superscript mark .mrn-stat__num and
+   .mrnp-strip already carry, so "36+" reads the same way in a unit card as it
+   does in the stats band above it. Inherits the figure's colour rather than
+   forcing gold — #companies recolours these to cyan. */
+.mrn-unit__meta div strong i {
+    font-style: normal;
+    font-weight: inherit;
+    font-size: .58em;
+    line-height: 1;
+    letter-spacing: 0;
+    vertical-align: super;
+}
+
 .mrn-unit__meta div span {
     font-size: 11px;
     letter-spacing: 2.4px;
