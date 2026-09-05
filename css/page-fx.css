@@ -224,8 +224,16 @@
     flex: none;
 }
 
+/* Touch target — SC 2.5.8 wants 24x24 CSS px and this link measured 16px
+   tall. It is a flex item of the .mrnp-crumb chip, so plain padding would
+   push the chip 10px taller; the negative margin hands back exactly what the
+   padding takes, leaving the flex line (and the chip) the size it was while
+   the anchor's own border box — which is what gets hit-tested — grows to
+   32px. Applied at every width: 24px is a floor, not a phone rule. */
 .mrnp-crumb a {
     color: rgba(214, 231, 245, .8);
+    padding: 8px 0;
+    margin: -8px 0;
     transition: color .3s var(--e-out);
 }
 
@@ -1220,6 +1228,16 @@
     line-height: 1.68;
 }
 
+/* Same 24px floor for the tap-to-call / tap-to-email links. These are inline,
+   where vertical padding grows the hit box without entering the line box, so
+   nothing moves. 2px each way is the whole budget and not a timid choice:
+   15.5px x 1.68 leaves exactly 4px between one line's content box and the
+   next, so anything more would make the phone and email hit areas overlap
+   and send a thumb aimed at one to the other. 22 + 4 = 26px. */
+.mrnp-infocard a {
+    padding: 2px 0;
+}
+
 .mrnp-infocard a:hover {
     color: var(--cyan-deep, #1195cf);
 }
@@ -2043,6 +2061,19 @@
     display: none;
 }
 
+/* The rail scrolls sideways with its scrollbar hidden, so without a cue the
+   last chip just stops mid-word and reads as broken layout rather than as
+   something you can drag. Fade the trailing edge — but only while the bar
+   really does overflow, otherwise the final chip is dimmed for no reason.
+   js/page-fx.js railSpy() sets .is-scrollable from the element's own
+   scrollWidth on load and on every resize; this used to be a `max-width:
+   860px` media query, which left chips cut off with no fade all the way up
+   to ~1010px, where the rail still overflows. */
+.pfx-jump.is-scrollable {
+    -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
+}
+
 .pfx-jump__inner {
     display: flex;
     align-items: stretch;
@@ -2121,6 +2152,54 @@
 .mrnp-section.mrn-dark .table-responsive {
     border: var(--pfx-ring-dark);
     background: var(--pfx-plate-dark);
+}
+
+/* --- the table scrolls sideways, and it has to LOOK like it does --------
+   The table holds five columns and carries min-width:620px, so on a phone
+   roughly half of it is off-box: measured at 375px the plate is 325px wide
+   against 620px of content, and "Motor Tanker" / "Research Vessel" /
+   "Container Ship" are all cut mid-word at the right edge. The wrapper does
+   scroll, but the only thing saying so is an overlay scrollbar that is 2px
+   of gutter and paints solely while a scroll is in flight — so at rest the
+   fleet list reads as truncated data, not as a scrollable table.
+
+   Two shadow layers pinned to the box (`scroll`) sit under two cover layers
+   pinned to the CONTENT (`local`). At the left end the left cover rides over
+   the left shadow and hides it; scroll right and the cover travels away,
+   uncovering the shadow that says "there is more back there". The right pair
+   does the mirror image. Because the covers are content-anchored, a table
+   that already fits keeps both shadows covered and shows nothing at all —
+   the cue appears exactly when it is true and needs no JS and no breakpoint.
+   (Roman Komarov's scrolling-shadows technique; `local` is the whole trick.)
+
+   The covers must be opaque colours rather than var(--pfx-plate): a gradient
+   cannot be the fade target, and these sit ON the plate, so they use its two
+   stops directly — #ffffff at the top of the plate, #fbfdff at the bottom. */
+.mrnp-section .table-responsive {
+    background:
+        linear-gradient(to right, #ffffff 55%, rgba(255, 255, 255, 0) 100%)
+            0 0 / 56px 100% no-repeat local,
+        linear-gradient(to left, #fbfdff 55%, rgba(251, 253, 255, 0) 100%)
+            100% 0 / 56px 100% no-repeat local,
+        linear-gradient(to right, rgba(7, 26, 46, .42), rgba(7, 26, 46, 0))
+            0 0 / 40px 100% no-repeat scroll,
+        linear-gradient(to left, rgba(7, 26, 46, .42), rgba(7, 26, 46, 0))
+            100% 0 / 40px 100% no-repeat scroll,
+        var(--pfx-plate);
+}
+
+.mrn-dark .mrnp-section .table-responsive,
+.mrnp-section.mrn-dark .table-responsive {
+    background:
+        linear-gradient(to right, #0a2340 42%, rgba(10, 35, 64, 0) 100%)
+            0 0 / 46px 100% no-repeat local,
+        linear-gradient(to left, #04121f 42%, rgba(4, 18, 31, 0) 100%)
+            100% 0 / 46px 100% no-repeat local,
+        linear-gradient(to right, rgba(0, 0, 0, .42), rgba(0, 0, 0, 0))
+            0 0 / 26px 100% no-repeat scroll,
+        linear-gradient(to left, rgba(0, 0, 0, .42), rgba(0, 0, 0, 0))
+            100% 0 / 26px 100% no-repeat scroll,
+        var(--pfx-plate-dark);
 }
 
 .mrnp-section table {
@@ -2979,14 +3058,6 @@ html.sg-motion [data-sg-delay="10"] {
     .pfx-jump a::after {
         left: 15px;
         right: 15px;
-    }
-
-    /* the rail is wider than the viewport here (measured 801px in 375px), so
-       fade the trailing edge — otherwise a chip is simply cut off and nothing
-       says the bar scrolls */
-    .pfx-jump {
-        -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
-        mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
     }
 
     .pfx-wave svg {

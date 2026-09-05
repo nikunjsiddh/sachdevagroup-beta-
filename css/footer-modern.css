@@ -411,14 +411,26 @@
     padding: 0;
 }
 
+/* Touch targets, at every width — SC 2.5.8's 24px floor is not a phone-only
+   rule. At 15px/1.5 the anchor box is 22.5px tall and the 13px gap under it
+   is dead space no pointer can use, so the gap moves INSIDE the anchor: the
+   pitch between two links is unchanged (23+13=36 -> 33+4=37) and the hit
+   area grows by half. It has to be padding on the element rather than a
+   min-height because .sgf-links a is inline-FLEX, where vertical padding is
+   in the line box — which is also why `li` gives back what `a` takes.
+
+   The `.sgf-yard__meta` links are deliberately left alone: they sit inline
+   in a sentence, which SC 2.5.8 exempts, and padding there would not enlarge
+   the line box anyway. */
 .sgf-links li {
-    margin-bottom: 13px;
+    margin-bottom: 4px;
 }
 
 .sgf-links a {
     display: inline-flex;
     align-items: flex-start;
     gap: 9px;
+    padding: 5px 0;
     font-size: 15px;
     line-height: 1.5;
     color: var(--sgf-body);
@@ -1549,6 +1561,34 @@ html.sgfb-locked body {
         clip: rect(0 0 0 0);
         clip-path: inset(50%);
         white-space: nowrap;
+    }
+
+    /* PARKED OVER THE HERO.
+       `.mrn-hero__rail` is `position:absolute; bottom:0` inside a hero whose
+       min-height fills the viewport, so on a phone the stat panel IS the
+       bottom 176px of the first screen — and any bottom-anchored floating
+       control lands on top of it. Measured at 375x812: the launcher covered
+       "Years of Operation" before the visitor had scrolled a pixel.
+
+       Padding the rail cannot fix this (it would leave a dead band across
+       the bottom of the hero) and neither can moving the button (every
+       bottom corner is rail). So the launcher does what #toTopBtn at line
+       577 already does on this site — it stays out of the first screen and
+       fades in once the reader has left the hero behind. Same 250px
+       threshold, so the two controls arrive together instead of one
+       appearing under the other.
+
+       Scoped to the media query rather than left global: if the class were
+       ever stale after a resize to desktop, the desktop launcher — which
+       floats over empty margin and covers nothing — must still be visible.
+       js/feedback.js only sets it below this same 860px width. */
+    .sgfb-launch.is-parked {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(10px);
+        transition: opacity .3s var(--sgf-ease), transform .3s var(--sgf-ease),
+            visibility 0s linear .3s;
     }
 }
 
