@@ -36,6 +36,55 @@ function sg_driver() {
 }
 
 /* --------------------------------------------------------------------------
+   Keeping the database folder off the web
+   --------------------------------------------------------------------------
+   data/.htaccess is what stops Apache serving data/content.sqlite to anyone
+   who asks for it by name. That file holds every administrator's password
+   hash and every note a visitor has sent, so serving it is the worst single
+   thing this project can do.
+
+   The rule used to live only in a .htaccess committed to the repository, and
+   that turned out not to be enough: the folder is created at runtime, is in
+   .gitignore, and does not survive being deleted and recreated — which is
+   exactly what happens when somebody clears the database, restores a backup,
+   or copies the site without hidden files (a very common FTP default). The
+   protection then silently disappears while everything still works, which is
+   the worst possible failure shape.
+
+   So it is rewritten here on every connection instead. It costs one is_file()
+   on the hot path, and it means the guard cannot go missing without the code
+   that needs it also being gone.
+   -------------------------------------------------------------------------- */
+
+function sg_guard_dir($dir) {
+    $file = rtrim($dir, '/\\') . '/.htaccess';
+    if (is_file($file)) return;
+
+    $rules = "# Written automatically by includes/db.php. Do not delete.\n"
+           . "# This folder holds the SQLite database: every admin password hash and\n"
+           . "# every note a visitor has sent. Apache serves .sqlite as a plain file,\n"
+           . "# so without this a GET for data/content.sqlite downloads the lot.\n"
+           . "<IfModule mod_authz_core.c>\n"
+           . "    Require all denied\n"
+           . "</IfModule>\n"
+           . "<IfModule !mod_authz_core.c>\n"
+           . "    Order allow,deny\n"
+           . "    Deny from all\n"
+           . "</IfModule>\n";
+
+    @file_put_contents($file, $rules);
+
+    /* A host that ignores .htaccess entirely (AllowOverride None, nginx) gets
+       no protection from the file above and no warning either. Say so in the
+       log once, so it is discoverable without a penetration test. */
+    if (!is_file($file)) {
+        error_log('sg: could not write ' . $file . ' — the database directory may be '
+            . 'downloadable over HTTP. Move data/ outside the web root, or deny it in '
+            . 'the server config.');
+    }
+}
+
+/* --------------------------------------------------------------------------
    The handle
    -------------------------------------------------------------------------- */
 
@@ -66,6 +115,8 @@ function sg_db() {
         $file = $db['file'];
         $dir  = dirname($file);
         if (!is_dir($dir)) @mkdir($dir, 0775, true);
+
+        sg_guard_dir($dir);
 
         $pdo = new PDO('sqlite:' . $file, null, null, $opt);
 
