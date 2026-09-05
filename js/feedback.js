@@ -58,9 +58,19 @@
        customers of a ship recycler are the owners and cash buyers who bring
        the ship, and a briefcase said nothing about that. */
     var ICON = {
-        chat: '<path opacity=".16" fill="currentColor" stroke="none" d="M6 4.4h12.4a1.6 1.6 0 0 1 1.6 1.6v9a1.6 1.6 0 0 1-1.6 1.6H8.9L4.4 20V6a1.6 1.6 0 0 1 1.6-1.6z"/>' +
-              '<path d="M20.4 15.2a2 2 0 0 1-2 2H8.6L4 20.8V5.4a2 2 0 0 1 2-2h12.4a2 2 0 0 1 2 2z"/>' +
-              '<path d="M8 8.8h8"/><path d="M8 12.4h5.2"/>',
+        /* The launcher glyph. It was a plain speech bubble with two text
+           lines, which is the same mark half the internet uses for "chat with
+           support" — it said a conversation was on offer but not that we were
+           asking to be rated. This is that bubble carrying a star.
+
+           The star is FILLED, not stroked. A ten-point outline at stroke 1.7
+           closes up into a grey blob by the time the icon is painted at 21px;
+           a solid silhouette stays a star at any size, and the contrast
+           against the stroked bubble is what makes the pair readable rather
+           than busy. Everything else follows the house rules above. */
+        rate: '<path opacity=".16" fill="currentColor" stroke="none" d="M5.6 3.4h12.8A2.5 2.5 0 0 1 20.9 5.9v8.1a2.5 2.5 0 0 1-2.5 2.5h-6.2L7.7 20.5v-4H5.6a2.5 2.5 0 0 1-2.5-2.5V5.9a2.5 2.5 0 0 1 2.5-2.5z"/>' +
+              '<path d="M5.6 3.4h12.8A2.5 2.5 0 0 1 20.9 5.9v8.1a2.5 2.5 0 0 1-2.5 2.5h-6.2L7.7 20.5v-4H5.6a2.5 2.5 0 0 1-2.5-2.5V5.9a2.5 2.5 0 0 1 2.5-2.5z"/>' +
+              '<path fill="currentColor" stroke="none" d="M12 5.9 13.05 8.66 15.99 8.8 13.69 10.65 14.47 13.5 12 11.88 9.53 13.5 10.31 10.65 8.01 8.8 10.95 8.66z"/>',
 
         close: '<path d="M6.4 6.4 17.6 17.6"/><path d="M17.6 6.4 6.4 17.6"/>',
 
@@ -214,7 +224,12 @@
         btn.id = 'sgfbLaunch';
         btn.setAttribute('aria-haspopup', 'dialog');
         btn.setAttribute('aria-expanded', 'false');
-        btn.innerHTML = '<span class="sgfb-launch__ico">' + svg(ICON.chat) + '</span>' +
+        /* The label is never removed from the DOM. On a phone the stylesheet
+           hides it with the clip pattern rather than display:none, because
+           display:none also takes it out of the accessible name and would
+           leave the button announcing itself as "button" to a screen reader
+           on exactly the devices that have no hover to reveal it. */
+        btn.innerHTML = '<span class="sgfb-launch__ico">' + svg(ICON.rate) + '</span>' +
             '<span class="sgfb-launch__txt">Feedback</span>';
 
         var wrap = doc.createElement('div');
