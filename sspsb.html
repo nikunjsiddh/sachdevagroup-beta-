@@ -70,30 +70,166 @@
          (css/scroll-fx.css section 6) so the two read as one material. The one
          thing that is fetched is the logo itself, preloaded above. -->
     <style id="sgl-css">
-.sgl{display:none}
-html.sgl-on .sgl{display:flex;position:fixed;inset:0;z-index:2147483001;align-items:center;justify-content:center;background:linear-gradient(160deg,#071a2e 0%,#0a2340 100%);-webkit-clip-path:inset(0 0 0 0);clip-path:inset(0 0 0 0);animation:sgl-lift 1.1s cubic-bezier(.87,0,.13,1) 1.55s both}
-html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
-.sgl__art{--w:clamp(136px,14vw,172px);--h:calc(var(--w) * 99 / 110);position:relative;width:var(--w);height:var(--h);animation:sgl-out .3s ease-in 1.45s both}
-.sgl__b{position:absolute;left:0;width:100%;overflow:hidden}
-.sgl__b>img{position:absolute;left:0;width:100%;height:auto;display:block}
-.sgl__wheel{top:0;height:calc(var(--h) * 43 / 99);transform-origin:49.5% 50%;animation:sgl-turn .95s cubic-bezier(.16,1,.3,1) .05s both}
-.sgl__wheel>img{top:0}
-.sgl__rule{top:calc(var(--h) * 43 / 99);height:calc(var(--h) * 5 / 99);transform-origin:50% 50%;animation:sgl-rule .42s cubic-bezier(.16,1,.3,1) .48s both}
-.sgl__rule>img{top:calc(var(--h) * -43 / 99)}
-.sgl__word{top:calc(var(--h) * 48 / 99);height:calc(var(--h) * 15 / 99)}
-.sgl__word>img{filter:brightness(0) invert(1);top:calc(var(--h) * -48 / 99);--in:calc(var(--h) * 16 / 99);animation:sgl-slide .55s cubic-bezier(.16,1,.3,1) .58s both}
-.sgl__group{top:calc(var(--h) * 63 / 99);height:calc(var(--h) * 5 / 99);animation:sgl-fade .4s ease-out .78s both}
-.sgl__group>img{top:calc(var(--h) * -63 / 99)}
-.sgl__anchor{top:calc(var(--h) * 68 / 99);height:calc(var(--h) * 31 / 99)}
-.sgl__anchor>img{filter:brightness(0) invert(1) opacity(.82);top:calc(var(--h) * -68 / 99);--in:calc(var(--h) * -32 / 99);animation:sgl-slide .6s cubic-bezier(.16,1,.3,1) .7s both}
-@keyframes sgl-turn{from{opacity:0;transform:rotate(-95deg) scale(.82)}to{opacity:1;transform:rotate(0) scale(1)}}
-@keyframes sgl-rule{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-@keyframes sgl-slide{from{transform:translateY(var(--in))}to{transform:translateY(0)}}
-@keyframes sgl-fade{from{opacity:0}to{opacity:1}}
-@keyframes sgl-out{to{opacity:0;transform:translateY(-14px)}}
-@keyframes sgl-lift{to{-webkit-clip-path:inset(0 0 100% 0);clip-path:inset(0 0 100% 0);visibility:hidden}}
+        .sgl {
+            display: none
+        }
+
+        html.sgl-on .sgl {
+            display: flex;
+            position: fixed;
+            inset: 0;
+            z-index: 2147483001;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(160deg, #071a2e 0%, #0a2340 100%);
+            -webkit-clip-path: inset(0 0 0 0);
+            clip-path: inset(0 0 0 0);
+            animation: sgl-lift 1.1s cubic-bezier(.87, 0, .13, 1) 1.55s both
+        }
+
+        html.sgl-lock,
+        html.sgl-lock body {
+            overflow: hidden !important
+        }
+
+        .sgl__art {
+            --w: clamp(136px, 14vw, 172px);
+            --h: calc(var(--w) * 99 / 110);
+            position: relative;
+            width: var(--w);
+            height: var(--h);
+            animation: sgl-out .3s ease-in 1.45s both
+        }
+
+        .sgl__b {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            overflow: hidden
+        }
+
+        .sgl__b>img {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: auto;
+            display: block
+        }
+
+        .sgl__wheel {
+            top: 0;
+            height: calc(var(--h) * 43 / 99);
+            transform-origin: 49.5% 50%;
+            animation: sgl-turn .95s cubic-bezier(.16, 1, .3, 1) .05s both
+        }
+
+        .sgl__wheel>img {
+            top: 0
+        }
+
+        .sgl__rule {
+            top: calc(var(--h) * 43 / 99);
+            height: calc(var(--h) * 5 / 99);
+            transform-origin: 50% 50%;
+            animation: sgl-rule .42s cubic-bezier(.16, 1, .3, 1) .48s both
+        }
+
+        .sgl__rule>img {
+            top: calc(var(--h) * -43 / 99)
+        }
+
+        .sgl__word {
+            top: calc(var(--h) * 48 / 99);
+            height: calc(var(--h) * 15 / 99)
+        }
+
+        .sgl__word>img {
+            filter: brightness(0) invert(1);
+            top: calc(var(--h) * -48 / 99);
+            --in: calc(var(--h) * 16 / 99);
+            animation: sgl-slide .55s cubic-bezier(.16, 1, .3, 1) .58s both
+        }
+
+        .sgl__group {
+            top: calc(var(--h) * 63 / 99);
+            height: calc(var(--h) * 5 / 99);
+            animation: sgl-fade .4s ease-out .78s both
+        }
+
+        .sgl__group>img {
+            top: calc(var(--h) * -63 / 99)
+        }
+
+        .sgl__anchor {
+            top: calc(var(--h) * 68 / 99);
+            height: calc(var(--h) * 31 / 99)
+        }
+
+        .sgl__anchor>img {
+            filter: brightness(0) invert(1) opacity(.82);
+            top: calc(var(--h) * -68 / 99);
+            --in: calc(var(--h) * -32 / 99);
+            animation: sgl-slide .6s cubic-bezier(.16, 1, .3, 1) .7s both
+        }
+
+        @keyframes sgl-turn {
+            from {
+                opacity: 0;
+                transform: rotate(-95deg) scale(.82)
+            }
+
+            to {
+                opacity: 1;
+                transform: rotate(0) scale(1)
+            }
+        }
+
+        @keyframes sgl-rule {
+            from {
+                transform: scaleX(0)
+            }
+
+            to {
+                transform: scaleX(1)
+            }
+        }
+
+        @keyframes sgl-slide {
+            from {
+                transform: translateY(var(--in))
+            }
+
+            to {
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes sgl-fade {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes sgl-out {
+            to {
+                opacity: 0;
+                transform: translateY(-14px)
+            }
+        }
+
+        @keyframes sgl-lift {
+            to {
+                -webkit-clip-path: inset(0 0 100% 0);
+                clip-path: inset(0 0 100% 0);
+                visibility: hidden
+            }
+        }
     </style>
-    <script>(function(d){var h=d.documentElement,C=h.classList;if(C){C.add('sg-motion');}else{h.className+=' sg-motion';}setTimeout(function(){if(h.getAttribute('data-sg-ready'))return;if(C){C.remove('sg-motion');}else{h.className=(' '+h.className+' ').split(' sg-motion ').join(' ');}},4000);})(document);</script>
+    <script>(function (d) { var h = d.documentElement, C = h.classList; if (C) { C.add('sg-motion'); } else { h.className += ' sg-motion'; } setTimeout(function () { if (h.getAttribute('data-sg-ready')) return; if (C) { C.remove('sg-motion'); } else { h.className = (' ' + h.className + ' ').split(' sg-motion ').join(' '); } }, 4000); })(document);</script>
 
     <title>Sachdeva Group of Industries Leading Ship Recycling Companies in Alang Gujarat, India</title>
     <meta name="description" content="">
@@ -141,7 +277,10 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
 
     <!-- ====== scroll to top ====== -->
     <a id="toTopBtn" title="Go to top" aria-label="Back to top" href="javascript:void(0)">
-        <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5.5 15 6.5-6.5 6.5 6.5"/></svg>
+        <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="m5.5 15 6.5-6.5 6.5 6.5" />
+        </svg>
     </a>
 
 
@@ -241,8 +380,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     </nav>
                     <h1 class="mrnp-hero__title" data-mrnp-split-words>Sachdeva Steel Products (Ship Breakers) LLP</h1>
                     <p class="mrnp-hero__sub" data-sg-split>
-                        Our Company Sachdeva Steel Products (Ship Breaking Unit) is involved in the business since
-                        ship breaking activity started at Alang in 1983.
+                        Our Company Sachdeva Steel Products (Ship Recycling Unit) is involved in the business since
+                        ship Recycling activity started at Alang in 1983.
                     </p>
                     <div class="mrnp-hero__rule"></div>
                 </div>
@@ -267,7 +406,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
 
                     <div class="pfx-unit__media mrnp-split__media" data-mrn-tilt="7">
                         <div class="mrnp-split__frame" data-drift-img data-sfx-open>
-                            <img loading="lazy" decoding="async" src="images/s3.webp" alt="Laden container vessel under way">
+                            <img loading="lazy" decoding="async" src="images/s3.webp"
+                                alt="Laden container vessel under way">
                         </div>
                         <div class="pfx-stamp">
                             <strong><span data-count="32">32</span></strong>
@@ -287,7 +427,7 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                         <ul class="pfx-figures">
                             <li class="pfx-figure">
                                 <strong>1983</strong>
-                                <span>Ship Breaking At Alang</span>
+                                <span>Ship Recycling At Alang</span>
                             </li>
                             <li class="pfx-figure">
                                 <strong>1994</strong>
@@ -307,12 +447,22 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                             <a class="pfx-hop__link" href="#yard-details">
                                 <span class="pfx-hop__no" aria-hidden="true">01</span>
                                 Yard Details
-                                <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                                <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                                    focusable="false">
+                                    <path d="M2.5 12h17" />
+                                    <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                                </svg>
                             </a>
                             <a class="pfx-hop__link" href="#fleet">
                                 <span class="pfx-hop__no" aria-hidden="true">02</span>
                                 List of Ships Recycled
-                                <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                                <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                    stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                                    focusable="false">
+                                    <path d="M2.5 12h17" />
+                                    <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                                </svg>
                             </a>
                         </nav>
                     </div>
@@ -339,7 +489,7 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                                 </div>
                                 <div>
                                     <strong>Address</strong>
-                                    <p>Plot No 65, Alang Ship Breaking Yard, Alang, Bhavnagar, Gujarat ,India</p>
+                                    <p>Plot No 65, Alang Ship Recycling Yard, Alang, Bhavnagar, Gujarat ,India</p>
                                 </div>
                             </div>
 
@@ -377,7 +527,7 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                         <div class="mrnp-split__frame" data-drift-img data-sfx-open>
                             <img loading="lazy" decoding="async" src="images/container.webp" alt="Shipping container">
                         </div>
-                        <span class="mrnp-split__tag">Alang Ship Breaking Yard</span>
+                        <span class="mrnp-split__tag">Alang Ship Recycling Yard</span>
                     </div>
                 </div>
             </div>
@@ -673,7 +823,7 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                         <span class="sgf-yard__badge">
                             <span class="sgf-yard__dot" aria-hidden="true"></span> Yard Address
                         </span>
-                        <h2 class="sgf-yard__title">Plot No. 65, Alang Ship Breaking Yard</h2>
+                        <h2 class="sgf-yard__title">Plot No. 65, Alang Ship Recycling Yard</h2>
                         <p class="sgf-yard__meta">
                             Alang, Bhavnagar, Gujarat, India
                             <span class="sgf-yard__sep" aria-hidden="true">&middot;</span>
@@ -684,7 +834,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     </div>
 
                     <a class="sgf-yard__btn" href="contact_us.html">
-                        Discuss a Vessel <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                        Discuss a Vessel <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                            focusable="false">
+                            <path d="M2.5 12h17" />
+                            <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -704,7 +859,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <!-- Brand -->
                     <div class="sgf-col sgf-col--brand">
                         <a href="index.html">
-                            <img loading="lazy" decoding="async" src="images/logo.png" class="sgf-logo" alt="Sachdeva Group of Industries">
+                            <img loading="lazy" decoding="async" src="images/logo.png" class="sgf-logo"
+                                alt="Sachdeva Group of Industries">
                         </a>
                         <p class="sgf-about">
                             India's trusted partner for the safe and environmentally sound recycling of end-of-life
@@ -762,7 +918,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                                     Gallery</a></li>
                             <li><a href="news.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     News &amp; Media</a></li>
-                            <li><a href="about_us.html#testimonials"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                            <li><a href="about_us.html#testimonials"><span class="sgf-chev"
+                                        aria-hidden="true">&rsaquo;</span>
                                     Testimonials</a></li>
                             <li><a href="contact_us.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     Contact Us</a></li>
@@ -861,9 +1018,15 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
          no such flag, so it adds the scrubbed drift without taking anything
          away. If either request fails, the file returns at its first guard
          and the page keeps exactly the motion it has today. -->
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha512-P2IDYZfqSwjcSjX0BKeNhwRUH8zRPGlgcWl5n6gBLzdi4Y5/0O4zaXrtO4K9TZK6Hn1BenYpKowuCavNandERg==" crossorigin="anonymous"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js" integrity="sha512-wOeEC+9qERAzhliwBFPDb6t8TiFFxdxG8vhK/Ygs7TuC44bpg8pg/X2/U/u+0X4fK05wb9id1EIipnF02+CFQw==" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"
+        integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA=="
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"
+        integrity="sha512-P2IDYZfqSwjcSjX0BKeNhwRUH8zRPGlgcWl5n6gBLzdi4Y5/0O4zaXrtO4K9TZK6Hn1BenYpKowuCavNandERg=="
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"
+        integrity="sha512-wOeEC+9qERAzhliwBFPDb6t8TiFFxdxG8vhK/Ygs7TuC44bpg8pg/X2/U/u+0X4fK05wb9id1EIipnF02+CFQw=="
+        crossorigin="anonymous"></script>
     <script defer src="js/scroll-drift.js"></script>
     <script defer src="js/scroll-fx.js"></script>
 </body>
