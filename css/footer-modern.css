@@ -1283,6 +1283,26 @@ a.sgf-contact__value:focus {
     border-bottom-color: rgba(53, 198, 244, .5);
 }
 
+
+/* --- touch keyboards: never let the field trigger a page zoom --------------
+   iOS Safari zooms the whole page in when a form control it is about to focus
+   computes below 16px, and it does not zoom back out on blur — the visitor is
+   left on a page scaled past the viewport, which reads as the layout breaking
+   the moment they tap a field. The controls above sit at 15.5px, half a pixel
+   under the threshold, so every one of them trips it.
+
+   Answered on `pointer: coarse` rather than a width breakpoint because the
+   zoom is a property of the input device, not the window: an iPad in landscape
+   is 1024px wide and still zooms, and a narrow desktop window never does.
+   Desktop typography is therefore untouched, and 16px vs 15.5px is invisible
+   at the sizes a touch device renders these fields. */
+@media (pointer: coarse) {
+    .sgfb-field input,
+    .sgfb-field textarea {
+        font-size: 16px;
+    }
+}
+
 .sgfb-field label {
     position: absolute;
     left: 4px;
