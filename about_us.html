@@ -74,30 +74,166 @@
          (css/scroll-fx.css section 6) so the two read as one material. The one
          thing that is fetched is the logo itself, preloaded above. -->
     <style id="sgl-css">
-.sgl{display:none}
-html.sgl-on .sgl{display:flex;position:fixed;inset:0;z-index:2147483001;align-items:center;justify-content:center;background:linear-gradient(160deg,#071a2e 0%,#0a2340 100%);-webkit-clip-path:inset(0 0 0 0);clip-path:inset(0 0 0 0);animation:sgl-lift 1.1s cubic-bezier(.87,0,.13,1) 1.55s both}
-html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
-.sgl__art{--w:clamp(136px,14vw,172px);--h:calc(var(--w) * 99 / 110);position:relative;width:var(--w);height:var(--h);animation:sgl-out .3s ease-in 1.45s both}
-.sgl__b{position:absolute;left:0;width:100%;overflow:hidden}
-.sgl__b>img{position:absolute;left:0;width:100%;height:auto;display:block}
-.sgl__wheel{top:0;height:calc(var(--h) * 43 / 99);transform-origin:49.5% 50%;animation:sgl-turn .95s cubic-bezier(.16,1,.3,1) .05s both}
-.sgl__wheel>img{top:0}
-.sgl__rule{top:calc(var(--h) * 43 / 99);height:calc(var(--h) * 5 / 99);transform-origin:50% 50%;animation:sgl-rule .42s cubic-bezier(.16,1,.3,1) .48s both}
-.sgl__rule>img{top:calc(var(--h) * -43 / 99)}
-.sgl__word{top:calc(var(--h) * 48 / 99);height:calc(var(--h) * 15 / 99)}
-.sgl__word>img{filter:brightness(0) invert(1);top:calc(var(--h) * -48 / 99);--in:calc(var(--h) * 16 / 99);animation:sgl-slide .55s cubic-bezier(.16,1,.3,1) .58s both}
-.sgl__group{top:calc(var(--h) * 63 / 99);height:calc(var(--h) * 5 / 99);animation:sgl-fade .4s ease-out .78s both}
-.sgl__group>img{top:calc(var(--h) * -63 / 99)}
-.sgl__anchor{top:calc(var(--h) * 68 / 99);height:calc(var(--h) * 31 / 99)}
-.sgl__anchor>img{filter:brightness(0) invert(1) opacity(.82);top:calc(var(--h) * -68 / 99);--in:calc(var(--h) * -32 / 99);animation:sgl-slide .6s cubic-bezier(.16,1,.3,1) .7s both}
-@keyframes sgl-turn{from{opacity:0;transform:rotate(-95deg) scale(.82)}to{opacity:1;transform:rotate(0) scale(1)}}
-@keyframes sgl-rule{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-@keyframes sgl-slide{from{transform:translateY(var(--in))}to{transform:translateY(0)}}
-@keyframes sgl-fade{from{opacity:0}to{opacity:1}}
-@keyframes sgl-out{to{opacity:0;transform:translateY(-14px)}}
-@keyframes sgl-lift{to{-webkit-clip-path:inset(0 0 100% 0);clip-path:inset(0 0 100% 0);visibility:hidden}}
+        .sgl {
+            display: none
+        }
+
+        html.sgl-on .sgl {
+            display: flex;
+            position: fixed;
+            inset: 0;
+            z-index: 2147483001;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(160deg, #071a2e 0%, #0a2340 100%);
+            -webkit-clip-path: inset(0 0 0 0);
+            clip-path: inset(0 0 0 0);
+            animation: sgl-lift 1.1s cubic-bezier(.87, 0, .13, 1) 1.55s both
+        }
+
+        html.sgl-lock,
+        html.sgl-lock body {
+            overflow: hidden !important
+        }
+
+        .sgl__art {
+            --w: clamp(136px, 14vw, 172px);
+            --h: calc(var(--w) * 99 / 110);
+            position: relative;
+            width: var(--w);
+            height: var(--h);
+            animation: sgl-out .3s ease-in 1.45s both
+        }
+
+        .sgl__b {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            overflow: hidden
+        }
+
+        .sgl__b>img {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: auto;
+            display: block
+        }
+
+        .sgl__wheel {
+            top: 0;
+            height: calc(var(--h) * 43 / 99);
+            transform-origin: 49.5% 50%;
+            animation: sgl-turn .95s cubic-bezier(.16, 1, .3, 1) .05s both
+        }
+
+        .sgl__wheel>img {
+            top: 0
+        }
+
+        .sgl__rule {
+            top: calc(var(--h) * 43 / 99);
+            height: calc(var(--h) * 5 / 99);
+            transform-origin: 50% 50%;
+            animation: sgl-rule .42s cubic-bezier(.16, 1, .3, 1) .48s both
+        }
+
+        .sgl__rule>img {
+            top: calc(var(--h) * -43 / 99)
+        }
+
+        .sgl__word {
+            top: calc(var(--h) * 48 / 99);
+            height: calc(var(--h) * 15 / 99)
+        }
+
+        .sgl__word>img {
+            filter: brightness(0) invert(1);
+            top: calc(var(--h) * -48 / 99);
+            --in: calc(var(--h) * 16 / 99);
+            animation: sgl-slide .55s cubic-bezier(.16, 1, .3, 1) .58s both
+        }
+
+        .sgl__group {
+            top: calc(var(--h) * 63 / 99);
+            height: calc(var(--h) * 5 / 99);
+            animation: sgl-fade .4s ease-out .78s both
+        }
+
+        .sgl__group>img {
+            top: calc(var(--h) * -63 / 99)
+        }
+
+        .sgl__anchor {
+            top: calc(var(--h) * 68 / 99);
+            height: calc(var(--h) * 31 / 99)
+        }
+
+        .sgl__anchor>img {
+            filter: brightness(0) invert(1) opacity(.82);
+            top: calc(var(--h) * -68 / 99);
+            --in: calc(var(--h) * -32 / 99);
+            animation: sgl-slide .6s cubic-bezier(.16, 1, .3, 1) .7s both
+        }
+
+        @keyframes sgl-turn {
+            from {
+                opacity: 0;
+                transform: rotate(-95deg) scale(.82)
+            }
+
+            to {
+                opacity: 1;
+                transform: rotate(0) scale(1)
+            }
+        }
+
+        @keyframes sgl-rule {
+            from {
+                transform: scaleX(0)
+            }
+
+            to {
+                transform: scaleX(1)
+            }
+        }
+
+        @keyframes sgl-slide {
+            from {
+                transform: translateY(var(--in))
+            }
+
+            to {
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes sgl-fade {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes sgl-out {
+            to {
+                opacity: 0;
+                transform: translateY(-14px)
+            }
+        }
+
+        @keyframes sgl-lift {
+            to {
+                -webkit-clip-path: inset(0 0 100% 0);
+                clip-path: inset(0 0 100% 0);
+                visibility: hidden
+            }
+        }
     </style>
-    <script>(function(d){var h=d.documentElement,C=h.classList;if(C){C.add('sg-motion');}else{h.className+=' sg-motion';}setTimeout(function(){if(h.getAttribute('data-sg-ready'))return;if(C){C.remove('sg-motion');}else{h.className=(' '+h.className+' ').split(' sg-motion ').join(' ');}},4000);})(document);</script>
+    <script>(function (d) { var h = d.documentElement, C = h.classList; if (C) { C.add('sg-motion'); } else { h.className += ' sg-motion'; } setTimeout(function () { if (h.getAttribute('data-sg-ready')) return; if (C) { C.remove('sg-motion'); } else { h.className = (' ' + h.className + ' ').split(' sg-motion ').join(' '); } }, 4000); })(document);</script>
 
     <title>Sachdeva Group of Industries Leading Ship Recycling Companies in Alang Gujarat, India</title>
     <meta name="description" content="">
@@ -148,7 +284,10 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
 
     <!-- ====== scroll to top ====== -->
     <a id="toTopBtn" title="Go to top" aria-label="Back to top" href="javascript:void(0)">
-        <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5.5 15 6.5-6.5 6.5 6.5"/></svg>
+        <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="m5.5 15 6.5-6.5 6.5 6.5" />
+        </svg>
     </a>
 
 
@@ -271,14 +410,21 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     </nav>
 
                     <div class="mrn-hero__badge">
-                        <b aria-hidden="true"><svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="4.8" r="2.4"/><path d="M12 7.2v13.6"/><path d="M8.4 10.4h7.2"/><path d="M4.2 13.2H2.4a9.6 9.6 0 0 0 19.2 0h-1.8"/></svg></b>
+                        <b aria-hidden="true"><svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                                focusable="false">
+                                <circle cx="12" cy="4.8" r="2.4" />
+                                <path d="M12 7.2v13.6" />
+                                <path d="M8.4 10.4h7.2" />
+                                <path d="M4.2 13.2H2.4a9.6 9.6 0 0 0 19.2 0h-1.8" />
+                            </svg></b>
                         <span>Alang Ship Recycling Yard &middot; Since 1983</span>
                     </div>
 
                     <h1 class="mrnp-hero__title" data-mrnp-split-words>About Sachdeva Group</h1>
 
                     <p class="mrnp-hero__sub" data-sg-split>
-                        The Sachdeva Group, through its companies Sachdeva Steel Products (Ship Breaking Unit) LLP
+                        The Sachdeva Group, through its companies Sachdeva Steel Products (Ship Recycling Unit) LLP
                         and Jai Jagdish Ship Breakers Pvt. Ltd., has been a cornerstone in the ship recycling
                         industry since its inception in Alang, Gujarat, in 1983.
                     </p>
@@ -288,11 +434,18 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <div class="mrn-hero__actions">
                         <a href="contact_us.html" class="mrn-btn mrn-btn--gold" data-mrn-magnetic>
                             Discuss a Vessel
-                            <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                            <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M2.5 12h17" />
+                                <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                            </svg>
                         </a>
                         <a href="#profile" class="mrn-btn mrn-btn--ghost">
                             Group Profile
-                            <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5.5 9 6.5 6.5 6.5-6.5"/></svg>
+                            <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="m5.5 9 6.5 6.5 6.5-6.5" />
+                            </svg>
                         </a>
                     </div>
                 </div>
@@ -348,7 +501,7 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                             <p>The Group operates on approximately 4,950 square meters of dedicated land, with the
                                 capacity to process over 100,000 lightweight tons of ships annually.</p>
                             <p>Our journey began under the name Madhav Industrial Corporation, which led the way in
-                                shipbreaking until 1997. In that year, we rebranded to Sachdeva Steel Products (Ship
+                                shipRecycling until 1997. In that year, we rebranded to Sachdeva Steel Products (Ship
                                 Breakers) and have successfully recycled 37 ships. To meet growing demand and further
                                 expand our operations, we established Jai Jagdish Ship Breakers Pvt. Ltd. in 1998, which
                                 has since recycled 36 ships.</p>
@@ -357,7 +510,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                         </div>
 
                         <a href="contact_us.html" class="mrn-btn mrn-btn--navy" data-mrn-reveal data-mrn-magnetic>
-                            Discuss a Vessel <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                            Discuss a Vessel <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                                focusable="false">
+                                <path d="M2.5 12h17" />
+                                <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                            </svg>
                         </a>
                     </div>
                 </div>
@@ -403,7 +561,7 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <li class="abt-time__item" data-mrnp-tilt="7">
                         <span class="abt-time__year">1983</span>
                         <h4>Madhav Industrial Corporation</h4>
-                        <p>The family enters ship recycling in the first year of ship-breaking activity at Alang,
+                        <p>The family enters ship recycling in the first year of ship-Recycling activity at Alang,
                             operating under the name Madhav Industrial Corporation.</p>
                     </li>
                     <li class="abt-time__item" data-mrnp-tilt="7">
@@ -469,8 +627,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                             <span class="viz-card__no" aria-hidden="true">02</span>
                             <span class="viz-card__icon" aria-hidden="true">
                                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
-                                    stroke-linecap="round" stroke-linejoin="round"
-                                    xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+                                    stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg"
+                                    aria-hidden="true" focusable="false">
                                     <circle cx="12" cy="12" r="9" />
                                     <path d="M15.6 8.4l-2.1 5.1-5.1 2.1 2.1-5.1z" fill="currentColor" stroke="none" />
                                     <path d="M12 2.6v2M12 19.4v2M21.4 12h-2M4.6 12h-2" />
@@ -507,7 +665,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <li class="cmp" data-mrnp-tilt="6">
                         <span class="cmp__rule" aria-hidden="true"></span>
                         <span class="cmp__head">
-                            <span class="cmp__seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M20 6L9 17l-5-5"/></svg></span>
+                            <span class="cmp__seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+                                    focusable="false">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg></span>
                             <span class="cmp__no" aria-hidden="true">01</span>
                         </span>
                         <span class="cmp__k">IMO</span>
@@ -517,7 +680,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <li class="cmp" data-mrnp-tilt="6">
                         <span class="cmp__rule" aria-hidden="true"></span>
                         <span class="cmp__head">
-                            <span class="cmp__seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M20 6L9 17l-5-5"/></svg></span>
+                            <span class="cmp__seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+                                    focusable="false">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg></span>
                             <span class="cmp__no" aria-hidden="true">02</span>
                         </span>
                         <span class="cmp__k">ILO</span>
@@ -527,7 +695,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <li class="cmp" data-mrnp-tilt="6">
                         <span class="cmp__rule" aria-hidden="true"></span>
                         <span class="cmp__head">
-                            <span class="cmp__seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M20 6L9 17l-5-5"/></svg></span>
+                            <span class="cmp__seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+                                    focusable="false">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg></span>
                             <span class="cmp__no" aria-hidden="true">03</span>
                         </span>
                         <span class="cmp__k">Basel</span>
@@ -537,7 +710,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <li class="cmp" data-mrnp-tilt="6">
                         <span class="cmp__rule" aria-hidden="true"></span>
                         <span class="cmp__head">
-                            <span class="cmp__seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M20 6L9 17l-5-5"/></svg></span>
+                            <span class="cmp__seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+                                    focusable="false">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg></span>
                             <span class="cmp__no" aria-hidden="true">04</span>
                         </span>
                         <span class="cmp__k">HKC</span>
@@ -547,7 +725,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <li class="cmp" data-mrnp-tilt="6">
                         <span class="cmp__rule" aria-hidden="true"></span>
                         <span class="cmp__head">
-                            <span class="cmp__seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false"><path d="M20 6L9 17l-5-5"/></svg></span>
+                            <span class="cmp__seal" aria-hidden="true"><svg viewBox="0 0 24 24" fill="none"
+                                    stroke="currentColor" stroke-width="1.8" stroke-linecap="round"
+                                    stroke-linejoin="round" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"
+                                    focusable="false">
+                                    <path d="M20 6L9 17l-5-5" />
+                                </svg></span>
                             <span class="cmp__no" aria-hidden="true">05</span>
                         </span>
                         <span class="cmp__k">EU SRR</span>
@@ -575,13 +758,18 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                         <div class="abt-unit__body">
                             <div class="abt-unit__no" aria-hidden="true">01</div>
                             <h3>Sachdeva Steel Products<br>(Ship Breakers) LLP</h3>
-                            <p>A key player in the ship recycling industry since ship-breaking began at Alang in
+                            <p>A key player in the ship recycling industry since ship-Recycling began at Alang in
                                 1983. Building on that legacy, the business was formally established under the name
                                 Sachdeva Steel Products (Ship Breakers) in 1994.</p>
                             <p>With a track record of recycling 37 ships to date, the unit operates with a focus on
                                 environmental responsibility, compliance with international standards and a
                                 dedication to excellence.</p>
-                            <a href="sspsb.html" class="mrn-btn mrn-btn--gold">View Unit <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg></a>
+                            <a href="sspsb.html" class="mrn-btn mrn-btn--gold">View Unit <svg class="sg-ico"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M2.5 12h17" />
+                                    <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                                </svg></a>
                         </div>
                         <div class="abt-unit__meta">
                             <div><strong><span data-count="37">0</span><i>+</i></strong><span>Ships Recycled</span></div>
@@ -602,7 +790,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                             <p>With a strong legacy and decades of expertise, the unit has recycled 36 ships to date,
                                 committed to environmentally responsible practice, safety and compliance with
                                 international standards.</p>
-                            <a href="jjsb.html" class="mrn-btn mrn-btn--gold">View Unit <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg></a>
+                            <a href="jjsb.html" class="mrn-btn mrn-btn--gold">View Unit <svg class="sg-ico"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M2.5 12h17" />
+                                    <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                                </svg></a>
                         </div>
                         <div class="abt-unit__meta">
                             <div><strong><span data-count="36">0</span><i>+</i></strong><span>Ships Recycled</span></div>
@@ -637,7 +830,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                             <span class="tst__no" aria-hidden="true">01</span>
                         </div>
                         <span class="tst__rule" aria-hidden="true"></span>
-                        <p class="tst__text">Generally found good infrastructure for ship recycling Which is good initiative for facility management</p>
+                        <p class="tst__text">Generally found good infrastructure for ship recycling Which is good
+                            initiative for facility management</p>
                     </article>
 
                     <article class="tst" data-mrnp-tilt="6">
@@ -647,7 +841,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                             <span class="tst__no" aria-hidden="true">02</span>
                         </div>
                         <span class="tst__rule" aria-hidden="true"></span>
-                        <p class="tst__text">Team&#039;s attitude to obtain knowledge is very good. Please keep obtaining knowledge.</p>
+                        <p class="tst__text">Team&#039;s attitude to obtain knowledge is very good. Please keep
+                            obtaining knowledge.</p>
                     </article>
 
                     <article class="tst" data-mrnp-tilt="6">
@@ -657,7 +852,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                             <span class="tst__no" aria-hidden="true">03</span>
                         </div>
                         <span class="tst__rule" aria-hidden="true"></span>
-                        <p class="tst__text">Yard is well developed. Safety and Environment friendly operation is good. Hope to see next upgrading.</p>
+                        <p class="tst__text">Yard is well developed. Safety and Environment friendly operation is good.
+                            Hope to see next upgrading.</p>
                     </article>
 
                     <article class="tst" data-mrnp-tilt="6">
@@ -667,7 +863,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                             <span class="tst__no" aria-hidden="true">04</span>
                         </div>
                         <span class="tst__rule" aria-hidden="true"></span>
-                        <p class="tst__text">We are impressed that well managed good yard &amp; Nice idea like Floating Platform.</p>
+                        <p class="tst__text">We are impressed that well managed good yard &amp; Nice idea like Floating
+                            Platform.</p>
                     </article>
                 </div>
                 <!-- SG-CMS:testimonials:end -->
@@ -685,39 +882,50 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                 <div class="mrnp-certs" data-mrn-stagger="90" data-mrn-reveal>
                     <article class="mrnp-certcard" data-mrnp-tilt="8" data-mrnp-lightbox="images/cert/1.jpg"
                         data-mrnp-caption="Certificate 01" data-sfx-open>
-                        <img loading="lazy" decoding="async" src="images/cert/1.jpg" alt="Sachdeva Group certificate 01">
+                        <img loading="lazy" decoding="async" src="images/cert/1.jpg"
+                            alt="Sachdeva Group certificate 01">
                         <div class="mrnp-certcard__bar">Certificate 01</div>
                     </article>
                     <article class="mrnp-certcard" data-mrnp-tilt="8" data-mrnp-lightbox="images/cert/2.jpg"
                         data-mrnp-caption="Certificate 02" data-sfx-open>
-                        <img loading="lazy" decoding="async" src="images/cert/2.jpg" alt="Sachdeva Group certificate 02">
+                        <img loading="lazy" decoding="async" src="images/cert/2.jpg"
+                            alt="Sachdeva Group certificate 02">
                         <div class="mrnp-certcard__bar">Certificate 02</div>
                     </article>
                     <article class="mrnp-certcard" data-mrnp-tilt="8" data-mrnp-lightbox="images/cert/3.jpg"
                         data-mrnp-caption="Certificate 03" data-sfx-open>
-                        <img loading="lazy" decoding="async" src="images/cert/3.jpg" alt="Sachdeva Group certificate 03">
+                        <img loading="lazy" decoding="async" src="images/cert/3.jpg"
+                            alt="Sachdeva Group certificate 03">
                         <div class="mrnp-certcard__bar">Certificate 03</div>
                     </article>
                     <article class="mrnp-certcard" data-mrnp-tilt="8" data-mrnp-lightbox="images/cert/4.jpg"
                         data-mrnp-caption="Certificate 04" data-sfx-open>
-                        <img loading="lazy" decoding="async" src="images/cert/4.jpg" alt="Sachdeva Group certificate 04">
+                        <img loading="lazy" decoding="async" src="images/cert/4.jpg"
+                            alt="Sachdeva Group certificate 04">
                         <div class="mrnp-certcard__bar">Certificate 04</div>
                     </article>
                     <article class="mrnp-certcard" data-mrnp-tilt="8" data-mrnp-lightbox="images/cert/5.jpg"
                         data-mrnp-caption="Certificate 05" data-sfx-open>
-                        <img loading="lazy" decoding="async" src="images/cert/5.jpg" alt="Sachdeva Group certificate 05">
+                        <img loading="lazy" decoding="async" src="images/cert/5.jpg"
+                            alt="Sachdeva Group certificate 05">
                         <div class="mrnp-certcard__bar">Certificate 05</div>
                     </article>
                     <article class="mrnp-certcard" data-mrnp-tilt="8" data-mrnp-lightbox="images/cert/6.jpg"
                         data-mrnp-caption="Certificate 06" data-sfx-open>
-                        <img loading="lazy" decoding="async" src="images/cert/6.jpg" alt="Sachdeva Group certificate 06">
+                        <img loading="lazy" decoding="async" src="images/cert/6.jpg"
+                            alt="Sachdeva Group certificate 06">
                         <div class="mrnp-certcard__bar">Certificate 06</div>
                     </article>
                 </div>
 
                 <div class="mrn-center abt-cred-cta">
                     <a href="our_credentials.html" class="mrn-btn mrn-btn--navy" data-mrn-reveal data-mrn-magnetic>
-                        All Credentials <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                        All Credentials <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                            focusable="false">
+                            <path d="M2.5 12h17" />
+                            <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -738,7 +946,7 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                         <span class="sgf-yard__badge">
                             <span class="sgf-yard__dot" aria-hidden="true"></span> Yard Address
                         </span>
-                        <h2 class="sgf-yard__title">Plot No. 65, Alang Ship Breaking Yard</h2>
+                        <h2 class="sgf-yard__title">Plot No. 65, Alang Ship Recycling Yard</h2>
                         <p class="sgf-yard__meta">
                             Alang, Bhavnagar, Gujarat, India
                             <span class="sgf-yard__sep" aria-hidden="true">&middot;</span>
@@ -749,7 +957,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     </div>
 
                     <a class="sgf-yard__btn" href="contact_us.html">
-                        Discuss a Vessel <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                        Discuss a Vessel <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                            focusable="false">
+                            <path d="M2.5 12h17" />
+                            <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -769,7 +982,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <!-- Brand -->
                     <div class="sgf-col sgf-col--brand">
                         <a href="index.html">
-                            <img loading="lazy" decoding="async" src="images/logo.png" class="sgf-logo" alt="Sachdeva Group of Industries">
+                            <img loading="lazy" decoding="async" src="images/logo.png" class="sgf-logo"
+                                alt="Sachdeva Group of Industries">
                         </a>
                         <p class="sgf-about">
                             India's trusted partner for the safe and environmentally sound recycling of end-of-life
@@ -827,7 +1041,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                                     Gallery</a></li>
                             <li><a href="news.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     News &amp; Media</a></li>
-                            <li><a href="about_us.html#testimonials"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                            <li><a href="about_us.html#testimonials"><span class="sgf-chev"
+                                        aria-hidden="true">&rsaquo;</span>
                                     Testimonials</a></li>
                             <li><a href="contact_us.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     Contact Us</a></li>
@@ -927,9 +1142,15 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
          no such flag, so it adds the scrubbed drift without taking anything
          away. If either request fails, the file returns at its first guard
          and the page keeps exactly the motion it has today. -->
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha512-P2IDYZfqSwjcSjX0BKeNhwRUH8zRPGlgcWl5n6gBLzdi4Y5/0O4zaXrtO4K9TZK6Hn1BenYpKowuCavNandERg==" crossorigin="anonymous"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js" integrity="sha512-wOeEC+9qERAzhliwBFPDb6t8TiFFxdxG8vhK/Ygs7TuC44bpg8pg/X2/U/u+0X4fK05wb9id1EIipnF02+CFQw==" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"
+        integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA=="
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"
+        integrity="sha512-P2IDYZfqSwjcSjX0BKeNhwRUH8zRPGlgcWl5n6gBLzdi4Y5/0O4zaXrtO4K9TZK6Hn1BenYpKowuCavNandERg=="
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"
+        integrity="sha512-wOeEC+9qERAzhliwBFPDb6t8TiFFxdxG8vhK/Ygs7TuC44bpg8pg/X2/U/u+0X4fK05wb9id1EIipnF02+CFQw=="
+        crossorigin="anonymous"></script>
     <script defer src="js/scroll-drift.js"></script>
     <script defer src="js/scroll-fx.js"></script>
 </body>

@@ -4,7 +4,7 @@ Reference for converting inner pages. **Read this fully before editing any page.
 
 ## The client & the category
 
-Heavy-industrial **B2B maritime — ship recycling / ship breaking yard operator** at Alang,
+Heavy-industrial **B2B maritime — ship recycling / ship Recycling yard operator** at Alang,
 Gujarat, India. Operating since 1983 across two units: Sachdeva Steel Products (Ship Breakers) LLP
 and Jai Jagdish Ship Breakers Pvt. Ltd.
 
@@ -509,7 +509,7 @@ A content audit of all 12 live pages found these. Fix the ones that touch your p
 
 `gallery.html` and `news.html` were never populated with real content. They still carry the original
 theme's stock photos, with alt text reading **"Rock Concert", "Ballet", "Stand Up Comedy",
-"Theater Performance", "Jazz Concert"** — concert and dance imagery on a ship-breaking company's
+"Theater Performance", "Jazz Concert"** — concert and dance imagery on a ship-Recycling company's
 website. Their only real copy is the headings "Show Gallery" and "Latest News".
 
 **`gallery.html`** — remove the concert filler entirely and rebuild the grid from the client's own
