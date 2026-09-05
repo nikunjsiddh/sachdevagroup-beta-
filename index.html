@@ -83,40 +83,176 @@
          (css/scroll-fx.css section 6) so the two read as one material. The one
          thing that is fetched is the logo itself, preloaded above. -->
     <style id="sgl-css">
-.sgl{display:none}
-html.sgl-on .sgl{display:flex;position:fixed;inset:0;z-index:2147483001;align-items:center;justify-content:center;background:linear-gradient(160deg,#071a2e 0%,#0a2340 100%);-webkit-clip-path:inset(0 0 0 0);clip-path:inset(0 0 0 0);animation:sgl-lift 1.1s cubic-bezier(.87,0,.13,1) 1.55s both}
-html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
-.sgl__art{--w:clamp(136px,14vw,172px);--h:calc(var(--w) * 99 / 110);position:relative;width:var(--w);height:var(--h);animation:sgl-out .3s ease-in 1.45s both}
-.sgl__b{position:absolute;left:0;width:100%;overflow:hidden}
-.sgl__b>img{position:absolute;left:0;width:100%;height:auto;display:block}
-.sgl__wheel{top:0;height:calc(var(--h) * 43 / 99);transform-origin:49.5% 50%;animation:sgl-turn .95s cubic-bezier(.16,1,.3,1) .05s both}
-.sgl__wheel>img{top:0}
-.sgl__rule{top:calc(var(--h) * 43 / 99);height:calc(var(--h) * 5 / 99);transform-origin:50% 50%;animation:sgl-rule .42s cubic-bezier(.16,1,.3,1) .48s both}
-.sgl__rule>img{top:calc(var(--h) * -43 / 99)}
-.sgl__word{top:calc(var(--h) * 48 / 99);height:calc(var(--h) * 15 / 99)}
-.sgl__word>img{filter:brightness(0) invert(1);top:calc(var(--h) * -48 / 99);--in:calc(var(--h) * 16 / 99);animation:sgl-slide .55s cubic-bezier(.16,1,.3,1) .58s both}
-.sgl__group{top:calc(var(--h) * 63 / 99);height:calc(var(--h) * 5 / 99);animation:sgl-fade .4s ease-out .78s both}
-.sgl__group>img{top:calc(var(--h) * -63 / 99)}
-.sgl__anchor{top:calc(var(--h) * 68 / 99);height:calc(var(--h) * 31 / 99)}
-.sgl__anchor>img{filter:brightness(0) invert(1) opacity(.82);top:calc(var(--h) * -68 / 99);--in:calc(var(--h) * -32 / 99);animation:sgl-slide .6s cubic-bezier(.16,1,.3,1) .7s both}
-@keyframes sgl-turn{from{opacity:0;transform:rotate(-95deg) scale(.82)}to{opacity:1;transform:rotate(0) scale(1)}}
-@keyframes sgl-rule{from{transform:scaleX(0)}to{transform:scaleX(1)}}
-@keyframes sgl-slide{from{transform:translateY(var(--in))}to{transform:translateY(0)}}
-@keyframes sgl-fade{from{opacity:0}to{opacity:1}}
-@keyframes sgl-out{to{opacity:0;transform:translateY(-14px)}}
-@keyframes sgl-lift{to{-webkit-clip-path:inset(0 0 100% 0);clip-path:inset(0 0 100% 0);visibility:hidden}}
+        .sgl {
+            display: none
+        }
+
+        html.sgl-on .sgl {
+            display: flex;
+            position: fixed;
+            inset: 0;
+            z-index: 2147483001;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(160deg, #071a2e 0%, #0a2340 100%);
+            -webkit-clip-path: inset(0 0 0 0);
+            clip-path: inset(0 0 0 0);
+            animation: sgl-lift 1.1s cubic-bezier(.87, 0, .13, 1) 1.55s both
+        }
+
+        html.sgl-lock,
+        html.sgl-lock body {
+            overflow: hidden !important
+        }
+
+        .sgl__art {
+            --w: clamp(136px, 14vw, 172px);
+            --h: calc(var(--w) * 99 / 110);
+            position: relative;
+            width: var(--w);
+            height: var(--h);
+            animation: sgl-out .3s ease-in 1.45s both
+        }
+
+        .sgl__b {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            overflow: hidden
+        }
+
+        .sgl__b>img {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: auto;
+            display: block
+        }
+
+        .sgl__wheel {
+            top: 0;
+            height: calc(var(--h) * 43 / 99);
+            transform-origin: 49.5% 50%;
+            animation: sgl-turn .95s cubic-bezier(.16, 1, .3, 1) .05s both
+        }
+
+        .sgl__wheel>img {
+            top: 0
+        }
+
+        .sgl__rule {
+            top: calc(var(--h) * 43 / 99);
+            height: calc(var(--h) * 5 / 99);
+            transform-origin: 50% 50%;
+            animation: sgl-rule .42s cubic-bezier(.16, 1, .3, 1) .48s both
+        }
+
+        .sgl__rule>img {
+            top: calc(var(--h) * -43 / 99)
+        }
+
+        .sgl__word {
+            top: calc(var(--h) * 48 / 99);
+            height: calc(var(--h) * 15 / 99)
+        }
+
+        .sgl__word>img {
+            filter: brightness(0) invert(1);
+            top: calc(var(--h) * -48 / 99);
+            --in: calc(var(--h) * 16 / 99);
+            animation: sgl-slide .55s cubic-bezier(.16, 1, .3, 1) .58s both
+        }
+
+        .sgl__group {
+            top: calc(var(--h) * 63 / 99);
+            height: calc(var(--h) * 5 / 99);
+            animation: sgl-fade .4s ease-out .78s both
+        }
+
+        .sgl__group>img {
+            top: calc(var(--h) * -63 / 99)
+        }
+
+        .sgl__anchor {
+            top: calc(var(--h) * 68 / 99);
+            height: calc(var(--h) * 31 / 99)
+        }
+
+        .sgl__anchor>img {
+            filter: brightness(0) invert(1) opacity(.82);
+            top: calc(var(--h) * -68 / 99);
+            --in: calc(var(--h) * -32 / 99);
+            animation: sgl-slide .6s cubic-bezier(.16, 1, .3, 1) .7s both
+        }
+
+        @keyframes sgl-turn {
+            from {
+                opacity: 0;
+                transform: rotate(-95deg) scale(.82)
+            }
+
+            to {
+                opacity: 1;
+                transform: rotate(0) scale(1)
+            }
+        }
+
+        @keyframes sgl-rule {
+            from {
+                transform: scaleX(0)
+            }
+
+            to {
+                transform: scaleX(1)
+            }
+        }
+
+        @keyframes sgl-slide {
+            from {
+                transform: translateY(var(--in))
+            }
+
+            to {
+                transform: translateY(0)
+            }
+        }
+
+        @keyframes sgl-fade {
+            from {
+                opacity: 0
+            }
+
+            to {
+                opacity: 1
+            }
+        }
+
+        @keyframes sgl-out {
+            to {
+                opacity: 0;
+                transform: translateY(-14px)
+            }
+        }
+
+        @keyframes sgl-lift {
+            to {
+                -webkit-clip-path: inset(0 0 100% 0);
+                clip-path: inset(0 0 100% 0);
+                visibility: hidden
+            }
+        }
     </style>
     <script>(function (d, w) {
-        var h = d.documentElement, C = h.classList;
-        function add(c) { if (C) { C.add(c); } else { h.className += ' ' + c; } }
-        function del(c) { if (C) { C.remove(c); } else { h.className = (' ' + h.className + ' ').split(' ' + c + ' ').join(' '); } }
-        w.SG_MOTION_ENGINE = 'gsap';
-        add('sg-motion'); add('sg-anim');
-        setTimeout(function () {
-            if (!h.getAttribute('data-sg-ready')) del('sg-motion');
-            if (!h.getAttribute('data-mo-ready')) del('sg-anim');
-        }, 4000);
-    })(document, window);</script>
+            var h = d.documentElement, C = h.classList;
+            function add(c) { if (C) { C.add(c); } else { h.className += ' ' + c; } }
+            function del(c) { if (C) { C.remove(c); } else { h.className = (' ' + h.className + ' ').split(' ' + c + ' ').join(' '); } }
+            w.SG_MOTION_ENGINE = 'gsap';
+            add('sg-motion'); add('sg-anim');
+            setTimeout(function () {
+                if (!h.getAttribute('data-sg-ready')) del('sg-motion');
+                if (!h.getAttribute('data-mo-ready')) del('sg-anim');
+            }, 4000);
+        })(document, window);</script>
 
     <title>Sachdeva Group of Industries - Leading Ship Recycling Companies in Alang Gujarat, India</title>
 
@@ -156,7 +292,10 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
 
     <!-- ====== scroll to top ====== -->
     <a id="toTopBtn" title="Go to top" aria-label="Back to top" href="javascript:void(0)">
-        <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5.5 15 6.5-6.5 6.5 6.5"/></svg>
+        <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+            <path d="m5.5 15 6.5-6.5 6.5 6.5" />
+        </svg>
     </a>
 
 
@@ -256,7 +395,14 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
             <div class="mrn-hero__inner">
                 <div class="mrn-container">
                     <div class="mrn-hero__badge" data-anim="fade-up">
-                        <b aria-hidden="true"><svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><circle cx="12" cy="4.8" r="2.4"/><path d="M12 7.2v13.6"/><path d="M8.4 10.4h7.2"/><path d="M4.2 13.2H2.4a9.6 9.6 0 0 0 19.2 0h-1.8"/></svg></b>
+                        <b aria-hidden="true"><svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                                focusable="false">
+                                <circle cx="12" cy="4.8" r="2.4" />
+                                <path d="M12 7.2v13.6" />
+                                <path d="M8.4 10.4h7.2" />
+                                <path d="M4.2 13.2H2.4a9.6 9.6 0 0 0 19.2 0h-1.8" />
+                            </svg></b>
                         <span>Alang Ship Recycling Yard · Since 1983</span>
                     </div>
 
@@ -268,19 +414,28 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     </h1>
 
                     <p class="mrn-hero__sub" data-anim="fade-up">
-                        Sachdeva Group is your trusted partner for the safe and environmentally sound
-                        recycling of end-of-life vessels — four decades of engineering discipline across
-                        two fully-equipped yards on the Alang coastline.
+                        <b>
+                            Sachdeva Group is your trusted partner for the safe and environmentally sound
+                            recycling of end-of-life vessels — four decades of engineering discipline across
+                            two fully-equipped yards on the Alang coastline.
+                    </p>b>
                     </p>
 
                     <div class="mrn-hero__actions">
                         <a href="contact_us.html" class="mrn-btn mrn-btn--gold" data-anim="fade-up" data-mrn-magnetic>
                             Start a Conversation
-                            <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                            <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M2.5 12h17" />
+                                <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                            </svg>
                         </a>
                         <a href="#about" class="mrn-btn mrn-btn--ghost" data-anim="fade-up" data-d="0.12">
                             Explore the Yard
-                            <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="m5.5 9 6.5 6.5 6.5-6.5"/></svg>
+                            <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="m5.5 9 6.5 6.5 6.5-6.5" />
+                            </svg>
                         </a>
                     </div>
                 </div>
@@ -312,17 +467,6 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
             </div>
         </section>
 
-        <!-- ============================ TICKER ============================ -->
-        <div class="mrn-ticker" role="region" aria-label="Operational status" tabindex="0">
-            <div class="mrn-ticker__track" data-mrn-marquee>
-                <span class="mrn-ticker__item"><b>Safe</b> Ship Recycling <i aria-hidden="true"></i></span>
-                <span class="mrn-ticker__item">Hong Kong Convention <b>Aligned</b> <i aria-hidden="true"></i></span>
-                <span class="mrn-ticker__item"><b>Zero</b> Beach Contamination <i aria-hidden="true"></i></span>
-                <span class="mrn-ticker__item">Certified <b>Green</b> Yards <i aria-hidden="true"></i></span>
-                <span class="mrn-ticker__item">Alang · <b>Gujarat</b> · India <i aria-hidden="true"></i></span>
-                <span class="mrn-ticker__item">Trained <b>Workforce</b> <i aria-hidden="true"></i></span>
-            </div>
-        </div>
         <!-- ============================ ABOUT ============================ -->
         <section class="mrn-section mrn-light" id="about" data-drift="30">
             <div class="mrn-wavesep mrn-wavesep--top">
@@ -335,8 +479,7 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     </defs>
                     <path fill="url(#mrnWaveGrad)"
                         d="M0,0 L1440,0 L1440,26 C1200,68 960,6 720,38 C480,70 240,14 0,48 Z">
-                        <animate attributeName="d" dur="12s" repeatCount="indefinite"
-                            values="M0,0 L1440,0 L1440,26 C1200,68 960,6 720,38 C480,70 240,14 0,48 Z;
+                        <animate attributeName="d" dur="12s" repeatCount="indefinite" values="M0,0 L1440,0 L1440,26 C1200,68 960,6 720,38 C480,70 240,14 0,48 Z;
                                     M0,0 L1440,0 L1440,48 C1200,14 960,70 720,38 C480,6 240,68 0,26 Z;
                                     M0,0 L1440,0 L1440,26 C1200,68 960,6 720,38 C480,70 240,14 0,48 Z" />
                     </path>
@@ -348,8 +491,7 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <div class="mrn-figure" data-mrn-tilt="9" data-anim="fade-left">
                         <span class="mrn-figure__ring" aria-hidden="true"></span>
                         <div class="mrn-figure__frame" data-sg-frame="open">
-                            <img src="images/gallery/5.jpg" width="1152" height="648" loading="lazy"
-                                decoding="async"
+                            <img src="images/gallery/5.jpg" width="1152" height="648" loading="lazy" decoding="async"
                                 alt="Vessels beached for dismantling beside the plate deck at the Sachdeva Group yard, Alang">
                             <span class="ab-reg" aria-hidden="true"></span>
                             <div class="ab-cap">
@@ -369,10 +511,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                         <span class="mrn-eyebrow" data-anim="fade-up">Who We Are</span>
                         <h2 class="mrn-title" data-anim="fade-up">Four decades on the <em>Alang coastline</em></h2>
                         <p class="mrn-lead" data-anim="fade-up" data-d="0.12">
-                            Sachdeva Steel Products (Ship Breaking Unit) LLP and Jai Jagdish Ship Breakers Pvt. Ltd.
-                            have been in the business since ship recycling activity began at Alang in 1983. What
-                            started as Madhav Industrial Corporation has grown into two dedicated units with a
-                            combined record of 71 vessels safely dismantled.
+                            <b>Sachdeva Steel Products (Ship Breakers) LLP </b> and <b>Jai Jagdish Ship Breakers
+                                Pvt.</b> Ltd. have been at the forefront of the ship recycling industry at Alang since
+                            its early development in 1983. With more than four decades of industry experience, our two
+                            dedicated ship recycling units have collectively and successfully dismantled <b>100+
+                                vessels</b>, establishing a strong track record in safe vessel dismantling, resource
+                            recovery and responsible recycling.
                         </p>
 
                         <p class="ab-spec__head" data-anim="fade-up">
@@ -381,16 +525,20 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                         </p>
                         <ul class="mrn-about__points" data-stagger="0.12" data-anim="fade-up">
                             <li>Hong Kong Convention aligned processes</li>
-                            <li>Impermeable primary cutting zones</li>
+                            <li>100% Impermeable floor</li>
                             <li>Certified hazardous waste handling</li>
-                            <li>Continuous workforce safety training</li>
+                            <li>Trained Workforce </li>
                             <li>Full inventory of hazardous materials</li>
-                            <li>Documented downstream traceability</li>
+                            <li>Transparent Procedure & Operation</li>
                         </ul>
 
                         <a href="about_us.html" class="mrn-btn mrn-btn--navy" data-anim="fade-up" data-mrn-magnetic>
                             More About Us
-                            <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                            <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path d="M2.5 12h17" />
+                                <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                            </svg>
                         </a>
                     </div>
                 </div>
@@ -404,28 +552,57 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                 <div class="mrn-stats__grid" data-stagger="0.13" data-anim="fade-up">
                     <div class="mrn-stat" data-mrn-tilt="6" data-anim="fade-up">
                         <div class="mrn-stat__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M4 16.8h16l-1.7 3a1.9 1.9 0 0 1-1.6.9H7.3a1.9 1.9 0 0 1-1.6-.9z"/><path d="M4.3 16.8h15.4l-1.7-5a1.4 1.4 0 0 0-1.3-.9H7.3a1.4 1.4 0 0 0-1.3.9z"/><path d="M12 10.9V3.7"/><path d="M8.8 5.7h6.4"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path opacity=".16" fill="currentColor" stroke="none"
+                                    d="M4 16.8h16l-1.7 3a1.9 1.9 0 0 1-1.6.9H7.3a1.9 1.9 0 0 1-1.6-.9z" />
+                                <path d="M4.3 16.8h15.4l-1.7-5a1.4 1.4 0 0 0-1.3-.9H7.3a1.4 1.4 0 0 0-1.3.9z" />
+                                <path d="M12 10.9V3.7" />
+                                <path d="M8.8 5.7h6.4" />
+                            </svg>
                         </div>
                         <div class="mrn-stat__num"><span data-count="71">0</span><i>+</i></div>
                         <div class="mrn-stat__label">Ships Recycled</div>
                     </div>
                     <div class="mrn-stat" data-mrn-tilt="6" data-anim="fade-up">
                         <div class="mrn-stat__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M12 2.7l7 2.6v5.5c0 4.5-2.9 8-7 9.8-4.1-1.8-7-5.3-7-9.8V5.3z"/><path d="M12 2.7l7 2.6v5.5c0 4.5-2.9 8-7 9.8-4.1-1.8-7-5.3-7-9.8V5.3z"/><path d="M9 11.8l2.1 2.2 3.9-4.2"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path opacity=".16" fill="currentColor" stroke="none"
+                                    d="M12 2.7l7 2.6v5.5c0 4.5-2.9 8-7 9.8-4.1-1.8-7-5.3-7-9.8V5.3z" />
+                                <path d="M12 2.7l7 2.6v5.5c0 4.5-2.9 8-7 9.8-4.1-1.8-7-5.3-7-9.8V5.3z" />
+                                <path d="M9 11.8l2.1 2.2 3.9-4.2" />
+                            </svg>
                         </div>
                         <div class="mrn-stat__num"><span data-count="100">0</span><i>%</i></div>
                         <div class="mrn-stat__label">Compliance Focus</div>
                     </div>
                     <div class="mrn-stat" data-mrn-tilt="6" data-anim="fade-up">
                         <div class="mrn-stat__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M12 2.6a5.9 5.9 0 0 1 5.9 5.9c0 4.1-4.2 8.2-5.9 10-1.7-1.8-5.9-5.9-5.9-10A5.9 5.9 0 0 1 12 2.6z"/><path d="M12 2.6a5.9 5.9 0 0 1 5.9 5.9c0 4.1-4.2 8.2-5.9 10-1.7-1.8-5.9-5.9-5.9-10A5.9 5.9 0 0 1 12 2.6z"/><circle cx="12" cy="8.4" r="2.2"/><path d="M3.4 21.4h17.2"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path opacity=".16" fill="currentColor" stroke="none"
+                                    d="M12 2.6a5.9 5.9 0 0 1 5.9 5.9c0 4.1-4.2 8.2-5.9 10-1.7-1.8-5.9-5.9-5.9-10A5.9 5.9 0 0 1 12 2.6z" />
+                                <path
+                                    d="M12 2.6a5.9 5.9 0 0 1 5.9 5.9c0 4.1-4.2 8.2-5.9 10-1.7-1.8-5.9-5.9-5.9-10A5.9 5.9 0 0 1 12 2.6z" />
+                                <circle cx="12" cy="8.4" r="2.2" />
+                                <path d="M3.4 21.4h17.2" />
+                            </svg>
                         </div>
                         <div class="mrn-stat__num"><span data-count="2">0</span></div>
                         <div class="mrn-stat__label">Operating Yards</div>
                     </div>
                     <div class="mrn-stat" data-mrn-tilt="6" data-anim="fade-up">
                         <div class="mrn-stat__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M4.8 12.5a7.2 7.2 0 0 0 14.4 0z"/><circle cx="12" cy="4.5" r="2"/><path d="M12 6.5v14"/><path d="M8.6 10h6.8"/><path d="M4.8 12.5a7.2 7.2 0 0 0 14.4 0"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path opacity=".16" fill="currentColor" stroke="none"
+                                    d="M4.8 12.5a7.2 7.2 0 0 0 14.4 0z" />
+                                <circle cx="12" cy="4.5" r="2" />
+                                <path d="M12 6.5v14" />
+                                <path d="M8.6 10h6.8" />
+                                <path d="M4.8 12.5a7.2 7.2 0 0 0 14.4 0" />
+                            </svg>
                         </div>
                         <div class="mrn-stat__num"><span data-count="1983">0</span></div>
                         <div class="mrn-stat__label">Operating Since</div>
@@ -433,6 +610,17 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                 </div>
             </div>
         </section>
+
+        <div class="mrn-ticker" role="region" aria-label="Operational status" tabindex="0">
+            <div class="mrn-ticker__track" data-mrn-marquee>
+                <span class="mrn-ticker__item"><b>ISO -HKC</b> Certified Yard <i aria-hidden="true"></i></span>
+                <span class="mrn-ticker__item">Hong Kong Convention <b>Aligned</b> <i aria-hidden="true"></i></span>
+                <span class="mrn-ticker__item"><b>Zero</b> Beach Contamination <i aria-hidden="true"></i></span>
+                <span class="mrn-ticker__item">Certified <b>Green</b> Yards <i aria-hidden="true"></i></span>
+                <span class="mrn-ticker__item">Alang · <b>Gujarat</b> · India <i aria-hidden="true"></i></span>
+                <span class="mrn-ticker__item">Trained <b>Workforce</b> <i aria-hidden="true"></i></span>
+            </div>
+        </div>
 
         <!-- ============================ COMPANIES ============================ -->
         <section class="mrn-section mrn-soft" id="companies" data-drift>
@@ -449,7 +637,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
 
                 <div class="mrn-units d3-stage" data-stagger="0.16" data-anim="fade-up">
                     <article class="mrn-unit mrn-unit--a d3-card edge-sweep" data-anim="fade-up" data-mrn-tilt="6">
-                        <div class="sg-plx-clip" aria-hidden="true"><img src="images/gallery/3.jpg" alt="" width="1152" height="648" loading="lazy" decoding="async"></div>
+                        <div class="sg-plx-clip" aria-hidden="true"><img src="images/gallery/3.jpg" alt="" width="1152"
+                                height="648" loading="lazy" decoding="async"></div>
                         <div class="mrn-unit__body d3-pop-sm" data-anim="fade-up">
                             <div class="mrn-unit__no" aria-hidden="true">01</div>
                             <h3>Sachdeva Steel Products<br>(Ship Breakers)</h3>
@@ -457,16 +646,23 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                                 Established in 1997 as the group's flagship recycling unit, carrying forward the
                                 operations first begun under Madhav Industrial Corporation in 1983.
                             </p>
-                            <a href="sspsb.html" class="mrn-btn mrn-btn--gold">View Unit <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg></a>
+                            <a href="sspsb.html" class="mrn-btn mrn-btn--gold">View Unit <svg class="sg-ico"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M2.5 12h17" />
+                                    <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                                </svg></a>
                         </div>
                         <div class="mrn-unit__meta" data-anim="fade-up">
-                            <div><strong><span data-count="36">0</span></strong><span>Ships Recycled</span></div>
+                            <div><strong><span data-count="36"></span></strong><span>Ships Recycled</span>
+                            </div>
                             <div><strong>1997</strong><span>Established</span></div>
                         </div>
                     </article>
 
                     <article class="mrn-unit mrn-unit--b d3-card edge-sweep" data-anim="fade-up" data-mrn-tilt="6">
-                        <div class="sg-plx-clip" aria-hidden="true"><img src="images/gallery/6.jpg" alt="" width="1152" height="648" loading="lazy" decoding="async"></div>
+                        <div class="sg-plx-clip" aria-hidden="true"><img src="images/gallery/6.jpg" alt="" width="1152"
+                                height="648" loading="lazy" decoding="async"></div>
                         <div class="mrn-unit__body d3-pop-sm" data-anim="fade-up">
                             <div class="mrn-unit__no" aria-hidden="true">02</div>
                             <h3>Jai Jagdish<br>Ship Breakers Pvt. Ltd.</h3>
@@ -474,7 +670,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                                 Commissioned in 1998 to expand group capacity, equipped to handle vessels of all
                                 classes with dedicated hazardous-material handling infrastructure.
                             </p>
-                            <a href="jjsb.html" class="mrn-btn mrn-btn--gold">View Unit <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg></a>
+                            <a href="jjsb.html" class="mrn-btn mrn-btn--gold">View Unit <svg class="sg-ico"
+                                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                    stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                    <path d="M2.5 12h17" />
+                                    <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                                </svg></a>
                         </div>
                         <div class="mrn-unit__meta" data-anim="fade-up">
                             <div><strong><span data-count="35">0</span></strong><span>Ships Recycled</span></div>
@@ -500,7 +701,17 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                 <div class="mrn-flow d3-stage" data-stagger="0.14" data-anim="fade-up">
                     <div class="mrn-step d3-card" data-mrn-tilt="5">
                         <div class="mrn-step__dot" data-step="1">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M3.6 15.4h13.2l-1.5 2.7H5.1z"/><path d="M3.9 15.4h12.6l-1.4-4.2a1.3 1.3 0 0 0-1.2-.8H6.5a1.3 1.3 0 0 0-1.2.8z"/><path d="M10.2 10.4V4.6"/><path d="M7.7 6.3h5"/><path d="M2.6 20.6c1.7-1.2 3.4-1.2 5.1 0s3.4 1.2 5.1 0 3.4-1.2 5.1 0"/><circle cx="19.4" cy="7.4" r="2.6"/><path d="M21.3 9.4l1.1 1.1"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path opacity=".16" fill="currentColor" stroke="none"
+                                    d="M3.6 15.4h13.2l-1.5 2.7H5.1z" />
+                                <path d="M3.9 15.4h12.6l-1.4-4.2a1.3 1.3 0 0 0-1.2-.8H6.5a1.3 1.3 0 0 0-1.2.8z" />
+                                <path d="M10.2 10.4V4.6" />
+                                <path d="M7.7 6.3h5" />
+                                <path d="M2.6 20.6c1.7-1.2 3.4-1.2 5.1 0s3.4 1.2 5.1 0 3.4-1.2 5.1 0" />
+                                <circle cx="19.4" cy="7.4" r="2.6" />
+                                <path d="M21.3 9.4l1.1 1.1" />
+                            </svg>
                         </div>
                         <h4>Beaching &amp; Survey</h4>
                         <p>Vessel arrival, gas-free certification and a full inventory of hazardous materials before
@@ -508,7 +719,15 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     </div>
                     <div class="mrn-step d3-card" data-mrn-tilt="5">
                         <div class="mrn-step__dot" data-step="2">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M3.4 15.6h8.2v5.1H3.4z"/><path d="M3.4 20.7v-5.1h8.2v5.1"/><path d="M13.4 12.9l6-6a1.9 1.9 0 0 1 2.7 2.7l-6 6z"/><path d="M13.4 12.9l-2.6 2.7"/><path d="M9.6 18.2h.01"/><path d="M6.6 12.4h.01"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path opacity=".16" fill="currentColor" stroke="none" d="M3.4 15.6h8.2v5.1H3.4z" />
+                                <path d="M3.4 20.7v-5.1h8.2v5.1" />
+                                <path d="M13.4 12.9l6-6a1.9 1.9 0 0 1 2.7 2.7l-6 6z" />
+                                <path d="M13.4 12.9l-2.6 2.7" />
+                                <path d="M9.6 18.2h.01" />
+                                <path d="M6.6 12.4h.01" />
+                            </svg>
                         </div>
                         <h4>Controlled Dismantling</h4>
                         <p>Block-by-block cutting on impermeable flooring, with cranes and winches rated to the load
@@ -516,7 +735,16 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     </div>
                     <div class="mrn-step d3-card" data-mrn-tilt="5">
                         <div class="mrn-step__dot" data-step="3">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M9.6 3.2h4.8v3.9H9.6z"/><path d="M9.6 7.1V3.2h4.8v3.9"/><path d="M12 7.1v3.4"/><path d="M4.6 15.1v-2a2 2 0 0 1 2-2h10.8a2 2 0 0 1 2 2v2"/><path d="M4.6 15.1h3.1v5.7H4.6z"/><path d="M10.4 15.1h3.2v5.7h-3.2z"/><path d="M16.3 15.1h3.1v5.7h-3.1z"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path opacity=".16" fill="currentColor" stroke="none" d="M9.6 3.2h4.8v3.9H9.6z" />
+                                <path d="M9.6 7.1V3.2h4.8v3.9" />
+                                <path d="M12 7.1v3.4" />
+                                <path d="M4.6 15.1v-2a2 2 0 0 1 2-2h10.8a2 2 0 0 1 2 2v2" />
+                                <path d="M4.6 15.1h3.1v5.7H4.6z" />
+                                <path d="M10.4 15.1h3.2v5.7h-3.2z" />
+                                <path d="M16.3 15.1h3.1v5.7h-3.1z" />
+                            </svg>
                         </div>
                         <h4>Waste Segregation</h4>
                         <p>Asbestos, oils, PCBs and e-waste separated into licensed streams and routed to authorised
@@ -524,7 +752,15 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     </div>
                     <div class="mrn-step d3-card" data-mrn-tilt="5">
                         <div class="mrn-step__dot" data-step="4">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M3.2 17.6l8.8-3.9 8.8 3.9-8.8 3.9z"/><path d="M3.2 17.6l8.8-3.9 8.8 3.9-8.8 3.9z"/><path d="M3.2 13.1L12 9.2l8.8 3.9"/><path d="M8.6 5.6h5.6a2.4 2.4 0 0 1 0 4.8"/><path d="M10.4 3.6L8.4 5.6l2 2"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path opacity=".16" fill="currentColor" stroke="none"
+                                    d="M3.2 17.6l8.8-3.9 8.8 3.9-8.8 3.9z" />
+                                <path d="M3.2 17.6l8.8-3.9 8.8 3.9-8.8 3.9z" />
+                                <path d="M3.2 13.1L12 9.2l8.8 3.9" />
+                                <path d="M8.6 5.6h5.6a2.4 2.4 0 0 1 0 4.8" />
+                                <path d="M10.4 3.6L8.4 5.6l2 2" />
+                            </svg>
                         </div>
                         <h4>Recovery &amp; Reuse</h4>
                         <p>Re-rollable plate, machinery and fittings graded, weighed and released back into the
@@ -615,11 +851,19 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                         <a href="environment_management.html" class="mrn-card__link"
                             aria-label="Environment Management"></a>
                         <div class="mrn-card__img" data-anim="clip-up">
-                            <img src="images/commitment/environment-management.webp" alt="Environment Management: a yard supervisor reviewing an environmental checklist beside a vessel under dismantling, with Hong Kong Convention and ISO 14001 marks" width="1200" height="800" loading="lazy" decoding="async">
+                            <img src="images/commitment/environment-management.webp"
+                                alt="Environment Management: a yard supervisor reviewing an environmental checklist beside a vessel under dismantling, with Hong Kong Convention and ISO 14001 marks"
+                                width="1200" height="800" loading="lazy" decoding="async">
                         </div>
                         <div class="mrn-card__veil"></div>
                         <div class="mrn-card__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M12 3.4c3.6 2.4 5.6 5.1 5.6 8a5.6 5.6 0 1 1-11.2 0c0-2.9 2-5.6 5.6-8z"/><path d="M12 3.4c3.6 2.4 5.6 5.1 5.6 8a5.6 5.6 0 1 1-11.2 0c0-2.9 2-5.6 5.6-8z"/><path d="M2.6 20.9c1.9-1.3 3.8-1.3 5.7 0s3.8 1.3 5.7 0 3.8-1.3 5.7 0"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path opacity=".16" fill="currentColor" stroke="none"
+                                    d="M12 3.4c3.6 2.4 5.6 5.1 5.6 8a5.6 5.6 0 1 1-11.2 0c0-2.9 2-5.6 5.6-8z" />
+                                <path d="M12 3.4c3.6 2.4 5.6 5.1 5.6 8a5.6 5.6 0 1 1-11.2 0c0-2.9 2-5.6 5.6-8z" />
+                                <path d="M2.6 20.9c1.9-1.3 3.8-1.3 5.7 0s3.8 1.3 5.7 0 3.8-1.3 5.7 0" />
+                            </svg>
                         </div>
                         <div class="mrn-card__body">
                             <h4>Environment Management</h4>
@@ -633,11 +877,21 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <article class="mrn-card d3-card" data-mrn-tilt="5">
                         <a href="health_safety.html" class="mrn-card__link" aria-label="Health and Safety"></a>
                         <div class="mrn-card__img" data-anim="clip-up">
-                            <img src="images/commitment/health-safety.webp" alt="Health and Safety: hard hat, gloves and an ISO 45001 safety management system manual on the quayside, with the safety cycle from compliance through training to continuous improvement" width="1200" height="800" loading="lazy" decoding="async">
+                            <img src="images/commitment/health-safety.webp"
+                                alt="Health and Safety: hard hat, gloves and an ISO 45001 safety management system manual on the quayside, with the safety cycle from compliance through training to continuous improvement"
+                                width="1200" height="800" loading="lazy" decoding="async">
                         </div>
                         <div class="mrn-card__veil"></div>
                         <div class="mrn-card__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M3.4 16.2a8.6 8.6 0 0 1 17.2 0z"/><path d="M3.4 16.2a8.6 8.6 0 0 1 17.2 0"/><path d="M2.6 16.2h18.8"/><path d="M9.6 8.1V5.4a1.4 1.4 0 0 1 1.4-1.4h2a1.4 1.4 0 0 1 1.4 1.4v2.7"/><path d="M12 19.9h.01"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path opacity=".16" fill="currentColor" stroke="none"
+                                    d="M3.4 16.2a8.6 8.6 0 0 1 17.2 0z" />
+                                <path d="M3.4 16.2a8.6 8.6 0 0 1 17.2 0" />
+                                <path d="M2.6 16.2h18.8" />
+                                <path d="M9.6 8.1V5.4a1.4 1.4 0 0 1 1.4-1.4h2a1.4 1.4 0 0 1 1.4 1.4v2.7" />
+                                <path d="M12 19.9h.01" />
+                            </svg>
                         </div>
                         <div class="mrn-card__body">
                             <h4>Health &amp; Safety</h4>
@@ -650,11 +904,22 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <article class="mrn-card d3-card" data-mrn-tilt="5">
                         <a href="waste_management.html" class="mrn-card__link" aria-label="Waste Management"></a>
                         <div class="mrn-card__img" data-anim="clip-up">
-                            <img src="images/commitment/waste-management.webp" alt="Waste Management: the recycling loop over a ship under dismantling — scrap steel cutting, segregated hazardous waste drums and replanted ground" width="1200" height="800" loading="lazy" decoding="async">
+                            <img src="images/commitment/waste-management.webp"
+                                alt="Waste Management: the recycling loop over a ship under dismantling — scrap steel cutting, segregated hazardous waste drums and replanted ground"
+                                width="1200" height="800" loading="lazy" decoding="async">
                         </div>
                         <div class="mrn-card__veil"></div>
                         <div class="mrn-card__icon">
-                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M6.1 9.4h11.8l-1 10a1.7 1.7 0 0 1-1.7 1.5H8.8a1.7 1.7 0 0 1-1.7-1.5z"/><path d="M6.1 9.4h11.8l-1 10a1.7 1.7 0 0 1-1.7 1.5H8.8a1.7 1.7 0 0 1-1.7-1.5z"/><path d="M4.4 9.4h15.2"/><path d="M9.7 6.2V4.6a1.3 1.3 0 0 1 1.3-1.3h2a1.3 1.3 0 0 1 1.3 1.3v1.6"/><path d="M10.4 13.1v4.2"/><path d="M13.6 13.1v4.2"/></svg>
+                            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                                stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                                <path opacity=".16" fill="currentColor" stroke="none"
+                                    d="M6.1 9.4h11.8l-1 10a1.7 1.7 0 0 1-1.7 1.5H8.8a1.7 1.7 0 0 1-1.7-1.5z" />
+                                <path d="M6.1 9.4h11.8l-1 10a1.7 1.7 0 0 1-1.7 1.5H8.8a1.7 1.7 0 0 1-1.7-1.5z" />
+                                <path d="M4.4 9.4h15.2" />
+                                <path d="M9.7 6.2V4.6a1.3 1.3 0 0 1 1.3-1.3h2a1.3 1.3 0 0 1 1.3 1.3v1.6" />
+                                <path d="M10.4 13.1v4.2" />
+                                <path d="M13.6 13.1v4.2" />
+                            </svg>
                         </div>
                         <div class="mrn-card__body">
                             <h4>Waste Management</h4>
@@ -678,38 +943,61 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                      innerHTML, which re-parses the originals and drops every listener
                      already bound to them. js/cert-viewer.js clones instead. -->
                 <div class="mrn-certs__track">
-                    <div class="mrn-cert" data-mrn-tilt="6"
-                        data-cert-title="ISO 9001 · 14001 · 45001"
-                        data-cert-sub="Sachdeva Steel Products (Ship Breakers) LLP — Bureau Veritas"><img src="images/cert/1.jpg" alt="Bureau Veritas certificate: Sachdeva Steel Products (Ship Breakers) LLP, ISO 9001:2015, ISO 14001:2015 and ISO 45001:2018" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"
-                        data-cert-title="ISO 9001 · 14001 · 45001"
-                        data-cert-sub="Sachdeva Steel Products (Ship Breakers) LLP — Bureau Veritas"><img src="images/cert/2.jpg" alt="Bureau Veritas certificate: Sachdeva Steel Products (Ship Breakers) LLP, ISO 9001:2015, ISO 14001:2015 and ISO 45001:2018" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"
-                        data-cert-title="ISO 30000:2009"
-                        data-cert-sub="Jai Jagdish Ship Breakers Pvt. Ltd. — Bureau Veritas"><img src="images/cert/3.jpg" alt="Bureau Veritas certificate: Jai Jagdish Ship Breakers Pvt. Ltd., ISO 30000:2009 ship recycling management" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"
-                        data-cert-title="ISO 30000:2009"
-                        data-cert-sub="Jai Jagdish Ship Breakers Pvt. Ltd. — Bureau Veritas"><img src="images/cert/4.jpg" alt="Bureau Veritas certificate: Jai Jagdish Ship Breakers Pvt. Ltd., ISO 30000:2009 ship recycling management" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"
-                        data-cert-title="EU Ship Recycling Regulation — SRF-010"
-                        data-cert-sub="Certificate of Compliance, Article 13 — ClassNK (NKK Netherlands B.V.)"><img src="images/cert/5.jpg" alt="ClassNK certificate of compliance SRF-010: Sachdeva Steel Products and Jai Jagdish Ship Breakers, EU Regulation 1257/2013 Article 13" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"
-                        data-cert-title="Statement of Compliance — KC19SRF-001"
-                        data-cert-sub="IMO MEPC.210(63), firms engaged in ship recycling — ClassNK"><img src="images/cert/6.jpg" alt="Nippon Kaiji Kyokai statement of compliance KC19SRF-001 for firms engaged in ship recycling, IMO Resolution MEPC.210(63)" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"
-                        data-cert-title="ISO 30000:2009"
-                        data-cert-sub="Jai Jagdish Ship Breakers Pvt. Ltd. — Bureau Veritas"><img src="images/cert/7.jpg" alt="Bureau Veritas certificate: Jai Jagdish Ship Breakers Pvt. Ltd., ISO 30000:2009 ship recycling management" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"
-                        data-cert-title="ISO 30000:2009 — Appendix"
-                        data-cert-sub="Certified sites, Plot 65 and Plot 66, Alang — Bureau Veritas"><img src="images/cert/8.jpg" alt="Bureau Veritas appendix to certificate IND20.2401/SM listing the certified sites at Plot 65 and Plot 66, Alang" loading="lazy" decoding="async"></div>
-                    <div class="mrn-cert" data-mrn-tilt="6"
-                        data-cert-title="EU Ship Recycling Regulation — SRF-010"
-                        data-cert-sub="Certificate of Compliance, Article 13 — ClassNK (NKK Netherlands B.V.)"><img src="images/cert/9.jpg" alt="ClassNK certificate of compliance SRF-010: Sachdeva Steel Products and Jai Jagdish Ship Breakers, EU Regulation 1257/2013 Article 13" loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6" data-cert-title="ISO 9001 · 14001 · 45001"
+                        data-cert-sub="Sachdeva Steel Products (Ship Breakers) LLP — Bureau Veritas"><img
+                            src="images/cert/1.jpg"
+                            alt="Bureau Veritas certificate: Sachdeva Steel Products (Ship Breakers) LLP, ISO 9001:2015, ISO 14001:2015 and ISO 45001:2018"
+                            loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6" data-cert-title="ISO 9001 · 14001 · 45001"
+                        data-cert-sub="Sachdeva Steel Products (Ship Breakers) LLP — Bureau Veritas"><img
+                            src="images/cert/2.jpg"
+                            alt="Bureau Veritas certificate: Sachdeva Steel Products (Ship Breakers) LLP, ISO 9001:2015, ISO 14001:2015 and ISO 45001:2018"
+                            loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6" data-cert-title="ISO 30000:2009"
+                        data-cert-sub="Jai Jagdish Ship Breakers Pvt. Ltd. — Bureau Veritas"><img
+                            src="images/cert/3.jpg"
+                            alt="Bureau Veritas certificate: Jai Jagdish Ship Breakers Pvt. Ltd., ISO 30000:2009 ship recycling management"
+                            loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6" data-cert-title="ISO 30000:2009"
+                        data-cert-sub="Jai Jagdish Ship Breakers Pvt. Ltd. — Bureau Veritas"><img
+                            src="images/cert/4.jpg"
+                            alt="Bureau Veritas certificate: Jai Jagdish Ship Breakers Pvt. Ltd., ISO 30000:2009 ship recycling management"
+                            loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6" data-cert-title="EU Ship Recycling Regulation — SRF-010"
+                        data-cert-sub="Certificate of Compliance, Article 13 — ClassNK (NKK Netherlands B.V.)"><img
+                            src="images/cert/5.jpg"
+                            alt="ClassNK certificate of compliance SRF-010: Sachdeva Steel Products and Jai Jagdish Ship Breakers, EU Regulation 1257/2013 Article 13"
+                            loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6" data-cert-title="Statement of Compliance — KC19SRF-001"
+                        data-cert-sub="IMO MEPC.210(63), firms engaged in ship recycling — ClassNK"><img
+                            src="images/cert/6.jpg"
+                            alt="Nippon Kaiji Kyokai statement of compliance KC19SRF-001 for firms engaged in ship recycling, IMO Resolution MEPC.210(63)"
+                            loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6" data-cert-title="ISO 30000:2009"
+                        data-cert-sub="Jai Jagdish Ship Breakers Pvt. Ltd. — Bureau Veritas"><img
+                            src="images/cert/7.jpg"
+                            alt="Bureau Veritas certificate: Jai Jagdish Ship Breakers Pvt. Ltd., ISO 30000:2009 ship recycling management"
+                            loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6" data-cert-title="ISO 30000:2009 — Appendix"
+                        data-cert-sub="Certified sites, Plot 65 and Plot 66, Alang — Bureau Veritas"><img
+                            src="images/cert/8.jpg"
+                            alt="Bureau Veritas appendix to certificate IND20.2401/SM listing the certified sites at Plot 65 and Plot 66, Alang"
+                            loading="lazy" decoding="async"></div>
+                    <div class="mrn-cert" data-mrn-tilt="6" data-cert-title="EU Ship Recycling Regulation — SRF-010"
+                        data-cert-sub="Certificate of Compliance, Article 13 — ClassNK (NKK Netherlands B.V.)"><img
+                            src="images/cert/9.jpg"
+                            alt="ClassNK certificate of compliance SRF-010: Sachdeva Steel Products and Jai Jagdish Ship Breakers, EU Regulation 1257/2013 Article 13"
+                            loading="lazy" decoding="async"></div>
                 </div>
             </div>
             <div class="mrn-container mrn-center">
                 <a href="our_credentials.html" class="mrn-btn mrn-btn--navy" data-anim="fade-up" data-mrn-magnetic>
-                    All Credentials <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                    All Credentials <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                        focusable="false">
+                        <path d="M2.5 12h17" />
+                        <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                    </svg>
                 </a>
             </div>
         </section>
@@ -727,28 +1015,46 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
 
                 <div class="mrn-mosaic__rule hazard-rule" aria-hidden="true" data-anim="fade-up"></div>
                 <div class="mrn-mosaic" data-stagger="0.07" data-anim="fade-up">
-                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-anim="fade-up" aria-label="Yard gallery: tideline approach">
-                        <img src="images/ship_recycling.jpg" alt="Aerial view of the Sachdeva plot at Alang, vessels drawn up on the tideline" loading="lazy" decoding="async">
+                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-anim="fade-up"
+                        aria-label="Yard gallery: tideline approach">
+                        <img src="images/ship_recycling.jpg"
+                            alt="Aerial view of the Sachdeva plot at Alang, vessels drawn up on the tideline"
+                            loading="lazy" decoding="async">
                         <span class="mrn-tile__cap">Tideline Approach</span>
                     </a>
-                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-anim="fade-up" aria-label="Yard gallery: beaching">
-                        <img src="images/gallery/2.jpg" alt="A vessel beached at the head of the plot with cranes standing by" loading="lazy" decoding="async">
+                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-anim="fade-up"
+                        aria-label="Yard gallery: beaching">
+                        <img src="images/gallery/2.jpg"
+                            alt="A vessel beached at the head of the plot with cranes standing by" loading="lazy"
+                            decoding="async">
                         <span class="mrn-tile__cap">Beaching</span>
                     </a>
-                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-anim="fade-up" aria-label="Yard gallery: block handling">
-                        <img src="images/gallery/3.jpg" alt="Aerial of a vessel opened up mid-dismantling, blocks cut away from the hull" loading="lazy" decoding="async">
+                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-anim="fade-up"
+                        aria-label="Yard gallery: block handling">
+                        <img src="images/gallery/3.jpg"
+                            alt="Aerial of a vessel opened up mid-dismantling, blocks cut away from the hull"
+                            loading="lazy" decoding="async">
                         <span class="mrn-tile__cap">Block Handling</span>
                     </a>
-                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-anim="fade-up" aria-label="Yard gallery: plate recovery">
-                        <img src="images/gallery/4.jpg" alt="Cut plate stacked on the yard deck, ready to move to the rolling mills" loading="lazy" decoding="async">
+                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-anim="fade-up"
+                        aria-label="Yard gallery: plate recovery">
+                        <img src="images/gallery/4.jpg"
+                            alt="Cut plate stacked on the yard deck, ready to move to the rolling mills" loading="lazy"
+                            decoding="async">
                         <span class="mrn-tile__cap">Plate Recovery</span>
                     </a>
-                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-sg-frame="close" aria-label="Yard gallery: the primary cutting zone">
-                        <img src="images/gallery/5.jpg" alt="The working face at Alang: several vessels beached along the primary cutting zone" loading="lazy" decoding="async">
+                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-sg-frame="close"
+                        aria-label="Yard gallery: the primary cutting zone">
+                        <img src="images/gallery/5.jpg"
+                            alt="The working face at Alang: several vessels beached along the primary cutting zone"
+                            loading="lazy" decoding="async">
                         <span class="mrn-tile__cap">Primary Cutting Zone</span>
                     </a>
-                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-anim="fade-up" aria-label="Yard gallery: yard overview">
-                        <img src="images/gallery/6.jpg" alt="Aerial of the full plot: plate stacks, crane rows and machinery bays" loading="lazy" decoding="async">
+                    <a href="gallery.html" class="mrn-tile" data-mrn-tilt="6" data-anim="fade-up"
+                        aria-label="Yard gallery: yard overview">
+                        <img src="images/gallery/6.jpg"
+                            alt="Aerial of the full plot: plate stacks, crane rows and machinery bays" loading="lazy"
+                            decoding="async">
                         <span class="mrn-tile__cap">Yard Overview</span>
                     </a>
                 </div>
@@ -769,10 +1075,21 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                 </p>
                 <div class="mrn-cta__actions" data-anim="fade-up">
                     <a href="contact_us.html" class="mrn-btn mrn-btn--gold" data-anim="fade-up" data-mrn-magnetic>
-                        Contact Us <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                        Contact Us <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                            focusable="false">
+                            <path d="M2.5 12h17" />
+                            <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                        </svg>
                     </a>
                     <a href="tel:+912782429573" class="mrn-btn mrn-btn--ghost">
-                        <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path opacity=".16" fill="currentColor" stroke="none" d="M6.4 3.6h3.2l1.6 4-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4 1.6v3.2a1.9 1.9 0 0 1-2.1 1.9A16.1 16.1 0 0 1 4.5 5.7a1.9 1.9 0 0 1 1.9-2.1Z"/><path d="M6.4 3.6h3.2l1.6 4-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4 1.6v3.2a1.9 1.9 0 0 1-2.1 1.9A16.1 16.1 0 0 1 4.5 5.7a1.9 1.9 0 0 1 1.9-2.1Z"/></svg> +91 278 2429573
+                        <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
+                            stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
+                            <path opacity=".16" fill="currentColor" stroke="none"
+                                d="M6.4 3.6h3.2l1.6 4-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4 1.6v3.2a1.9 1.9 0 0 1-2.1 1.9A16.1 16.1 0 0 1 4.5 5.7a1.9 1.9 0 0 1 1.9-2.1Z" />
+                            <path
+                                d="M6.4 3.6h3.2l1.6 4-2.1 1.4a11.4 11.4 0 0 0 5 5l1.4-2.1 4 1.6v3.2a1.9 1.9 0 0 1-2.1 1.9A16.1 16.1 0 0 1 4.5 5.7a1.9 1.9 0 0 1 1.9-2.1Z" />
+                        </svg> +91 278 2429573
                     </a>
                 </div>
             </div>
@@ -793,7 +1110,7 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                         <span class="sgf-yard__badge">
                             <span class="sgf-yard__dot" aria-hidden="true"></span> Yard Address
                         </span>
-                        <h2 class="sgf-yard__title" data-anim="fade-up">Plot No. 65, Alang Ship Breaking Yard</h2>
+                        <h2 class="sgf-yard__title" data-anim="fade-up">Plot No. 65 in Sachdeva Yards</h2>
                         <p class="sgf-yard__meta">
                             Alang, Bhavnagar, Gujarat, India
                             <span class="sgf-yard__sep" aria-hidden="true">&middot;</span>
@@ -804,7 +1121,12 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     </div>
 
                     <a class="sgf-yard__btn" href="contact_us.html">
-                        Discuss a Vessel <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M2.5 12h17"/><path d="m13.2 5.7 6.3 6.3-6.3 6.3"/></svg>
+                        Discuss a Vessel <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
+                            focusable="false">
+                            <path d="M2.5 12h17" />
+                            <path d="m13.2 5.7 6.3 6.3-6.3 6.3" />
+                        </svg>
                     </a>
                 </div>
             </div>
@@ -824,7 +1146,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                     <!-- Brand -->
                     <div class="sgf-col sgf-col--brand">
                         <a href="index.html">
-                            <img src="images/logo.png" class="sgf-logo" alt="Sachdeva Group of Industries" loading="lazy" decoding="async">
+                            <img src="images/logo.png" class="sgf-logo" alt="Sachdeva Group of Industries"
+                                loading="lazy" decoding="async">
                         </a>
                         <p class="sgf-about">
                             India's trusted partner for the safe and environmentally sound recycling of end-of-life
@@ -882,7 +1205,8 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
                                     Gallery</a></li>
                             <li><a href="news.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     News &amp; Media</a></li>
-                            <li><a href="about_us.html#testimonials"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
+                            <li><a href="about_us.html#testimonials"><span class="sgf-chev"
+                                        aria-hidden="true">&rsaquo;</span>
                                     Testimonials</a></li>
                             <li><a href="contact_us.html"><span class="sgf-chev" aria-hidden="true">&rsaquo;</span>
                                     Contact Us</a></li>
@@ -985,9 +1309,15 @@ html.sgl-lock,html.sgl-lock body{overflow:hidden!important}
          re-release cannot change the feel of the site overnight. If either
          request fails, js/motion.js returns at its first guard and pulls the
          sg-anim gate, so the page reads as plain static HTML. -->
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js" integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA==" crossorigin="anonymous"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js" integrity="sha512-P2IDYZfqSwjcSjX0BKeNhwRUH8zRPGlgcWl5n6gBLzdi4Y5/0O4zaXrtO4K9TZK6Hn1BenYpKowuCavNandERg==" crossorigin="anonymous"></script>
-    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js" integrity="sha512-wOeEC+9qERAzhliwBFPDb6t8TiFFxdxG8vhK/Ygs7TuC44bpg8pg/X2/U/u+0X4fK05wb9id1EIipnF02+CFQw==" crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/gsap.min.js"
+        integrity="sha512-NcZdtrT77bJr4STcmsGAESr06BYGE8woZdSdEgqnpyqac7sugNO+Tr4bGwGF3MsnEkGKhU2KL2xh6Ec+BqsaHA=="
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/ScrollTrigger.min.js"
+        integrity="sha512-P2IDYZfqSwjcSjX0BKeNhwRUH8zRPGlgcWl5n6gBLzdi4Y5/0O4zaXrtO4K9TZK6Hn1BenYpKowuCavNandERg=="
+        crossorigin="anonymous"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.0/SplitText.min.js"
+        integrity="sha512-wOeEC+9qERAzhliwBFPDb6t8TiFFxdxG8vhK/Ygs7TuC44bpg8pg/X2/U/u+0X4fK05wb9id1EIipnF02+CFQw=="
+        crossorigin="anonymous"></script>
     <script defer src="js/motion.js"></script>
 
     <!-- Additive scrub layer. motion.js owns the background/media parallax and
