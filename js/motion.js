@@ -66,6 +66,12 @@
 
     var EASE_OUT = 'power3.out';
     var EASE_SCRUB = 'none';
+
+    /* THE LOAD MARK (js/motion-policy.js). When it was drawn for this page
+       view the hero entrance waits for its lift rather than playing under the
+       sheet; everything below the fold is untouched, it reveals on scroll. */
+    var LOADER = (win.SG_LOADER && win.SG_LOADER.active) ? win.SG_LOADER : null;
+    var home = doc.getElementById('home');
     var STAGGER = 0.085;
     var AUTO_CASCADE = 0.09;      /* js/sg-reveal.js's own auto step, kept */
     var HEAD = 75;                /* sticky header height, --mo-head */
@@ -232,6 +238,13 @@
     }
 
     function revealBatch(els) {
+        /* hero reveals hold for the load mark; the rest of the batch runs */
+        if (LOADER && !LOADER.lifted && home) {
+            var held = els.filter(function (el) { return home.contains(el); });
+            els = els.filter(function (el) { return !home.contains(el); });
+            if (held.length) LOADER.onLift(function () { revealBatch(held); });
+            if (!els.length) return;
+        }
         els = els.slice().sort(readingOrder);
         els.forEach(function (el, i) {
             if (el.classList && el.classList.contains('in')) return;
@@ -510,7 +523,9 @@
            markup's intent — so the CSS keyframe animation is switched off and
            GSAP takes the same elements. */
         var words = qsa('.mrn-hero__title .mrn-word > span', sec);
-        var tl = gsap.timeline({ delay: 0.15 });
+        var waiting = !!(LOADER && !LOADER.lifted);
+        var tl = gsap.timeline({ delay: waiting ? 0 : 0.15, paused: waiting });
+        if (waiting) LOADER.onLift(function () { gsap.delayedCall(0.15, function () { tl.play(0); }); });
 
         if (words.length) {
             words.forEach(function (w) { w.style.animation = 'none'; });

@@ -30,9 +30,6 @@
   "use strict";
   $(function () {
     var $mainwindow = $(window);
-    $mainwindow.on("load", function () {
-      $(".loader").fadeOut();
-    });
     /*====================================
         scroll to top + sticky header
     ======================================*/

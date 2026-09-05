@@ -73,9 +73,17 @@
     var EASE_OUT = 'expo.out';
     var isIndex = !doc.querySelector('.mrnp-section');
     var hero = doc.querySelector('.mrnp-hero');
-    /* whether js/motion-policy.js drew the curtain for this page view — read
-       now, because buildIntro() drops the class once the curtain is gone */
-    var ARMED = hasC(html, 'sfx-arm');
+    /* THE LOAD MARK. When js/motion-policy.js drew it, its sheet is the
+       curtain for this page view: it is painted in the same navy, so
+       body::before could only ever show for the frame between the two. Drop
+       that gate now, and let the hero choreography below wait for the mark's
+       lift instead of playing underneath it. */
+    var LOADER = (win.SG_LOADER && win.SG_LOADER.active) ? win.SG_LOADER : null;
+    if (LOADER) delC(html, 'sfx-arm');
+
+    /* whether a curtain of either kind covers the hero for this page view —
+       read now, because buildIntro() drops the class once the sheet is gone */
+    var ARMED = hasC(html, 'sfx-arm') || !!LOADER;
     var lineEls = [];
     var openEls = [];
 
@@ -169,6 +177,16 @@
                        without one it simply rises straight away */
                     vars.delay = ARMED ? (isTitle ? 0.75 : 1.0) : (isTitle ? 0.1 : 0.4);
                     vars.duration = 1.5;
+                    /* under the load mark that clock starts at its lift, not
+                       at boot — hold the tween in its from-state until then */
+                    if (LOADER && !LOADER.lifted) {
+                        var wait = vars.delay;
+                        vars.delay = 0;
+                        vars.paused = true;
+                        var held = gsap.from(self.lines, vars);
+                        LOADER.onLift(function () { gsap.delayedCall(wait, function () { held.play(); }); });
+                        return held;
+                    }
                 } else {
                     vars.delay = afterEyebrow ? 0.14 : 0;
                     vars.scrollTrigger = { trigger: el, start: 'top 88%', once: true };
@@ -233,8 +251,13 @@
         var armed = hasC(html, 'sfx-arm');
         if (!armed && !hero) return;
 
-        var tl = gsap.timeline({ defaults: { ease: EASE_OUT } });
-        var t0 = armed ? 0.15 : 0;
+        /* under the load mark the photograph settles as the sheet clears,
+           the same beat it has under the curtain — so the timeline is built
+           now and released at the lift */
+        var waiting = !!(LOADER && !LOADER.lifted);
+        var tl = gsap.timeline({ defaults: { ease: EASE_OUT }, paused: waiting });
+        if (waiting) LOADER.onLift(function () { tl.play(0); });
+        var t0 = (armed || LOADER) ? 0.15 : 0;
 
         if (armed) {
             tl.fromTo(doc.body,
