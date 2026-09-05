@@ -1,0 +1,33 @@
+# ===========================================================================
+# ADMIN — delivery rules
+# ===========================================================================
+# The site's root .htaccess sends `Cache-Control: no-cache, must-revalidate`
+# for every .php file, and `Header set` there runs AFTER PHP has replied — so
+# it replaces the `no-store` that admin/_bootstrap.php sends and there is no
+# way for the PHP to win. The difference matters here: no-cache permits a copy
+# to be written to disk as long as it is revalidated, and these pages contain
+# whatever the panel was showing when somebody walked away from the machine.
+#
+# This file is closer to the request than the root one, so its Header set is
+# the one that lands.
+# ===========================================================================
+
+<IfModule mod_headers.c>
+    <FilesMatch "\.php$">
+        Header set Cache-Control "no-store, no-cache, must-revalidate, private"
+        Header set X-Robots-Tag "noindex, nofollow"
+    </FilesMatch>
+</IfModule>
+
+# The shared includes are one directory up and denied by their own .htaccess;
+# the two underscore files here are the panel's chrome, not pages. Requesting
+# either directly would run it with no session and no $title.
+<FilesMatch "^_">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
