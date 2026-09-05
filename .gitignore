@@ -46,3 +46,13 @@ tools-*.js
 # fill the copy in. Never remove this line.
 # ---------------------------------------------------------------------------
 mail-config.php
+
+# ---------------------------------------------------------------------------
+# CMS runtime state (admin panel).
+# data/ holds the SQLite database: every administrator password hash and every
+# note a visitor has sent. It is per-installation, never source.
+# config.local.php is where a MySQL password goes if the site is ever moved
+# off SQLite — the same reason mail-config.php is excluded above.
+# ---------------------------------------------------------------------------
+data/
+includes/config.local.php

@@ -1,0 +1,46 @@
+# ===========================================================================
+# UPLOADS — pictures only, and never anything executable
+# ===========================================================================
+# includes/helpers.php refuses anything getimagesize() cannot read, and names
+# every stored file itself, so a script should never reach this folder. This
+# file is what makes that "should never" into "cannot matter": the one thing
+# an uploaded PHP file needs in order to be dangerous is a server willing to
+# run it, and the rules below take that away.
+#
+# Both spellings are here on purpose. RemoveHandler covers the ordinary
+# AddHandler wiring, php_flag covers mod_php, and SetHandler inside FilesMatch
+# is the one that survives a host wiring PHP through a FilesMatch of its own.
+# On a host running PHP as CGI/FPM the php_flag line is unknown and would
+# normally 500 the whole folder, which is what the IfModule guard is for.
+# ===========================================================================
+
+<IfModule mod_php.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php7.c>
+    php_flag engine off
+</IfModule>
+<IfModule mod_php5.c>
+    php_flag engine off
+</IfModule>
+
+RemoveHandler .php .phtml .php3 .php4 .php5 .php7 .php8 .phps .pl .py .cgi .shtml
+RemoveType    .php .phtml .php3 .php4 .php5 .php7 .php8 .phps .pl .py .cgi .shtml
+
+<FilesMatch "\.(?i:php[0-9]?|phtml|phps|pl|py|cgi|sh|shtml|htaccess)$">
+    <IfModule mod_authz_core.c>
+        Require all denied
+    </IfModule>
+    <IfModule !mod_authz_core.c>
+        Order allow,deny
+        Deny from all
+    </IfModule>
+</FilesMatch>
+
+# Anything that does get served from here is an image, and is never markup —
+# a .jpg whose bytes happen to start with <html> is otherwise sniffed as HTML
+# by some browsers and rendered, which is a stored XSS on this domain.
+<IfModule mod_headers.c>
+    Header set X-Content-Type-Options "nosniff"
+    Header set Content-Disposition "inline"
+</IfModule>

@@ -1567,6 +1567,23 @@
     color: var(--ab-ink);
 }
 
+/* The designation, when the panel has one for this person: "NYK Ship
+   Management · Superintendent". Written inside .tst__who rather than beside it
+   so it wraps with the name instead of pushing the number off the row, and
+   dropped to sentence case because a designation in the uppercase display face
+   competes with the name it belongs to. Emitted only when there is one —
+   includes/publisher.php leaves the span out entirely otherwise, so nothing
+   here has to hide an empty element. */
+#testimonials .tst__role {
+    display: inline;
+    font-family: inherit;
+    font-weight: 400;
+    font-size: 12.5px;
+    letter-spacing: .6px;
+    text-transform: none;
+    color: rgba(11, 31, 51, .58);
+}
+
 #testimonials .tst__no {
     flex: 0 0 auto;
     align-self: flex-start;
