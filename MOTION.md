@@ -302,23 +302,40 @@ the load curtain paints from the first frame, with a 2.5s failsafe that pulls
 ## The load mark — the logo loader
 
 Every one of the 13 pages carries the mark inline: a `<style id="sgl-css">`
-in `<head>` and a `.sgl` block as the first child of `<body>`, so it paints on
-the very first frame with nothing to fetch. It is `display:none` unless
-`js/motion-policy.js` sets `html.sgl-on`, so **with no JS nothing is ever
-hidden** — the same contract as the other gates.
+in `<head>` and a `.sgl` block as the first child of `<body>`, so the sheet
+paints on the very first frame and only the logo file is fetched. It is
+`display:none` unless `js/motion-policy.js` sets `html.sgl-on`, so **with no JS
+nothing is ever hidden** — the same contract as the other gates.
 
 **When it draws.** On arrivals only (a fresh load, a reload, a visit from
 another site — the curtain's own rule, now computed once and exported as
 `SG_MOTION_POLICY.arrival`), and only while motion is wanted. A click between
 our own pages never shows it.
 
-**What it does.** The mark is the logo rebuilt as inline SVG on a sheet
-painted in the curtain's navy: the wheel draws on in gold while turning a
-quarter-turn to starboard, the anchor draws on in cyan, the wordmark rises
-inside a clip mask, a cyan→gold hairline extends. Then the mark fades up and
-the sheet lifts with the site's `expo.inOut` clip-path gesture. Two moves —
-draw, lift. No web font: Oswald arrives late, and a mark that reflows
-mid-draw reads as a fault.
+**What it does.** The mark is `images/logo.png` itself — the real artwork, not
+a redraw — on a sheet painted in the curtain's navy. Five copies of the file
+are stacked, each clipped to one horizontal band by its wrapper's `overflow`,
+so the logo can animate in its own parts:
+
+| Band | Rows (of 99) | Move |
+|---|---|---|
+| wheel | 0–42 | turns a quarter-turn to starboard, scaling 0.82 → 1 |
+| rule | 43–47 | the orange bar extends from the centre |
+| SACHDEVA | 48–62 | rises one band height inside its mask |
+| GROUP | 63–67 | fades up |
+| anchor | 68–98 | lowers into place from behind the line above it |
+
+Every cut falls on a row that is fully transparent in the PNG (rows 0, 47, 48,
+63, 68 and 98 are empty — measured, not guessed), so no glyph is ever sliced.
+The wheel band rotates **as a unit, clip and all**, about the wheel's own
+centre — 49.5% 50% of that band — which is why the turn is never clipped by
+the band edges. Then the mark fades up and the sheet lifts with the site's
+`expo.inOut` clip-path gesture.
+
+The logo is `<link rel="preload" as="image">`d in the same `<head>`, so the one
+thing the mark has to fetch is in flight before the stylesheet is parsed. At
+15 KB, and needed by the header regardless, it costs nothing extra. If it never
+arrives the sheet simply lifts on schedule over an empty navy field.
 
 **Who owns the clock.** The stylesheet. Every timing is a CSS keyframe delay
 from first paint: the sheet lifts at **1.55s** and is gone at **2.65s**
