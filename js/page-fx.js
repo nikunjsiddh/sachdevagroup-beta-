@@ -424,12 +424,28 @@
             fadeOut(top);
         }
 
+        /* The trailing edge-fade that says "this bar scrolls" used to be tied
+           to a 860px media query, but whether the rail overflows is a
+           function of its own chip widths, not the viewport: measured, the
+           chips run to 994px, so between 861px and ~1010px the last chip was
+           cut off with nothing marking it as cut. Ask the element instead of
+           guessing a breakpoint — this stays right if a chip is ever renamed.
+           css/page-fx.css hangs the mask on .is-scrollable. */
+        function markScrollable() {
+            var over = rail.scrollWidth > rail.clientWidth + 1;
+            var has = rail.className.indexOf('is-scrollable') > -1;
+            if (over === has) return;
+            if (over) rail.className += ' is-scrollable';
+            else rail.className = rail.className.replace(/\s*is-scrollable/g, '');
+        }
+
         /* A resize moves the fade window, so the opacity fadeOut() last wrote
            may now be the wrong one for the same rail position. Clearing the
            cached value defeats its no-op guard and forces one real write. */
         function relayout() {
             lastFade = -1;
             remeasure();
+            markScrollable();
             sync(SG.scrollY());
         }
 

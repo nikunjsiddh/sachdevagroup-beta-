@@ -314,6 +314,50 @@
             return;
         }
 
+        /* ---- keep the launcher off the hero on small screens -------------
+           On a phone the hero's stat rail is pinned to the bottom of a
+           viewport-height hero, so the launcher's corner IS content: at
+           375x812 it sat on top of "Years of Operation" at first paint.
+           Below 860px the button therefore parks until the reader has left
+           the hero, mirroring #toTopBtn's existing 250px threshold. Above
+           that width it floats over empty margin and never parks.
+
+           rAF-throttled and passive, so this adds no scroll-handler cost —
+           the same shape js/main.js:64 uses for the back-to-top button. */
+        var PARK_BELOW = 860;       /* matches the launcher's media query */
+        var PARK_UNTIL = 250;       /* matches #toTopBtn's TO_TOP_THRESHOLD */
+        var parked = null;          /* null = not yet applied */
+        var parkTicking = false;
+
+        function syncPark() {
+            parkTicking = false;
+            /* an open dialog must never have its own trigger yanked away */
+            var want = win.innerWidth <= PARK_BELOW &&
+                (win.pageYOffset || doc.documentElement.scrollTop || 0) < PARK_UNTIL &&
+                wrap.className.indexOf('is-open') < 0;
+            if (want === parked) return;
+            parked = want;
+            if (want) {
+                if (btn.className.indexOf('is-parked') < 0) btn.className += ' is-parked';
+            } else {
+                btn.className = btn.className.replace(/\s*is-parked/g, '');
+            }
+        }
+
+        function onParkEvent() {
+            if (parkTicking) return;
+            parkTicking = true;
+            /* called as a method, not a bare reference — an unbound
+               requestAnimationFrame throws "Illegal invocation" once it is
+               detached from window */
+            if (win.requestAnimationFrame) win.requestAnimationFrame(syncPark);
+            else win.setTimeout(syncPark, 16);
+        }
+
+        syncPark();
+        win.addEventListener('scroll', onParkEvent, { passive: true });
+        win.addEventListener('resize', onParkEvent);
+
         var panel = wrap.querySelector('.sgfb__panel');
         var form = wrap.querySelector('.sgfb__form');
         var done = wrap.querySelector('.sgfb__done');
@@ -514,6 +558,9 @@
                 doc.documentElement.className.replace(/\s*sgfb-locked/g, '');
             if (win.lenis && win.lenis.start) win.lenis.start();
             if (lastFocus && lastFocus.focus) lastFocus.focus();
+            /* re-evaluate the hero park: closing the dialog without scrolling
+               would otherwise leave the launcher sitting on the stat rail */
+            syncPark();
             /* clear only once the panel is out of sight */
             win.setTimeout(reset, 420);
         }

@@ -6416,9 +6416,17 @@
         grid-auto-rows: auto;
     }
 
+    /* `width: 100%` is load-bearing, not decoration. A stretched grid item
+       carrying BOTH an aspect-ratio and a min-height that binds resolves its
+       inline size FROM the ratio once the min-height wins: at a 320px
+       viewport the track is 272px, but 170px x 16/9 re-derived the tile at
+       302px and #yard (overflow:hidden) cut 30px off every caption. Pinning
+       the inline size to the track leaves the ratio driving height alone, so
+       min-height simply letterboxes instead of widening. */
     #yard .mrn-mosaic .mrn-tile {
         grid-column: 1;
         grid-row: auto;
+        width: 100%;
         aspect-ratio: 16 / 9;
         min-height: 170px;
     }
