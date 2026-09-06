@@ -52,9 +52,13 @@ function sg_published_gallery() {
                    ORDER BY sort_order ASC, id ASC');
 }
 
-function sg_published_feedback() {
-    return sg_all("SELECT * FROM sg_feedback WHERE status = 'approved'
-                   ORDER BY sort_order ASC, id ASC");
+/* Testimonials only. What the website form collects lives in sg_complaints
+   and is never rendered anywhere: it is correspondence, and the About page is
+   the company speaking about itself. A note worth printing is copied across
+   in the panel, which is a decision somebody makes. */
+function sg_published_testimonials() {
+    return sg_all('SELECT * FROM sg_testimonials WHERE is_published = 1
+                   ORDER BY sort_order ASC, id ASC');
 }
 
 function sg_published_certificates() {
@@ -289,7 +293,7 @@ function sg_render_gallery($rows) {
 }
 
 /* --------------------------------------------------------------------------
-   BLOCK 3 — the feedback section of about_us.html
+   BLOCK 3 — the testimonials on about_us.html
    --------------------------------------------------------------------------
    css/about-fx.css scopes every one of these rules to #testimonials, so the
    cards only look right inside that section. The numbering in the corner is
@@ -302,9 +306,9 @@ function sg_render_testimonials($rows) {
     if (!$rows) {
         return '<div class="pfx-note pfx-note--live" data-mrnp-tilt="4">' . "\n"
              . '    <span class="pfx-note__flag">' . "\n"
-             . '        <i aria-hidden="true"></i> Feedback &middot; nothing published yet' . "\n"
+             . '        <i aria-hidden="true"></i> Testimonials &middot; nothing published yet' . "\n"
              . '    </span>' . "\n"
-             . '    <p>Comments recorded by visitors to the yard will appear here once approved.</p>' . "\n"
+             . '    <p>Comments recorded by visitors to the yard will appear here once published.</p>' . "\n"
              . '</div>';
     }
 
@@ -444,7 +448,7 @@ function sg_publish_block($block) {
     switch ($block) {
         case 'news':         $body = sg_render_news(sg_published_news());              break;
         case 'gallery':      $body = sg_render_gallery(sg_published_gallery());        break;
-        case 'testimonials': $body = sg_render_testimonials(sg_published_feedback());  break;
+        case 'testimonials': $body = sg_render_testimonials(sg_published_testimonials()); break;
         case 'certificates': $body = sg_render_certificates(sg_published_certificates()); break;
         default:             return array(false, 'Unknown block "' . $block . '".');
     }

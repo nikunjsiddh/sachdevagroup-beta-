@@ -20,12 +20,14 @@ $stats = array(
     'gallery_live'   => (int) sg_val('SELECT COUNT(*) FROM sg_gallery WHERE is_published = 1', array(), 0),
     'cert_total'     => (int) sg_val('SELECT COUNT(*) FROM sg_certificates', array(), 0),
     'cert_live'      => (int) sg_val('SELECT COUNT(*) FROM sg_certificates WHERE is_published = 1', array(), 0),
-    'fb_pending'     => (int) sg_val("SELECT COUNT(*) FROM sg_feedback WHERE status = 'pending'", array(), 0),
-    'fb_approved'    => (int) sg_val("SELECT COUNT(*) FROM sg_feedback WHERE status = 'approved'", array(), 0),
+    'tst_total'      => (int) sg_val('SELECT COUNT(*) FROM sg_testimonials', array(), 0),
+    'tst_live'       => (int) sg_val('SELECT COUNT(*) FROM sg_testimonials WHERE is_published = 1', array(), 0),
+    'cmp_open'       => (int) sg_val("SELECT COUNT(*) FROM sg_complaints WHERE status = 'new'", array(), 0),
+    'cmp_total'      => (int) sg_val('SELECT COUNT(*) FROM sg_complaints', array(), 0),
     'users'          => sg_user_count(),
 );
 
-$waiting = sg_all("SELECT * FROM sg_feedback WHERE status = 'pending'
+$waiting = sg_all("SELECT * FROM sg_complaints WHERE status = 'new'
                    ORDER BY id DESC LIMIT 5");
 
 $recentNews = sg_all('SELECT id, title, published_on, is_published FROM sg_news
@@ -42,7 +44,7 @@ $healthLabels = array(
     'news'         => 'News page',
     'gallery'      => 'Gallery page',
     'certificates' => 'Certificates on the credentials page',
-    'testimonials' => 'Feedback on the About page',
+    'testimonials' => 'Testimonials on the About page',
 );
 
 sg_admin_head('Dashboard', 'dashboard.php');
@@ -67,10 +69,16 @@ sg_admin_head('Dashboard', 'dashboard.php');
         <span class="tile__s"><?php echo $stats['cert_total']; ?> in total</span>
     </a>
 
-    <a class="tile<?php echo $stats['fb_pending'] ? ' tile--alert' : ''; ?>" href="feedback.php?status=pending">
-        <span class="tile__n"><?php echo $stats['fb_pending']; ?></span>
-        <span class="tile__k">Feedback awaiting review</span>
-        <span class="tile__s"><?php echo $stats['fb_approved']; ?> published on the About page</span>
+    <a class="tile" href="testimonials.php">
+        <span class="tile__n"><?php echo $stats['tst_live']; ?></span>
+        <span class="tile__k">Testimonials on the About page</span>
+        <span class="tile__s"><?php echo $stats['tst_total']; ?> in total</span>
+    </a>
+
+    <a class="tile<?php echo $stats['cmp_open'] ? ' tile--alert' : ''; ?>" href="complaints.php?status=new">
+        <span class="tile__n"><?php echo $stats['cmp_open']; ?></span>
+        <span class="tile__k">Complaints still open</span>
+        <span class="tile__s"><?php echo $stats['cmp_total']; ?> received in all</span>
     </a>
 
     <?php if (sg_is_owner()): ?>
@@ -86,13 +94,13 @@ sg_admin_head('Dashboard', 'dashboard.php');
 
     <section class="card">
         <div class="card__head">
-            <h2>Feedback waiting for you</h2>
-            <a class="lnk" href="feedback.php?status=pending">Review all</a>
+            <h2>Complaints waiting for you</h2>
+            <a class="lnk" href="complaints.php?status=new">See all</a>
         </div>
 
         <?php if (!$waiting): ?>
-            <p class="empty">Nothing is waiting. Notes sent through the website form
-                appear here before anything of theirs reaches the About page.</p>
+            <p class="empty">Nothing is waiting. Notes sent through the feedback form on the
+                website appear here as soon as they arrive, whether or not the email goes out.</p>
         <?php else: ?>
             <ul class="feed">
                 <?php foreach ($waiting as $f): ?>
@@ -104,7 +112,7 @@ sg_admin_head('Dashboard', 'dashboard.php');
                                 echo $f['designation'] !== '' ? ' · ' . e($f['designation']) : ''; ?></em>
                             <span><?php echo e(sg_excerpt($f['note'], 120)); ?></span>
                         </span>
-                        <a class="lnk" href="feedback.php?status=pending#f<?php echo (int) $f['id']; ?>">Open</a>
+                        <a class="lnk" href="complaints.php?status=new#c<?php echo (int) $f['id']; ?>">Open</a>
                     </li>
                 <?php endforeach; ?>
             </ul>

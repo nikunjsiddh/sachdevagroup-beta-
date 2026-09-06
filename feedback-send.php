@@ -181,42 +181,83 @@ if ($dir === '') {
     }
 }
 
-/* --- 4b. keep a copy the admin panel can moderate ------------------------
+/* --- 4b. write it into the complaints book -------------------------------
    Recorded BEFORE the mail is attempted, deliberately. Sending is the step
    that fails — a wrong app password, a host blocking outbound SMTP, Gmail
    throttling — and until this existed a failure there meant the note was gone
    with nothing but a line in the error log to say it had ever arrived.
 
-   It lands as 'pending' and is invisible to the website until somebody
-   approves it in /admin; approving is what puts it on the About page.
+   It lands in sg_complaints, which is correspondence and is never published.
+   A note somebody decides is worth printing is copied across to the
+   testimonials by hand in /admin; nothing a stranger types reaches the About
+   page on its own.
 
    Wrapped, and deliberately non-fatal: this is an addition to a form that
    worked before there was a database, and a locked SQLite file or a MySQL
-   that is down must not stop a visitor's message reaching the office. A
-   failure here is logged and the mail goes out regardless.
+   that is down must not stop a visitor's message reaching the office. What it
+   sets is $stored, which is what section 4c then depends on.
    ---------------------------------------------------------------------- */
+
+$stored = false;
 
 try {
     require_once __DIR__ . '/includes/db.php';
     require_once __DIR__ . '/includes/helpers.php';
 
-    sg_run('INSERT INTO sg_feedback
-            (feedback_type, name, designation, mobile, note, initials, status, source,
-             sort_order, ip, submitted_at, reviewed_at, reviewed_by)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        array($type, $name, $role, '+91 ' . $digits, $note, sg_initials($name),
-              'pending', 'website', 0, $ip, date('Y-m-d H:i:s'), '', ''));
+    sg_run('INSERT INTO sg_complaints
+            (feedback_type, name, designation, mobile, note, status, source, ip,
+             submitted_at, handled_at, handled_by)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        array($type, $name, $role, '+91 ' . $digits, $note,
+              'new', 'website', $ip, date('Y-m-d H:i:s'), '', ''));
+
+    $stored = true;
 
 } catch (Throwable $ex) {
     error_log('feedback: could not record the note for the admin panel — '
         . $ex->getMessage() . ' (the email is still being sent)');
 }
 
-/* --- 4c. only now, the mail config ---------------------------------------
-   Deferred from section 2 so the note above is kept whatever the state of the
-   mail setup. The visitor is told the same thing they were told before. */
+/* --- 4c. mail is a second copy now, not the only one ---------------------
+   THE VISITOR IS NOT TOLD A MESSAGE FAILED THAT DID NOT FAIL.
+
+   This used to fail() the moment the mail config was missing, and it did so
+   AFTER the note had already been written to the database. The office had the
+   message, the panel was showing it, and the person who sent it was reading a
+   red box telling them to copy mail-config.sample.php — the site's internal
+   setup, in front of a visitor, about a delivery that had actually happened.
+
+   There are two destinations and the send succeeds if either one does. Where
+   the note is stored, mail is a convenience: log the problem for whoever runs
+   the server and tell the visitor the truth, which is that their feedback has
+   reached the office. Only a note that reached NEITHER is a failure, and that
+   one still says so.
+   ---------------------------------------------------------------------- */
+
+/* Said instead of "sent" whenever the mail did not go out. Kept in one place
+   because both the config failure below and the SMTP failure at the end of
+   this file need exactly the same sentence. */
+function delivered_to_panel_only($devHost, $why) {
+    error_log('feedback: ' . $why . ' — the note is in the admin panel, so the '
+        . 'visitor was told it arrived rather than that it failed');
+
+    echo json_encode(array(
+        'ok'      => true,
+        'message' => 'Your feedback has reached the Sachdeva Group office and is '
+                   . 'waiting there to be read. We will be in touch if a reply is needed.'
+                   /* Only on the machine running the server: the visitor has no
+                      use for it and it describes the mail setup. */
+                   . ($devHost ? ' (Mail is not configured on this server, so no email '
+                               . 'was sent — the note was recorded in /admin instead.)' : ''),
+    ));
+    exit;
+}
 
 if ($mailFail !== '') {
+    if ($stored) {
+        delivered_to_panel_only($devHost, 'mail is not configured');
+    }
+    /* Nowhere to put it and no way to send it. Now it is a failure. */
     fail($mailFail, 500);
 }
 
@@ -331,9 +372,14 @@ $subject = 'Website feedback — ' . $type . ' — ' . $name;
 $result  = smtp_send($cfg, $subject, $html, $text);
 
 if ($result !== true) {
-    /* The visitor is told it did not send and nothing more. Which SMTP step
-       failed, and whether the password was rejected, belongs in the server
-       log — it is a map of the mail setup to anybody probing this endpoint. */
+    /* Same rule as section 4c: the note is already in the panel, so a mail
+       that would not go out is the office's problem and not the visitor's.
+       Which SMTP step failed, and whether the password was rejected, belongs
+       in the server log — it is a map of the mail setup to anybody probing
+       this endpoint, and it is nothing a visitor can act on. */
+    if ($stored) {
+        delivered_to_panel_only($devHost, 'SMTP failed at step "' . $result . '"');
+    }
     fail('Could not send just now. Please call or email us instead.', 502);
 }
 

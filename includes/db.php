@@ -198,10 +198,52 @@ function sg_schema_sql() {
             updated_at   {STR} NOT NULL DEFAULT ''
         ){TBLOPT}",
 
-        /* ---- the feedback postbag, and the About page section ----------
-           Everything the website form collects lands here as 'pending'.
-           Only rows an administrator has moved to 'approved' are published,
-           so a stranger cannot put their own text on the About page.     */
+        /* ---- the About page's "In Their Words" section -----------------
+           A client testimonial: something the company chose to print about
+           itself. It is written or vetted in the panel, it is ordered by
+           hand, and it is the only one of the two tables below that reaches
+           a visitor's screen.                                            */
+        'sg_testimonials' => "CREATE TABLE IF NOT EXISTS sg_testimonials (
+            id           {PK},
+            name         {STR} NOT NULL,
+            designation  {STR} NOT NULL DEFAULT '',
+            note         {TXT},
+            initials     {STR} NOT NULL DEFAULT '',
+            is_published {INT} NOT NULL DEFAULT 1,
+            sort_order   {INT} NOT NULL DEFAULT 0,
+            created_at   {STR} NOT NULL DEFAULT '',
+            updated_at   {STR} NOT NULL DEFAULT ''
+        ){TBLOPT}",
+
+        /* ---- the postbag from the website form -------------------------
+           A DIFFERENT THING FROM A TESTIMONIAL, WHICH IS WHY IT IS A
+           DIFFERENT TABLE. "Tell us how we did" collects whatever a worker,
+           visitor or customer types, complaints included, and it carries a
+           mobile number and an IP with it. None of it is published: it is
+           correspondence, it is answered, and it is then marked resolved.
+           A note worth printing is copied across to sg_testimonials by hand,
+           which is a decision somebody makes rather than a status flag.  */
+        'sg_complaints' => "CREATE TABLE IF NOT EXISTS sg_complaints (
+            id            {PK},
+            feedback_type {STR} NOT NULL DEFAULT 'Visitors',
+            name          {STR} NOT NULL,
+            designation   {STR} NOT NULL DEFAULT '',
+            mobile        {STR} NOT NULL DEFAULT '',
+            note          {TXT},
+            status        {STR} NOT NULL DEFAULT 'new',
+            source        {STR} NOT NULL DEFAULT 'website',
+            ip            {STR} NOT NULL DEFAULT '',
+            submitted_at  {STR} NOT NULL DEFAULT '',
+            handled_at    {STR} NOT NULL DEFAULT '',
+            handled_by    {STR} NOT NULL DEFAULT ''
+        ){TBLOPT}",
+
+        /* ---- what those two were before they were split ----------------
+           Retained, not dropped: sg_migrate copies its rows into the two
+           tables above once and then never reads it again, and a table that
+           still exists is the difference between a split that can be checked
+           afterwards and one that has to be trusted. Nothing writes to it.
+           It can be dropped by hand once the split has been verified.    */
         'sg_feedback' => "CREATE TABLE IF NOT EXISTS sg_feedback (
             id            {PK},
             feedback_type {STR} NOT NULL DEFAULT 'Visitors',
@@ -267,14 +309,76 @@ function sg_migrate(PDO $pdo) {
         'CREATE INDEX IF NOT EXISTS sg_news_pub  ON sg_news (is_published, published_on)',
         'CREATE INDEX IF NOT EXISTS sg_gal_pub   ON sg_gallery (is_published, sort_order)',
         'CREATE INDEX IF NOT EXISTS sg_cert_pub  ON sg_certificates (is_published, sort_order)',
-        'CREATE INDEX IF NOT EXISTS sg_fb_status ON sg_feedback (status, sort_order)',
+        'CREATE INDEX IF NOT EXISTS sg_tst_pub   ON sg_testimonials (is_published, sort_order)',
+        'CREATE INDEX IF NOT EXISTS sg_cmp_state ON sg_complaints (status, id)',
         'CREATE INDEX IF NOT EXISTS sg_login_at  ON sg_login_log (at)',
     );
     foreach ($idx as $sql) {
         try { $pdo->exec($sql); } catch (PDOException $e) { /* already there */ }
     }
 
+    sg_split_feedback($pdo);
     sg_seed($pdo);
+}
+
+/* --------------------------------------------------------------------------
+   Splitting the old postbag in two
+   --------------------------------------------------------------------------
+   sg_feedback used to hold both kinds of note: the testimonials printed on
+   the About page and the messages the website form collects. One table, one
+   status column, and a single "approved" that meant two different things —
+   "print this on the About page" for the first and "we have dealt with this"
+   for the second. They are separate tables now, and this moves what is
+   already stored into them.
+
+   THE RULE IS: WHATEVER IS ON THE PAGE TODAY STAYS ON THE PAGE.
+   Anything approved is published, whichever way it arrived, because approved
+   is exactly what about_us.html is currently rendering — a split that quietly
+   emptied a live section would be a content change disguised as a migration.
+   Everything else from the website form becomes correspondence.
+
+   sg_feedback is left where it is. It is not read again after this runs.
+   -------------------------------------------------------------------------- */
+
+function sg_split_feedback(PDO $pdo) {
+    if (sg_seeded($pdo, 'split')) return;
+
+    /* An installation created after the split has no old table to read; the
+       CREATE above made an empty one, so this is a no-op with a flag. */
+    $rows = $pdo->query('SELECT * FROM sg_feedback ORDER BY sort_order ASC, id ASC')->fetchAll();
+
+    $tst = $pdo->prepare('INSERT INTO sg_testimonials
+        (name, designation, note, initials, is_published, sort_order, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?)');
+    $cmp = $pdo->prepare('INSERT INTO sg_complaints
+        (feedback_type, name, designation, mobile, note, status, source, ip,
+         submitted_at, handled_at, handled_by)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+
+    $order = 0;
+    foreach ($rows as $r) {
+        $approved = ($r['status'] === 'approved');
+
+        /* Approved, or typed into the panel by an administrator: a
+           testimonial. A rejected one written in the panel is kept as an
+           unpublished testimonial rather than thrown away. */
+        if ($approved || $r['source'] !== 'website') {
+            $order += 10;
+            $tst->execute(array(
+                $r['name'], $r['designation'], $r['note'], $r['initials'],
+                $approved ? 1 : 0, $order,
+                $r['submitted_at'], $r['reviewed_at']));
+            continue;
+        }
+
+        /* Everything else came through the form and was never published. */
+        $cmp->execute(array(
+            $r['feedback_type'], $r['name'], $r['designation'], $r['mobile'], $r['note'],
+            $r['status'] === 'rejected' ? 'resolved' : 'new',
+            'website', $r['ip'], $r['submitted_at'], $r['reviewed_at'], $r['reviewed_by']));
+    }
+
+    sg_mark_seeded($pdo, 'split');
 }
 
 /* --------------------------------------------------------------------------
@@ -361,8 +465,11 @@ function sg_seed(PDO $pdo) {
         sg_mark_seeded($pdo, 'certificates');
     }
 
-    if (!sg_seeded($pdo, 'feedback')) {
-        if ($count('sg_feedback') === 0) {
+    /* The four comments about_us.html carries by hand. sg_split_feedback has
+       already run by the time this does, so on an installation that predates
+       the split the table is not empty and nothing is added twice. */
+    if (!sg_seeded($pdo, 'testimonials')) {
+        if ($count('sg_testimonials') === 0) {
             $rows = array(
                 array('NYK Ship Management', 'NYK',
                       'Generally found good infrastructure for ship recycling Which is good initiative for facility management'),
@@ -373,16 +480,14 @@ function sg_seed(PDO $pdo) {
                 array('Keiji Tomoda, Japan', 'KT',
                       'We are impressed that well managed good yard & Nice idea like Floating Platform.'),
             );
-            $st = $pdo->prepare('INSERT INTO sg_feedback
-                (feedback_type, name, designation, mobile, note, initials, status, source,
-                 sort_order, ip, submitted_at, reviewed_at, reviewed_by)
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            $st = $pdo->prepare('INSERT INTO sg_testimonials
+                (name, designation, note, initials, is_published, sort_order, created_at, updated_at)
+                VALUES (?, ?, ?, ?, 1, ?, ?, ?)');
             foreach ($rows as $i => $r) {
-                $st->execute(array('Visitors', $r[0], '', '', $r[2], $r[1],
-                    'approved', 'admin', ($i + 1) * 10, '', $now, $now, 'seed'));
+                $st->execute(array($r[0], '', $r[2], $r[1], ($i + 1) * 10, $now, $now));
             }
         }
-        sg_mark_seeded($pdo, 'feedback');
+        sg_mark_seeded($pdo, 'testimonials');
     }
 }
 

@@ -7,13 +7,18 @@
    navigation is defined once.
    ========================================================================== */
 
-/* The badge beside "Feedback" in the sidebar — the count of notes waiting for
-   a decision. It is the one number in the panel that means "somebody has to
-   do something", so it is on every page rather than only the dashboard. */
-function sg_pending_feedback_count() {
+/* The badge beside "Complaints" in the sidebar — how many notes from the
+   website form have not been dealt with. It is the one number in the panel
+   that means "somebody has to do something", so it is on every page rather
+   than only the dashboard.
+
+   It counts complaints and not testimonials on purpose: an unpublished
+   testimonial is a draft somebody is choosing not to print, which nobody
+   needs chasing about. An unanswered message from a visitor is. */
+function sg_open_complaint_count() {
     static $n = null;
     if ($n === null) {
-        $n = (int) sg_val("SELECT COUNT(*) FROM sg_feedback WHERE status = 'pending'", array(), 0);
+        $n = (int) sg_val("SELECT COUNT(*) FROM sg_complaints WHERE status = 'new'", array(), 0);
     }
     return $n;
 }
@@ -24,14 +29,15 @@ function sg_nav_items() {
         array('news.php',      'News',      'M4 5h16v14H4zM8 9h8M8 13h8M8 17h5'),
         array('gallery.php',   'Gallery',   'M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6'),
         array('certificates.php', 'Certificates', 'M12 3l7 3v6c0 4.2-2.9 7.4-7 9-4.1-1.6-7-4.8-7-9V6zM9 12l2 2 4-4'),
-        array('feedback.php',  'Feedback',  'M4 5h16v11H8l-4 4z'),
+        array('testimonials.php', 'Testimonials', 'M7.5 6h9M7.5 10h9M7.5 14h5M4 4h16v13H8l-4 4z'),
+        array('complaints.php',   'Complaints',   'M12 4.2 21 19.8H3zM12 10v4M12 16.6v.2'),
         array('users.php',     'Users',     'M4 20c0-3.3 3.6-5 8-5s8 1.7 8 5M12 4a4 4 0 110 8 4 4 0 010-8'),
     );
 }
 
 function sg_admin_head($title, $active = '') {
     $u = sg_user();
-    $pending = sg_pending_feedback_count();
+    $pending = sg_open_complaint_count();
     ?><!doctype html>
 <html lang="en">
 
@@ -68,8 +74,8 @@ function sg_admin_head($title, $active = '') {
                         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
                              stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="<?php echo e($path); ?>"/></svg>
                         <span><?php echo e($label); ?></span>
-                        <?php if ($href === 'feedback.php' && $pending): ?>
-                            <b class="pip" title="<?php echo (int) $pending; ?> awaiting review"><?php echo (int) $pending; ?></b>
+                        <?php if ($href === 'complaints.php' && $pending): ?>
+                            <b class="pip" title="<?php echo (int) $pending; ?> still open"><?php echo (int) $pending; ?></b>
                         <?php endif; ?>
                     </a>
                 <?php endforeach; ?>

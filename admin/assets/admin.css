@@ -643,6 +643,13 @@ select:disabled { background: var(--line-2); color: var(--grey); }
 }
 .fb:target { border-left-color: var(--gold); background: #fffdf7; }
 
+/* An unpublished testimonial. The cyan edge means "this is on the About page",
+   so a draft must not have one — dimming alone reads as disabled rather than
+   as not-yet-printed. */
+.fb--off { border-left-color: var(--line); background: #fbfcfe; }
+.fb--off .fb__av { background: var(--line-2); color: var(--grey); }
+.fb--off .fb__note { color: var(--grey); }
+
 .fb__head { display: flex; align-items: center; gap: 12px; margin-bottom: 11px; }
 .fb__av {
     width: 38px; height: 38px;

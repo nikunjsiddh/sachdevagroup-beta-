@@ -491,8 +491,16 @@
 
                 if (res && res.ok) {
                     done_('');
-                    doneMsg.textContent = 'Your feedback has been sent to the Sachdeva Group ' +
-                        'office under ' + who + '. We will be in touch if a reply is needed.';
+
+                    /* The server sends a message of its own when the wording
+                       has to differ — the note reached the office's panel but
+                       the email did not go out, which is a success and must
+                       not read like the failure it used to be shown as. Set
+                       with textContent, so it is text and cannot be markup. */
+                    doneMsg.textContent = (res.message && typeof res.message === 'string')
+                        ? res.message
+                        : 'Your feedback has been sent to the Sachdeva Group ' +
+                          'office under ' + who + '. We will be in touch if a reply is needed.';
                     form.hidden = true;
                     wrap.querySelector('.sgfb__head').hidden = true;
                     done.hidden = false;
