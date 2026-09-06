@@ -25,5 +25,6 @@ sg_flash($ok ? 'ok' : 'error',
 $from = isset($_SERVER['HTTP_REFERER']) ? (string) $_SERVER['HTTP_REFERER'] : '';
 $page = basename((string) parse_url($from, PHP_URL_PATH));
 
-$allowed = array('dashboard.php', 'news.php', 'gallery.php', 'feedback.php', 'users.php');
+$allowed = array('dashboard.php', 'news.php', 'gallery.php', 'certificates.php',
+                 'feedback.php', 'users.php');
 sg_redirect(in_array($page, $allowed, true) ? $page : 'dashboard.php');

@@ -518,10 +518,35 @@ select:disabled { background: var(--line-2); color: var(--grey); }
 
 .form__foot {
     display: flex;
+    align-items: center;
+    flex-wrap: wrap;
     gap: 10px;
     margin-top: 22px;
     padding-top: 18px;
     border-top: 1px solid var(--line-2);
+}
+.form__foot .hint { max-width: 48ch; }
+
+/* --------------------------------------------------------------------------
+   The "add" card on the gallery and certificates pages
+   --------------------------------------------------------------------------
+   That card used to be .drop: a full-bleed strip holding nothing but a file
+   input, which published every new tile under a caption guessed from its
+   filename. It is an ordinary form card now, so the caption is asked for
+   before anything goes live. These two rules are all that still differs.
+   -------------------------------------------------------------------------- */
+
+/* admin.js still puts is-over on it while files are being dragged over. */
+.form--add.is-over { border-color: var(--cyan); background: var(--cyan-l); }
+
+/* The filename list admin.js writes under the file input. Inside a .field it
+   has no card edge to sit against, so it carries its own. */
+.field > .drop__picked {
+    padding: 8px 11px;
+    border: 1px solid var(--line-2);
+    border-radius: 8px;
+    background: #fbfdff;
+    font-size: 13px;
 }
 
 .thumbrow { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-bottom: 4px; }

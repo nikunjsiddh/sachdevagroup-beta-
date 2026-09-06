@@ -1,7 +1,7 @@
 # Website admin panel
 
-Content management for **news**, the **gallery** and **visitor feedback**, plus the
-accounts that may sign in.
+Content management for **news**, the **gallery**, the **certificates** on the
+credentials page and **visitor feedback**, plus the accounts that may sign in.
 
 ---
 
@@ -29,9 +29,10 @@ is no separate "publish" step to remember.
 |---|---|
 | News | `news.html` — the *Latest News* section |
 | Gallery | `gallery.html` — the tile grid and its lightbox |
+| Certificates | `our_credentials.html` — the certificate scan grid |
 | Feedback (approved only) | `about_us.html` — the *In Their Words* section |
 
-Each of those three files carries a pair of marker comments:
+Each of those four files carries a pair of marker comments:
 
 ```html
 <!-- SG-CMS:news:start … -->
@@ -61,8 +62,28 @@ script runs, so it animates and behaves exactly like markup typed by hand,
 nothing in `js/` or `css/` has to change, and the pages stay indexable and keep
 working with JavaScript off.
 
-The cost is that the panel needs **write permission on those three `.html`
+The cost is that the panel needs **write permission on those four `.html`
 files**. Without it, publishing fails loudly and names the file.
+
+---
+
+## Gallery and certificates
+
+Both are the same shape: a picture, the line printed across it, and an optional
+longer caption for the lightbox. The add form asks for all three, so a tile
+never goes live under a caption guessed from a filename — leave the caption
+empty and the guess is still what you get, but you have been shown the field.
+
+Several files can be added at once. With a caption typed above them it is
+numbered across the batch (*Beaching 01*, *Beaching 02*); with none it comes
+from each filename.
+
+The six certificate scans and six photographs those two pages carried by hand
+are copied into the database on the first request, so the panel opens showing
+what is already live rather than an empty section. That copy happens once and
+is recorded as having happened — deleting every item in a section leaves it
+empty and publishes the section's "nothing published yet" note, rather than
+the originals reappearing on the next page load.
 
 ---
 
@@ -83,7 +104,7 @@ Approving, rejecting and reordering all rewrite `about_us.html` at once.
 
 | | Owner | Editor |
 |---|---|---|
-| News, gallery, feedback | yes | yes |
+| News, gallery, certificates, feedback | yes | yes |
 | Create and remove administrators | yes | no |
 
 The last active owner cannot be deleted, disabled or demoted, and nobody can
@@ -136,11 +157,12 @@ themselves. The `db` block is replaced whole, so give all of its keys.
 ## Deploying
 
 1. Upload everything.
-2. Make `data/`, `uploads/`, and `news.html`, `gallery.html`, `about_us.html`
-   writable by the web server (755/775 on folders, 644/664 on the files — the
-   exact numbers depend on the host).
+2. Make `data/`, `uploads/`, and `news.html`, `gallery.html`,
+   `our_credentials.html`, `about_us.html` writable by the web server
+   (755/775 on folders, 644/664 on the files — the exact numbers depend on the
+   host).
 3. Open `/admin/` and create the owner account.
-4. Press **Republish site** once and check the dashboard reports all three
+4. Press **Republish site** once and check the dashboard reports all four
    pages as *Ready*.
 
 The `.htaccess` files under `includes/`, `data/` and `uploads/` are part of the

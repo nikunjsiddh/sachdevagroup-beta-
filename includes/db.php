@@ -181,6 +181,23 @@ function sg_schema_sql() {
             updated_at   {STR} NOT NULL DEFAULT ''
         ){TBLOPT}",
 
+        /* ---- our_credentials.html -------------------------------------
+           The certificate scans on the credentials page. Same shape as the
+           gallery — a picture, the line printed across its foot, and an
+           optional longer caption for the lightbox — because they are the
+           same kind of thing to whoever maintains them, and one shape means
+           one set of habits to learn.                                     */
+        'sg_certificates' => "CREATE TABLE IF NOT EXISTS sg_certificates (
+            id           {PK},
+            title        {STR} NOT NULL,
+            caption      {TXT},
+            image        {TXT},
+            is_published {INT} NOT NULL DEFAULT 1,
+            sort_order   {INT} NOT NULL DEFAULT 0,
+            created_at   {STR} NOT NULL DEFAULT '',
+            updated_at   {STR} NOT NULL DEFAULT ''
+        ){TBLOPT}",
+
         /* ---- the feedback postbag, and the About page section ----------
            Everything the website form collects lands here as 'pending'.
            Only rows an administrator has moved to 'approved' are published,
@@ -200,6 +217,16 @@ function sg_schema_sql() {
             submitted_at  {STR} NOT NULL DEFAULT '',
             reviewed_at   {STR} NOT NULL DEFAULT '',
             reviewed_by   {STR} NOT NULL DEFAULT ''
+        ){TBLOPT}",
+
+        /* ---- one row per thing the code needs to remember -------------
+           Today that is only which sections have had their first-run content
+           copied in; it is a key/value table rather than a seeded_at column
+           so the next such flag does not need a migration.               */
+        'sg_meta' => "CREATE TABLE IF NOT EXISTS sg_meta (
+            k {STR} NOT NULL,
+            v {TXT},
+            UNIQUE (k)
         ){TBLOPT}",
 
         /* ---- failed sign-ins, for the throttle ------------------------ */
@@ -239,6 +266,7 @@ function sg_migrate(PDO $pdo) {
     $idx = array(
         'CREATE INDEX IF NOT EXISTS sg_news_pub  ON sg_news (is_published, published_on)',
         'CREATE INDEX IF NOT EXISTS sg_gal_pub   ON sg_gallery (is_published, sort_order)',
+        'CREATE INDEX IF NOT EXISTS sg_cert_pub  ON sg_certificates (is_published, sort_order)',
         'CREATE INDEX IF NOT EXISTS sg_fb_status ON sg_feedback (status, sort_order)',
         'CREATE INDEX IF NOT EXISTS sg_login_at  ON sg_login_log (at)',
     );
@@ -258,10 +286,37 @@ function sg_migrate(PDO $pdo) {
    would silently delete content that has been live for years.
 
    Seeding copies what those pages already show into the database once, so the
-   first publish changes nothing visible and every item is then editable. The
-   guard is "is the table empty", not a flag, so clearing a table on purpose
-   and republishing still leaves the section empty on the next request.
+   first publish changes nothing visible and every item is then editable.
+
+   ONCE MEANS ONCE, AND THAT NEEDS A FLAG
+   The guard used to be "is the table empty", which is not the same question.
+   Emptying a section on purpose — six old certificate scans replaced by this
+   year's, deleted before the new ones are uploaded — left the table empty,
+   and the next request read that as a fresh installation and put all six
+   back. Delete has to mean delete, so what is recorded is that the copying
+   HAPPENED, in sg_meta, not what the table looks like now.
+
+   The flag is written on the first run whether or not anything was inserted.
+   An installation upgrading to this code already has its rows, gets the flag
+   without a second copy, and is never seeded again.
    -------------------------------------------------------------------------- */
+
+function sg_seeded(PDO $pdo, $key) {
+    $st = $pdo->prepare('SELECT v FROM sg_meta WHERE k = ?');
+    $st->execute(array('seeded_' . $key));
+    return $st->fetchColumn() !== false;
+}
+
+function sg_mark_seeded(PDO $pdo, $key) {
+    /* INSERT ... ON CONFLICT is spelled differently on the two drivers and
+       this runs at most once per section, so a plain guarded insert is worth
+       more than a clever one-liner. The race is two first requests arriving
+       together; UNIQUE (k) settles it and the loser is ignored. */
+    try {
+        $st = $pdo->prepare('INSERT INTO sg_meta (k, v) VALUES (?, ?)');
+        $st->execute(array('seeded_' . $key, date('Y-m-d H:i:s')));
+    } catch (PDOException $e) { /* already flagged by a concurrent request */ }
+}
 
 function sg_seed(PDO $pdo) {
     $now = date('Y-m-d H:i:s');
@@ -270,42 +325,64 @@ function sg_seed(PDO $pdo) {
         return (int) $pdo->query('SELECT COUNT(*) FROM ' . $t)->fetchColumn();
     };
 
-    if ($count('sg_gallery') === 0) {
-        $rows = array(
-            array('Primary Cutting Zone', 'images/gallery/1.jpg'),
-            array('Beaching',             'images/gallery/2.jpg'),
-            array('Block Handling',       'images/gallery/3.jpg'),
-            array('Plate Recovery',       'images/gallery/4.jpg'),
-            array('Secondary Cutting',    'images/gallery/5.jpg'),
-            array('Yard Overview',        'images/gallery/6.jpg'),
-        );
-        $st = $pdo->prepare('INSERT INTO sg_gallery
-            (title, caption, image, is_published, sort_order, created_at, updated_at)
-            VALUES (?, ?, ?, 1, ?, ?, ?)');
-        foreach ($rows as $i => $r) {
-            $st->execute(array($r[0], '', $r[1], ($i + 1) * 10, $now, $now));
+    if (!sg_seeded($pdo, 'gallery')) {
+        if ($count('sg_gallery') === 0) {
+            $rows = array(
+                array('Primary Cutting Zone', 'images/gallery/1.jpg'),
+                array('Beaching',             'images/gallery/2.jpg'),
+                array('Block Handling',       'images/gallery/3.jpg'),
+                array('Plate Recovery',       'images/gallery/4.jpg'),
+                array('Secondary Cutting',    'images/gallery/5.jpg'),
+                array('Yard Overview',        'images/gallery/6.jpg'),
+            );
+            $st = $pdo->prepare('INSERT INTO sg_gallery
+                (title, caption, image, is_published, sort_order, created_at, updated_at)
+                VALUES (?, ?, ?, 1, ?, ?, ?)');
+            foreach ($rows as $i => $r) {
+                $st->execute(array($r[0], '', $r[1], ($i + 1) * 10, $now, $now));
+            }
         }
+        sg_mark_seeded($pdo, 'gallery');
     }
 
-    if ($count('sg_feedback') === 0) {
-        $rows = array(
-            array('NYK Ship Management', 'NYK',
-                  'Generally found good infrastructure for ship recycling Which is good initiative for facility management'),
-            array('Class NK', 'NK',
-                  'Team\'s attitude to obtain knowledge is very good. Please keep obtaining knowledge.'),
-            array('JNA, Japan', 'JNA',
-                  'Yard is well developed. Safety and Environment friendly operation is good. Hope to see next upgrading.'),
-            array('Keiji Tomoda, Japan', 'KT',
-                  'We are impressed that well managed good yard & Nice idea like Floating Platform.'),
-        );
-        $st = $pdo->prepare('INSERT INTO sg_feedback
-            (feedback_type, name, designation, mobile, note, initials, status, source,
-             sort_order, ip, submitted_at, reviewed_at, reviewed_by)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
-        foreach ($rows as $i => $r) {
-            $st->execute(array('Visitors', $r[0], '', '', $r[2], $r[1],
-                'approved', 'admin', ($i + 1) * 10, '', $now, $now, 'seed'));
+    /* The six certificate scans our_credentials.html carries by hand. Same
+       reasoning as the gallery above: from the first publish the table IS the
+       section, so an empty one would delete six live cards. */
+    if (!sg_seeded($pdo, 'certificates')) {
+        if ($count('sg_certificates') === 0) {
+            $st = $pdo->prepare('INSERT INTO sg_certificates
+                (title, caption, image, is_published, sort_order, created_at, updated_at)
+                VALUES (?, ?, ?, 1, ?, ?, ?)');
+            for ($i = 1; $i <= 6; $i++) {
+                $label = 'Certificate ' . str_pad((string) $i, 2, '0', STR_PAD_LEFT);
+                $st->execute(array($label, '', 'images/cert/' . $i . '.jpg', $i * 10, $now, $now));
+            }
         }
+        sg_mark_seeded($pdo, 'certificates');
+    }
+
+    if (!sg_seeded($pdo, 'feedback')) {
+        if ($count('sg_feedback') === 0) {
+            $rows = array(
+                array('NYK Ship Management', 'NYK',
+                      'Generally found good infrastructure for ship recycling Which is good initiative for facility management'),
+                array('Class NK', 'NK',
+                      'Team\'s attitude to obtain knowledge is very good. Please keep obtaining knowledge.'),
+                array('JNA, Japan', 'JNA',
+                      'Yard is well developed. Safety and Environment friendly operation is good. Hope to see next upgrading.'),
+                array('Keiji Tomoda, Japan', 'KT',
+                      'We are impressed that well managed good yard & Nice idea like Floating Platform.'),
+            );
+            $st = $pdo->prepare('INSERT INTO sg_feedback
+                (feedback_type, name, designation, mobile, note, initials, status, source,
+                 sort_order, ip, submitted_at, reviewed_at, reviewed_by)
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)');
+            foreach ($rows as $i => $r) {
+                $st->execute(array('Visitors', $r[0], '', '', $r[2], $r[1],
+                    'approved', 'admin', ($i + 1) * 10, '', $now, $now, 'seed'));
+            }
+        }
+        sg_mark_seeded($pdo, 'feedback');
     }
 }
 

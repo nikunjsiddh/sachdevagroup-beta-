@@ -2,8 +2,8 @@
    SACHDEVA GROUP — admin panel behaviour
    ==========================================================================
    Four small things: the drawer on narrow screens, a confirmation before
-   anything destructive, the filename list under the gallery upload, and a
-   guard against double-submitting a form.
+   anything destructive, the filename list under the gallery and certificate
+   uploads, and a guard against double-submitting a form.
 
    Everything in the panel works with this file absent. It is progressive
    enhancement, not the application: the drawer is only needed below 900px,
@@ -107,10 +107,11 @@
     });
 
     /* ----------------------------------------------------------------------
-       4. The gallery upload
+       4. The gallery and certificate uploads
        ----------------------------------------------------------------------
        Names what was chosen, because a multiple file input reports only
-       "6 files" and there is no way to tell which six.
+       "6 files" and there is no way to tell which six. Both add forms carry
+       the same three ids, so one binding serves them both.
     ---------------------------------------------------------------------- */
 
     var input = document.getElementById('dropInput');

@@ -2,7 +2,7 @@
 /* ==========================================================================
    ADMIN — dashboard
    ==========================================================================
-   Counts, whatever is waiting for a decision, and the health of the three
+   Counts, whatever is waiting for a decision, and the health of the four
    pages this panel writes into. The health panel exists because every way
    publishing can fail is silent from the website's side: a page whose markers
    were deleted, or that the web server cannot write, looks exactly like a
@@ -18,6 +18,8 @@ $stats = array(
     'news_live'      => (int) sg_val('SELECT COUNT(*) FROM sg_news WHERE is_published = 1', array(), 0),
     'gallery_total'  => (int) sg_val('SELECT COUNT(*) FROM sg_gallery', array(), 0),
     'gallery_live'   => (int) sg_val('SELECT COUNT(*) FROM sg_gallery WHERE is_published = 1', array(), 0),
+    'cert_total'     => (int) sg_val('SELECT COUNT(*) FROM sg_certificates', array(), 0),
+    'cert_live'      => (int) sg_val('SELECT COUNT(*) FROM sg_certificates WHERE is_published = 1', array(), 0),
     'fb_pending'     => (int) sg_val("SELECT COUNT(*) FROM sg_feedback WHERE status = 'pending'", array(), 0),
     'fb_approved'    => (int) sg_val("SELECT COUNT(*) FROM sg_feedback WHERE status = 'approved'", array(), 0),
     'users'          => sg_user_count(),
@@ -32,12 +34,14 @@ $recentNews = sg_all('SELECT id, title, published_on, is_published FROM sg_news
 $health = array(
     'news'         => sg_target_status('news'),
     'gallery'      => sg_target_status('gallery'),
+    'certificates' => sg_target_status('certificates'),
     'testimonials' => sg_target_status('testimonials'),
 );
 
 $healthLabels = array(
     'news'         => 'News page',
     'gallery'      => 'Gallery page',
+    'certificates' => 'Certificates on the credentials page',
     'testimonials' => 'Feedback on the About page',
 );
 
@@ -55,6 +59,12 @@ sg_admin_head('Dashboard', 'dashboard.php');
         <span class="tile__n"><?php echo $stats['gallery_live']; ?></span>
         <span class="tile__k">Gallery photographs live</span>
         <span class="tile__s"><?php echo $stats['gallery_total']; ?> in total</span>
+    </a>
+
+    <a class="tile" href="certificates.php">
+        <span class="tile__n"><?php echo $stats['cert_live']; ?></span>
+        <span class="tile__k">Certificates live</span>
+        <span class="tile__s"><?php echo $stats['cert_total']; ?> in total</span>
     </a>
 
     <a class="tile<?php echo $stats['fb_pending'] ? ' tile--alert' : ''; ?>" href="feedback.php?status=pending">

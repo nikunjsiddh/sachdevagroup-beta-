@@ -61,6 +61,7 @@ $config = array(
         'news'         => 'news.html',
         'gallery'      => 'gallery.html',
         'testimonials' => 'about_us.html',
+        'certificates' => 'our_credentials.html',
     ),
 
     /* ---- session / login ------------------------------------------------ */

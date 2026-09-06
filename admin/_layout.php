@@ -23,6 +23,7 @@ function sg_nav_items() {
         array('dashboard.php', 'Dashboard', 'M3 12l9-8 9 8M5 10v10h14V10'),
         array('news.php',      'News',      'M4 5h16v14H4zM8 9h8M8 13h8M8 17h5'),
         array('gallery.php',   'Gallery',   'M3 5h18v14H3zM3 15l5-5 4 4 3-3 6 6'),
+        array('certificates.php', 'Certificates', 'M12 3l7 3v6c0 4.2-2.9 7.4-7 9-4.1-1.6-7-4.8-7-9V6zM9 12l2 2 4-4'),
         array('feedback.php',  'Feedback',  'M4 5h16v11H8l-4 4z'),
         array('users.php',     'Users',     'M4 20c0-3.3 3.6-5 8-5s8 1.7 8 5M12 4a4 4 0 110 8 4 4 0 010-8'),
     );

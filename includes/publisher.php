@@ -2,9 +2,9 @@
 /* ==========================================================================
    PUBLISHER
    ==========================================================================
-   Turns rows in the database into the markup that news.html, gallery.html and
-   about_us.html actually serve, and writes it into those files between a pair
-   of marker comments.
+   Turns rows in the database into the markup that news.html, gallery.html,
+   our_credentials.html and about_us.html actually serve, and writes it into
+   those files between a pair of marker comments.
 
    WHY IT WRITES HTML INSTEAD OF SERVING JSON
    The obvious build for a panel like this is a JSON endpoint plus fetch() on
@@ -26,7 +26,7 @@
    keeps working with JavaScript off, which a fetch-rendered newsroom does not.
 
    THE COST, STATED PLAINLY
-   The panel needs write permission on those three .html files. If it does not
+   The panel needs write permission on those four .html files. If it does not
    have it, publish() says so by name and changes nothing.
 
    ANYTHING BETWEEN THE MARKERS IS DISPOSABLE
@@ -55,6 +55,11 @@ function sg_published_gallery() {
 function sg_published_feedback() {
     return sg_all("SELECT * FROM sg_feedback WHERE status = 'approved'
                    ORDER BY sort_order ASC, id ASC");
+}
+
+function sg_published_certificates() {
+    return sg_all('SELECT * FROM sg_certificates WHERE is_published = 1
+                   ORDER BY sort_order ASC, id ASC');
 }
 
 /* --------------------------------------------------------------------------
@@ -334,6 +339,70 @@ function sg_render_testimonials($rows) {
 }
 
 /* --------------------------------------------------------------------------
+   BLOCK 4 — the certificate scans on our_credentials.html
+   --------------------------------------------------------------------------
+   .mrnp-certcard is styled by css/marine-pages.css and, like the gallery
+   tiles, is collected by js/marine-pages.js: [data-mrnp-lightbox] is the full
+   size picture the viewer opens and [data-mrnp-caption] is the line it prints
+   underneath. The bar across the foot of the card is the title.
+
+   The grid keeps its --3 modifier at every count rather than narrowing for
+   one or two cards: the modifier is a maximum, and the CSS already collapses
+   it on narrow screens.
+   -------------------------------------------------------------------------- */
+
+function sg_render_certificates($rows) {
+
+    if (!$rows) {
+        return '<div class="pfx-note pfx-note--live" data-mrnp-tilt="4">' . "
+"
+             . '    <span class="pfx-note__flag">' . "
+"
+             . '        <i aria-hidden="true"></i> Certificates &middot; nothing published yet' . "
+"
+             . '    </span>' . "
+"
+             . '    <p>Scans of the group&rsquo;s certification will appear here as they are issued.</p>' . "
+"
+             . '</div>';
+    }
+
+    $out = '<div class="mrnp-grid mrnp-grid--3" data-mrn-stagger="90" data-mrn-reveal>' . "
+";
+
+    foreach ($rows as $r) {
+        $img = sg_img_src($r['image']);
+        if ($img === '') continue;
+
+        $title = e($r['title']);
+        $cap   = trim((string) $r['caption']);
+        $cap   = $cap !== '' ? e($cap) : $title;
+
+        /* The title alone is what the bar under the picture already says, so
+           an alt of just "Certificate 04" tells a screen reader nothing the
+           next line does not. Naming the company is what the hand-written
+           markup did and is the part that is not on screen anywhere else. */
+        $alt = 'Sachdeva Group &mdash; ' . $title;
+
+        $out .= '    <article class="mrnp-certcard" data-mrnp-tilt="8" data-mrnp-lightbox="' . e($img) . '"' . "
+"
+              . '        data-mrnp-caption="' . $cap . '" data-sfx-open>' . "
+"
+              . '        <img loading="lazy" decoding="async" src="' . e($img) . '"' . "
+"
+              . '            alt="' . $alt . '">' . "
+"
+              . '        <div class="mrnp-certcard__bar">' . $title . '</div>' . "
+"
+              . '    </article>' . "
+";
+    }
+
+    return rtrim($out) . "
+" . '</div>';
+}
+
+/* --------------------------------------------------------------------------
    Writing it into the page
    -------------------------------------------------------------------------- */
 
@@ -376,6 +445,7 @@ function sg_publish_block($block) {
         case 'news':         $body = sg_render_news(sg_published_news());              break;
         case 'gallery':      $body = sg_render_gallery(sg_published_gallery());        break;
         case 'testimonials': $body = sg_render_testimonials(sg_published_feedback());  break;
+        case 'certificates': $body = sg_render_certificates(sg_published_certificates()); break;
         default:             return array(false, 'Unknown block "' . $block . '".');
     }
 

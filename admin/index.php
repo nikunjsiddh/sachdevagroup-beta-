@@ -112,7 +112,7 @@ $flash    = sg_take_flash();
             </p>
         <?php else: ?>
             <h1>Sign in</h1>
-            <p class="gate__lead">Website content for news, the gallery and visitor feedback.</p>
+            <p class="gate__lead">Website content for news, the gallery, certificates and visitor feedback.</p>
         <?php endif; ?>
 
         <?php foreach ($flash as $f): ?>
