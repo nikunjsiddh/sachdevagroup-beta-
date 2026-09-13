@@ -1640,3 +1640,23 @@ html.sgfb-locked body {
         box-shadow: 0 0 0 4px rgba(255, 173, 24, .34) !important;
     }
 }
+
+/* ==========================================================================
+   MOBILE FORM FIELDS -- 16px, or iOS zooms the page
+   ==========================================================================
+   Safari on iOS zooms the viewport whenever a focused form control renders
+   below 16px, and these fields computed to 15.5px. Tapping any of them pushed
+   the layout sideways and left the user pinched in, with no way back except a
+   manual zoom-out -- the classic "the form jumps when I tap it" bug.
+
+   16px only below the tablet breakpoint: the desktop type scale is unchanged,
+   and half a pixel is not a visible difference on a phone anyway.
+   ========================================================================== */
+
+@media (max-width: 767px) {
+    .sgfb-field input,
+    .sgfb-field textarea,
+    .sgfb-field select {
+        font-size: 16px;
+    }
+}

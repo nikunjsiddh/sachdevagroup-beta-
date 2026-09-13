@@ -53,48 +53,18 @@ if (!$originHost || strcasecmp($originHost, $hostOnly) !== 0) {
    public endpoint are a description of the server to anybody probing it. */
 $devHost = in_array($_SERVER['REMOTE_ADDR'] ?? '', array('127.0.0.1', '::1'), true);
 
-$configFile = __DIR__ . '/mail-config.php';
+require_once __DIR__ . '/includes/mailer.php';
+require_once __DIR__ . '/includes/mail-templates.php';
 
-/* A missing or unfinished mail config is NOT reported here any more.
+/* A missing or unfinished mail config is NOT reported here.
    It used to be, and that meant an unconfigured server threw the visitor's
    note away: this ran before the validation and before the note was recorded,
    so a site whose mail was not set up yet lost every message sent to it
    instead of at least keeping one for the admin panel to show.
 
    The failure is deferred to section 4c instead — after the note has been
-   written to the database — so the office still has it either way. Everything
-   about what the visitor is told, and what only a local setup is told, is
-   unchanged; it just happens a few lines later. */
-$mailFail = '';
-$cfg = array();
-
-if (!is_file($configFile)) {
-    /* This is the one setup step that cannot be shipped, and it catches
-       everyone who deploys with git: mail-config.php is in .gitignore because
-       it holds a live password, so a pull brings feedback-send.php and the
-       sample but never the real file. */
-    error_log('feedback: mail-config.php is missing — copy mail-config.sample.php to '
-        . 'mail-config.php in ' . __DIR__ . ' and fill in the Gmail address and app password');
-
-    $mailFail = 'Mail is not configured on this server.' . ($devHost
-        ? ' Copy mail-config.sample.php to mail-config.php in the site folder and'
-          . ' fill in the Gmail address and app password — .gitignore keeps that'
-          . ' file out of the repository, so git never delivers it.'
-        : '');
-} else {
-    $cfg = require $configFile;
-
-    /* A config that is present but still holds the sample values fails at AUTH
-       with nothing to explain it. Say so here instead. */
-    if (!is_array($cfg) || empty($cfg['user']) || empty($cfg['pass'])
-            || strpos((string) $cfg['user'], 'you@') === 0
-            || strpos((string) $cfg['pass'], 'xxxx') === 0) {
-        error_log('feedback: mail-config.php still holds the sample values');
-        $mailFail = 'Mail is not configured on this server.' . ($devHost
-            ? ' mail-config.php is still filled with the sample placeholders.' : '');
-        $cfg = is_array($cfg) ? $cfg : array();
-    }
-}
+   written to the database — so the office still has it either way. */
+list($cfg, $mailFail) = sg_mail_config($devHost);
 
 /* --- 3. the fields, re-checked ------------------------------------------ */
 
@@ -110,6 +80,7 @@ $type = field('feedbackType', 20);
 $name = field('name', 60);
 $role = field('designation', 60);
 $tel  = field('mobile', 18);
+$mail = field('email', 120);
 $note = trim(preg_replace('/[\x00-\x08\x0B\x0C\x0E-\x1F\x7F]/u', '',
         (string) ($_POST['note'] ?? '')));           /* newlines survive here */
 $note = mb_substr($note, 0, 500);
@@ -121,6 +92,13 @@ if (!preg_match('/^[\p{L}\p{M} .\'\-]+$/u', $name))
                                             fail('Name may contain letters, spaces, . \' and - only.');
 if (mb_strlen($role) < 2)                   fail('Please enter your designation.');
 if (mb_strlen($note) < 5)                   fail('Please write your feedback.');
+
+/* Optional, and the only optional field on this form. Given, it is what the
+   acknowledgement is sent to; left empty the note is still accepted exactly
+   as it always was. A malformed one is refused rather than silently dropped —
+   somebody who typed an address meant to hear back. */
+if ($mail !== '' && !filter_var($mail, FILTER_VALIDATE_EMAIL))
+                                            fail('That email address does not look right. Leave it empty if you would rather not give one.');
 
 /* the same rule js/feedback.js applies: a country prefix comes off only when
    there is more than ten digits to take it from, so a real ten-digit number
@@ -205,10 +183,10 @@ try {
     require_once __DIR__ . '/includes/helpers.php';
 
     sg_run('INSERT INTO sg_complaints
-            (feedback_type, name, designation, mobile, note, status, source, ip,
+            (feedback_type, name, designation, email, mobile, note, status, source, ip,
              submitted_at, handled_at, handled_by)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        array($type, $name, $role, '+91 ' . $digits, $note,
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        array($type, $name, $role, $mail, '+91 ' . $digits, $note,
               'new', 'website', $ip, date('Y-m-d H:i:s'), '', ''));
 
     $stored = true;
@@ -261,126 +239,74 @@ if ($mailFail !== '') {
     fail($mailFail, 500);
 }
 
-/* --- 5. the message ------------------------------------------------------ */
-
-require __DIR__ . '/feedback-template.php';
+/* --- 5. the two messages ------------------------------------------------- */
 
 $sentAt = date('j M Y, g:i a');
-$html   = sgfb_email_html($type, $name, $role, '+91 ' . $digits, $note, $sentAt);
-$text   = sgfb_email_text($type, $name, $role, '+91 ' . $digits, $note, $sentAt);
+$tel    = '+91 ' . $digits;
 
-/* --- 6. send ------------------------------------------------------------- */
+$html = sgm_office_feedback(array(
+    'type' => $type, 'name' => $name, 'role' => $role,
+    'tel'  => $tel,  'email' => $mail, 'note' => $note, 'sentAt' => $sentAt,
+));
+$text = sgm_text_office('New feedback', array(
+    'From'   => $type, 'Name' => $name, 'Designation' => $role,
+    'Mobile' => $tel,  'Email' => $mail, 'Received' => $sentAt,
+), 'What they said', $note);
 
-function smtp_send($cfg, $subject, $html, $text) {
-    $user = (string) $cfg['user'];
-    $pass = str_replace(' ', '', (string) $cfg['pass']);   /* Google prints it in fours */
-    $to   = (string) $cfg['to'];
-    $host = $cfg['host'] ?? 'smtp.gmail.com';
-    $port = (int) ($cfg['port'] ?? 465);
+/* --- 6. send over ONE session -------------------------------------------
+   The office copy always; the acknowledgement only when an address was given,
+   because the email field on this form is optional. Both ride the same
+   connection — two TLS handshakes plus two logins measured 8-15 seconds each
+   against smtp.gmail.com from this network, and the visitor waited through
+   both. See the note at the top of includes/mailer.php.
 
-    /* 'secure' exists so a local test relay (MailHog, Papercut, smtp4dev on
-       127.0.0.1) can be pointed at without TLS. It is guarded rather than
-       trusted: turning it off for anything but a loopback host would put the
-       app password on the wire in clear, so that combination is refused
-       outright instead of being left to whoever edits the config. */
-    $secure = ($cfg['secure'] ?? 'ssl') !== '';
-    $local  = in_array($host, array('127.0.0.1', 'localhost', '::1'), true);
+   The office copy decides the answer. The acknowledgement never does: the
+   note is already in the panel, and telling somebody their feedback did not
+   arrive because our courtesy email bounced would be a lie in the unhelpful
+   direction. */
 
-    if (!$secure && !$local) {
-        error_log('feedback: refusing to send to ' . $host . ' without TLS');
-        return 'insecure';
-    }
+$queue = array(array(
+    'to'      => $cfg['to'],
+    'subject' => 'Website feedback — ' . $type . ' — ' . $name,
+    'html'    => $html,
+    'text'    => $text,
+    'inline'  => sg_mail_inline(sgm_cids('office')),
+    /* reply reaches whoever wrote in, when they left an address */
+    'replyTo' => $mail,
+));
 
-    if ($secure && !extension_loaded('openssl')) {
-        error_log('feedback: the openssl extension is off; enable it in php.ini');
-        return 'openssl';
-    }
+if ($mail !== '') {
+    $parts = preg_split('/\s+/u', trim($name));
+    $first = $parts ? $parts[0] : $name;
 
-    $scheme = $secure ? 'ssl' : 'tcp';
-    $fp = @stream_socket_client("$scheme://$host:$port", $errno, $errstr, 20);
-    if (!$fp) {
-        /* On shared hosting this is almost always the host firewalling
-           outbound SMTP rather than anything wrong here — a lot of providers
-           block 25/465/587 to everything but their own mail server. Say so in
-           the log, because "connect failed" on its own sends people looking
-           at the password. */
-        error_log('feedback: could not reach ' . $host . ':' . $port . ' — ' . $errno . ' ' . $errstr
-            . '. If this is a live shared host, check whether it allows outbound SMTP on that port;'
-            . ' many block it and require their own relay instead.');
-        return 'connect';
-    }
-    stream_set_timeout($fp, 20);
-
-    /* SMTP replies can run to several lines; only the one with a space in the
-       fourth column is the last. Reading a single line reads AUTH and EHLO
-       wrong every time. */
-    $read = function () use ($fp) {
-        $out = '';
-        while (($line = fgets($fp, 1024)) !== false) {
-            $out .= $line;
-            if (strlen($line) < 4 || $line[3] !== '-') break;
-        }
-        return $out;
-    };
-    $say = function ($cmd) use ($fp, $read) { fwrite($fp, $cmd . "\r\n"); return $read(); };
-    $ok  = function ($reply, $code) { return strncmp($reply, (string) $code, 3) === 0; };
-
-    $step = 'greeting';
-    do {
-        if (!$ok($read(), 220)) break;
-        $step = 'ehlo';   if (!$ok($say('EHLO ' . ($_SERVER['HTTP_HOST'] ?? 'localhost')), 250)) break;
-        $step = 'auth';   if (!$ok($say('AUTH LOGIN'), 334)) break;
-        $step = 'user';   if (!$ok($say(base64_encode($user)), 334)) break;
-        $step = 'pass';   if (!$ok($say(base64_encode($pass)), 235)) break;
-        $step = 'from';   if (!$ok($say('MAIL FROM:<' . $user . '>'), 250)) break;
-        $step = 'rcpt';   if (!$ok($say('RCPT TO:<' . $to . '>'), 250)) break;
-        $step = 'data';   if (!$ok($say('DATA'), 354)) break;
-
-        $b = '=_sgfb_' . bin2hex(random_bytes(8));
-        $fromName = preg_replace('/[^\x20-\x7E]/', '', (string) ($cfg['from_name'] ?? 'Website'));
-        $headers = array(
-            'From: "' . $fromName . '" <' . $user . '>',
-            'To: <' . $to . '>',
-            'Subject: ' . $subject,
-            'Date: ' . date('r'),
-            'MIME-Version: 1.0',
-            'Content-Type: multipart/alternative; boundary="' . $b . '"'
-        );
-        $body = implode("\r\n", $headers) . "\r\n\r\n"
-              . "--$b\r\nContent-Type: text/plain; charset=UTF-8\r\n"
-              . "Content-Transfer-Encoding: base64\r\n\r\n" . chunk_split(base64_encode($text)) . "\r\n"
-              . "--$b\r\nContent-Type: text/html; charset=UTF-8\r\n"
-              . "Content-Transfer-Encoding: base64\r\n\r\n" . chunk_split(base64_encode($html)) . "\r\n"
-              . "--$b--\r\n";
-
-        /* a line that is a single dot ends DATA — double any leading dot */
-        $body = preg_replace('/^\./m', '..', $body);
-
-        fwrite($fp, $body . "\r\n.\r\n");
-        $step = 'send';   if (!$ok($read(), 250)) break;
-        $step = '';
-    } while (false);
-
-    @fwrite($fp, "QUIT\r\n");
-    @fclose($fp);
-
-    if ($step !== '') { error_log('feedback: SMTP failed at step "' . $step . '"'); return $step; }
-    return true;
+    $queue[] = array(
+        'to'      => $mail,
+        'subject' => 'We have your feedback — Sachdeva Group of Industries',
+        'html'    => sgm_ack(array('first' => $first, 'kind' => 'feedback',
+                                   'message' => $note, 'sentAt' => $sentAt)),
+        'text'    => sgm_text_ack($first, 'feedback', $note, $sentAt),
+        'inline'  => sg_mail_inline(sgm_cids('ack')),
+    );
 }
 
-$subject = 'Website feedback — ' . $type . ' — ' . $name;
-$result  = smtp_send($cfg, $subject, $html, $text);
+$sent = sg_smtp_send_many($cfg, $queue);
 
-if ($result !== true) {
+/* A string back means the connection or the login failed, so nothing left. */
+$office = is_array($sent) ? $sent[0] : $sent;
+
+if ($office !== true) {
     /* Same rule as section 4c: the note is already in the panel, so a mail
        that would not go out is the office's problem and not the visitor's.
-       Which SMTP step failed, and whether the password was rejected, belongs
-       in the server log — it is a map of the mail setup to anybody probing
-       this endpoint, and it is nothing a visitor can act on. */
+       Which SMTP step failed belongs in the server log — it is a map of the
+       mail setup to anybody probing this endpoint. */
     if ($stored) {
-        delivered_to_panel_only($devHost, 'SMTP failed at step "' . $result . '"');
+        delivered_to_panel_only($devHost, 'SMTP failed at step "' . $office . '"');
     }
     fail('Could not send just now. Please call or email us instead.', 502);
+}
+
+if ($mail !== '' && is_array($sent) && isset($sent[1]) && $sent[1] !== true) {
+    error_log('feedback: acknowledgement to ' . $mail . ' failed at step "' . $sent[1] . '"');
 }
 
 echo json_encode(array('ok' => true));
