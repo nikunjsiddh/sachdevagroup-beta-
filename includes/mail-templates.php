@@ -113,9 +113,22 @@ function sgm_head($eyebrow, $title) {
 
     return '<tr><td style="background:' . $c['ink'] . ';padding:26px 34px 26px;">
       <table role="presentation" width="100%" cellpadding="0" cellspacing="0" border="0"><tr>
-        <td width="52" style="width:52px;vertical-align:middle;padding-right:14px;">
-          <img src="cid:sg-logo" width="46" height="41" alt="' . sgm_h($o['name']) . '"
-               style="display:block;border:0;width:46px;height:41px;">
+        <td width="66" style="width:66px;vertical-align:middle;padding-right:15px;">
+          <!-- The logo is navy lettering and a navy anchor beside an orange
+               wheel, so on the ink masthead behind it only the wheel survived
+               and the wordmark disappeared. It sits on the same near-white
+               plate the site header uses instead — background-color first for
+               Outlook, which renders through Word and ignores the gradient,
+               and a solid hex border because rgba() is no better supported. -->
+          <table role="presentation" cellpadding="0" cellspacing="0" border="0"><tr>
+            <td width="66" height="58" align="center" valign="middle"
+                style="width:66px;height:58px;background-color:#f4f8fc;
+                       background-image:linear-gradient(150deg,#ffffff 0%,#e9f1f8 100%);
+                       border:1px solid #d8e3ee;border-radius:10px;">
+              <img src="cid:sg-logo" width="46" height="41" alt="' . sgm_h($o['name']) . '"
+                   style="display:block;border:0;width:46px;height:41px;">
+            </td>
+          </tr></table>
         </td>
         <td style="vertical-align:middle;">
           <div style="font:700 11px/1.3 ' . $c['font'] . ';letter-spacing:2.6px;
