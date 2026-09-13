@@ -58,9 +58,19 @@
        customers of a ship recycler are the owners and cash buyers who bring
        the ship, and a briefcase said nothing about that. */
     var ICON = {
-        chat: '<path opacity=".16" fill="currentColor" stroke="none" d="M6 4.4h12.4a1.6 1.6 0 0 1 1.6 1.6v9a1.6 1.6 0 0 1-1.6 1.6H8.9L4.4 20V6a1.6 1.6 0 0 1 1.6-1.6z"/>' +
-              '<path d="M20.4 15.2a2 2 0 0 1-2 2H8.6L4 20.8V5.4a2 2 0 0 1 2-2h12.4a2 2 0 0 1 2 2z"/>' +
-              '<path d="M8 8.8h8"/><path d="M8 12.4h5.2"/>',
+        /* The launcher glyph. It was a plain speech bubble with two text
+           lines, which is the same mark half the internet uses for "chat with
+           support" — it said a conversation was on offer but not that we were
+           asking to be rated. This is that bubble carrying a star.
+
+           The star is FILLED, not stroked. A ten-point outline at stroke 1.7
+           closes up into a grey blob by the time the icon is painted at 21px;
+           a solid silhouette stays a star at any size, and the contrast
+           against the stroked bubble is what makes the pair readable rather
+           than busy. Everything else follows the house rules above. */
+        rate: '<path opacity=".16" fill="currentColor" stroke="none" d="M5.6 3.4h12.8A2.5 2.5 0 0 1 20.9 5.9v8.1a2.5 2.5 0 0 1-2.5 2.5h-6.2L7.7 20.5v-4H5.6a2.5 2.5 0 0 1-2.5-2.5V5.9a2.5 2.5 0 0 1 2.5-2.5z"/>' +
+              '<path d="M5.6 3.4h12.8A2.5 2.5 0 0 1 20.9 5.9v8.1a2.5 2.5 0 0 1-2.5 2.5h-6.2L7.7 20.5v-4H5.6a2.5 2.5 0 0 1-2.5-2.5V5.9a2.5 2.5 0 0 1 2.5-2.5z"/>' +
+              '<path fill="currentColor" stroke="none" d="M12 5.9 13.05 8.66 15.99 8.8 13.69 10.65 14.47 13.5 12 11.88 9.53 13.5 10.31 10.65 8.01 8.8 10.95 8.66z"/>',
 
         close: '<path d="M6.4 6.4 17.6 17.6"/><path d="M17.6 6.4 6.4 17.6"/>',
 
@@ -214,7 +224,12 @@
         btn.id = 'sgfbLaunch';
         btn.setAttribute('aria-haspopup', 'dialog');
         btn.setAttribute('aria-expanded', 'false');
-        btn.innerHTML = '<span class="sgfb-launch__ico">' + svg(ICON.chat) + '</span>' +
+        /* The label is never removed from the DOM. On a phone the stylesheet
+           hides it with the clip pattern rather than display:none, because
+           display:none also takes it out of the accessible name and would
+           leave the button announcing itself as "button" to a screen reader
+           on exactly the devices that have no hover to reveal it. */
+        btn.innerHTML = '<span class="sgfb-launch__ico">' + svg(ICON.rate) + '</span>' +
             '<span class="sgfb-launch__txt">Feedback</span>';
 
         var wrap = doc.createElement('div');
@@ -298,6 +313,50 @@
             wrap.parentNode.removeChild(wrap);
             return;
         }
+
+        /* ---- keep the launcher off the hero on small screens -------------
+           On a phone the hero's stat rail is pinned to the bottom of a
+           viewport-height hero, so the launcher's corner IS content: at
+           375x812 it sat on top of "Years of Operation" at first paint.
+           Below 860px the button therefore parks until the reader has left
+           the hero, mirroring #toTopBtn's existing 250px threshold. Above
+           that width it floats over empty margin and never parks.
+
+           rAF-throttled and passive, so this adds no scroll-handler cost —
+           the same shape js/main.js:64 uses for the back-to-top button. */
+        var PARK_BELOW = 860;       /* matches the launcher's media query */
+        var PARK_UNTIL = 250;       /* matches #toTopBtn's TO_TOP_THRESHOLD */
+        var parked = null;          /* null = not yet applied */
+        var parkTicking = false;
+
+        function syncPark() {
+            parkTicking = false;
+            /* an open dialog must never have its own trigger yanked away */
+            var want = win.innerWidth <= PARK_BELOW &&
+                (win.pageYOffset || doc.documentElement.scrollTop || 0) < PARK_UNTIL &&
+                wrap.className.indexOf('is-open') < 0;
+            if (want === parked) return;
+            parked = want;
+            if (want) {
+                if (btn.className.indexOf('is-parked') < 0) btn.className += ' is-parked';
+            } else {
+                btn.className = btn.className.replace(/\s*is-parked/g, '');
+            }
+        }
+
+        function onParkEvent() {
+            if (parkTicking) return;
+            parkTicking = true;
+            /* called as a method, not a bare reference — an unbound
+               requestAnimationFrame throws "Illegal invocation" once it is
+               detached from window */
+            if (win.requestAnimationFrame) win.requestAnimationFrame(syncPark);
+            else win.setTimeout(syncPark, 16);
+        }
+
+        syncPark();
+        win.addEventListener('scroll', onParkEvent, { passive: true });
+        win.addEventListener('resize', onParkEvent);
 
         var panel = wrap.querySelector('.sgfb__panel');
         var form = wrap.querySelector('.sgfb__form');
@@ -432,8 +491,16 @@
 
                 if (res && res.ok) {
                     done_('');
-                    doneMsg.textContent = 'Your feedback has been sent to the Sachdeva Group ' +
-                        'office under ' + who + '. We will be in touch if a reply is needed.';
+
+                    /* The server sends a message of its own when the wording
+                       has to differ — the note reached the office's panel but
+                       the email did not go out, which is a success and must
+                       not read like the failure it used to be shown as. Set
+                       with textContent, so it is text and cannot be markup. */
+                    doneMsg.textContent = (res.message && typeof res.message === 'string')
+                        ? res.message
+                        : 'Your feedback has been sent to the Sachdeva Group ' +
+                          'office under ' + who + '. We will be in touch if a reply is needed.';
                     form.hidden = true;
                     wrap.querySelector('.sgfb__head').hidden = true;
                     done.hidden = false;
@@ -499,6 +566,9 @@
                 doc.documentElement.className.replace(/\s*sgfb-locked/g, '');
             if (win.lenis && win.lenis.start) win.lenis.start();
             if (lastFocus && lastFocus.focus) lastFocus.focus();
+            /* re-evaluate the hero park: closing the dialog without scrolling
+               would otherwise leave the launcher sitting on the stat rail */
+            syncPark();
             /* clear only once the panel is out of sight */
             win.setTimeout(reset, 420);
         }

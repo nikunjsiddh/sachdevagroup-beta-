@@ -224,8 +224,16 @@
     flex: none;
 }
 
+/* Touch target — SC 2.5.8 wants 24x24 CSS px and this link measured 16px
+   tall. It is a flex item of the .mrnp-crumb chip, so plain padding would
+   push the chip 10px taller; the negative margin hands back exactly what the
+   padding takes, leaving the flex line (and the chip) the size it was while
+   the anchor's own border box — which is what gets hit-tested — grows to
+   32px. Applied at every width: 24px is a floor, not a phone rule. */
 .mrnp-crumb a {
     color: rgba(214, 231, 245, .8);
+    padding: 8px 0;
+    margin: -8px 0;
     transition: color .3s var(--e-out);
 }
 
@@ -342,21 +350,28 @@
     height: 74px;
 }
 
-/* --- .crd-hero — our_credentials.html only -------------------------------
+/* --- .crd-hero — the audit-desk grade ------------------------------------
    The grade above is built for a daylight yard photograph: saturate(.42) and
    brightness(.62) duotone a warm, bright, outdoor frame down into the cyan
-   chrome. our_credentials.html now carries
-   images/about/credentials-banner-audit-desk.webp — an audit desk shot from
-   above, at night, lit by one lamp. It arrives already dark and already in
-   the palette, so the shared grade is subtraction from a frame that has
-   nothing left to give: at .62 the documents stop being legible as documents
-   and the picture reads as a black rectangle with an orange smear.
+   chrome. images/about/credentials-banner-audit-desk.webp is an audit desk
+   shot from above, at night, lit by one lamp. It arrives already dark and
+   already in the palette, so the shared grade is subtraction from a frame
+   that has nothing left to give: at .62 the documents stop being legible as
+   documents and the picture reads as a black rectangle with an orange smear.
 
-   This block is scoped to a class that exists on exactly one page, so it is
-   safe to keep in the shared file — the same job css/about-fx.css section 5
-   does for the About banner, which has a page stylesheet to put it in.
-   our_credentials.html does not, and one 30-line scoped block is cheaper than
-   a tenth stylesheet on every inner page.
+   This block is keyed to the photograph, not to the page. Every value below
+   is measured against that one frame — the crop against where the desk sits,
+   the wash against where the lamp and the window fall, ::before against the
+   lamp's own throw. So it belongs on any page carrying that image and on no
+   page carrying another, which is why it is opt-in on a class rather than
+   stated on .mrnp-hero.
+
+   One page opts in: our_credentials.html. health_safety.html,
+   environment_management.html and waste_management.html carried this frame
+   briefly after 6addfa9 deleted about-head-bg3.jpg out from under them; they
+   now take daylight yard frames from images/gallery through the shared grade
+   above, with no hook. css/about-fx.css section 5 does the same job for the
+   About banner; it has a page stylesheet to live in, and this does not.
 
    transform is untouched: js/page-fx.js heroScrub() writes it inline for the
    parallax and marine-pages.css:26 supplies the overscan it travels inside.
@@ -1213,6 +1228,16 @@
     line-height: 1.68;
 }
 
+/* Same 24px floor for the tap-to-call / tap-to-email links. These are inline,
+   where vertical padding grows the hit box without entering the line box, so
+   nothing moves. 2px each way is the whole budget and not a timid choice:
+   15.5px x 1.68 leaves exactly 4px between one line's content box and the
+   next, so anything more would make the phone and email hit areas overlap
+   and send a thumb aimed at one to the other. 22 + 4 = 26px. */
+.mrnp-infocard a {
+    padding: 2px 0;
+}
+
 .mrnp-infocard a:hover {
     color: var(--cyan-deep, #1195cf);
 }
@@ -1374,6 +1399,154 @@
     filter: none;
     border-color: rgba(34, 179, 230, .42);
     box-shadow: var(--lift-3, 0 34px 70px -30px rgba(4, 18, 31, .78));
+}
+
+
+/* --- 5.10b the location tag on the map -----------------------------------
+   The grade moves off the card and onto the map itself. It used to sit on
+   .mrnp-map (here and at marine-pages.css:1758), but the tag below is a
+   SIBLING of the iframe, so a filter on their shared parent desaturated the
+   red Google pin to slate until you hovered the card — the one element on it
+   that has to stay Google red. */
+.mrnp-map {
+    filter: none;
+}
+
+.mrnp-map__canvas {
+    filter: grayscale(.55) saturate(.85) contrast(1.05);
+    transition: filter .6s var(--e-out);
+}
+
+.mrnp-map:hover .mrnp-map__canvas {
+    filter: none;
+}
+
+/* the marker itself — Google's pin, the yard's name, and the way out to the
+   full listing. Top-right is the only corner Google leaves alone: the place
+   card takes the top-left, the Street View thumbnail and the "Google" wordmark
+   the bottom-left, and the attribution strip and zoom cluster the bottom-right.
+   Attribution has to stay legible, so the tag does not go near it. */
+.mrnp-map__tag {
+    position: absolute;
+    right: 22px;
+    top: 22px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    max-width: min(430px, calc(100% - 44px));
+    padding: 11px 20px 11px 12px;
+    border-radius: 999px;
+    background: rgba(255, 255, 255, .96);
+    border: 1px solid rgba(4, 18, 31, .10);
+    box-shadow: 0 16px 36px -18px rgba(4, 18, 31, .6);
+    text-decoration: none;
+    transition: transform .4s var(--e-out), box-shadow .4s var(--e-out),
+        border-color .4s var(--e-out);
+}
+
+.mrnp-map__tag:hover,
+.mrnp-map__tag:focus-visible {
+    transform: translateY(-3px);
+    border-color: rgba(234, 67, 53, .38);
+    box-shadow: 0 24px 48px -20px rgba(4, 18, 31, .66);
+}
+
+.mrnp-map__pin {
+    position: relative;
+    flex: none;
+    display: grid;
+    place-items: center;
+    width: 32px;
+    height: 32px;
+}
+
+.mrnp-map__pin svg {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 30px;
+    height: 30px;
+    filter: drop-shadow(0 3px 5px rgba(234, 67, 53, .38));
+}
+
+/* the halo that says "this one" — motion only where it is welcome */
+.mrnp-map__pin::before {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 62%;
+    width: 26px;
+    height: 26px;
+    margin: -13px 0 0 -13px;
+    border-radius: 50%;
+    background: rgba(234, 67, 53, .22);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .mrnp-map__pin::before {
+        animation: mrnp-map-ping 2.4s var(--e-out, ease-out) infinite;
+    }
+}
+
+@keyframes mrnp-map-ping {
+    0% { transform: scale(.5); opacity: .75; }
+    70% { transform: scale(1.9); opacity: 0; }
+    100% { transform: scale(1.9); opacity: 0; }
+}
+
+.mrnp-map__tagtext {
+    display: block;
+    min-width: 0;
+}
+
+.mrnp-map__tagtext strong {
+    display: block;
+    font-family: var(--font-display, "Oswald", sans-serif);
+    font-size: 15.5px;
+    font-weight: 600;
+    line-height: 1.15;
+    letter-spacing: .3px;
+    color: var(--heading-on-light, #071a2e);
+}
+
+.mrnp-map__tagtext > span {
+    display: block;
+    margin-top: 3px;
+    font-size: 11px;
+    letter-spacing: .5px;
+    line-height: 1.35;
+    color: var(--body-on-light, #4a6076);
+}
+
+/* Google's place card pins itself to the top-left and stops shrinking at about
+   300px, so on a narrow map there is no room for both up there. The tag drops
+   to the foot of the card — raised 34px, which is what keeps the "Google"
+   wordmark and the attribution strip readable underneath it. 992px is where
+   that starts: below it the card and a top-right tag overlap. */
+@media (max-width: 991.98px) {
+    .mrnp-map__tag {
+        left: 16px;
+        right: 16px;
+        top: auto;
+        bottom: 34px;
+        max-width: none;
+        border-radius: 18px;
+    }
+}
+
+@media (max-width: 575.98px) {
+    .mrnp-map__tag {
+        left: 12px;
+        right: 12px;
+        bottom: 30px;
+        border-radius: 16px;
+        padding: 11px 14px 11px 11px;
+    }
+
+    .mrnp-map__tagtext strong {
+        font-size: 14px;
+    }
 }
 
 /* --- 5.11 stat strip ---------------------------------------------------- */
@@ -1992,42 +2165,35 @@
     height: 74px;
 }
 
-/* --- 6.6 section rail — the sticky in-page nav -------------------------
+/* --- 6.6 section rail — the in-page nav under the hero -----------------
    Caller: about_us.html.
 
    The About material used to be split across three nav entries (Group
    Profile / Vision & Mission / Testimonials) even though about_us.html
    already contained all of it. The dropdown is now a single link and this
-   rail is what replaced it: the page's own table of contents, parked under
-   the header, tracking the reader's position.
+   rail is what replaced it: the page's own table of contents, sitting
+   between the hero and the first section.
 
-   `top` has to clear the site header, which main.js switches to
-   position:fixed at scrollTop 80 — measured 59px tall in that state. */
+   It is deliberately NOT sticky, and that is the whole design of this
+   block. Parked under the header it put two menu bars on screen at once
+   with a white band between them — js/main.js switches .header to
+   position:fixed at scrollTop 80, and the height read to place the rail was
+   taken while that bar's fadeInDown was still running, so the rail pinned
+   itself at the transient 103px instead of the settled 71px. The rail now
+   scrolls away with the page: you get it once, on the way past, and from
+   there down only the site header follows the reader. js/page-fx.js
+   railSpy() dissolves it across the last stretch of that travel so it
+   leaves as a deliberate exit rather than sliding under a 97%-opaque bar.
 
-/* .wrapper ships `overflow: hidden`, which makes it the scrollport for any
-   sticky descendant — and it never scrolls, so the rail scrolled away with the
-   page. `overflow-x: clip` clips identically without establishing a scroll
-   container. js/page-fx.js adds .has-jump-rail only when a rail is present.
-
-   The @supports guard is load-bearing, not decoration: without `clip` a
-   browser would drop overflow-x and keep overflow-y:visible, and a pair where
-   one axis is visible and the other is not computes the visible one to `auto`
-   — i.e. the wrapper would sprout its own vertical scrollbar. Guarded, such a
-   browser keeps `overflow: hidden` and merely does without a sticky rail. */
-@supports (overflow-x: clip) {
-    .wrapper.has-jump-rail {
-        overflow-x: clip;
-        overflow-y: visible;
-    }
-}
-
+   No overflow override on .wrapper any more either. It carried
+   `overflow-x: clip` purely to stop `overflow: hidden` acting as this
+   rail's sticky scrollport; with nothing sticky left on the page the
+   wrapper keeps the plain `overflow: hidden` css/style.css gives it. */
 .pfx-jump {
-    /* replaced at runtime with the measured .sticky_menu header height */
-    --pfx-jump-top: 71px;
-    position: sticky;
-    top: var(--pfx-jump-top);
-    z-index: 40;
-    /* 998 is the sticky header (css/header-modern.css); stay under it */
+    position: relative;
+    /* railSpy() drives opacity on the way out; the transition only has to
+       cover the frame gaps in the scroll loop, not animate the exit. */
+    transition: opacity .18s linear;
     background: rgba(7, 26, 46, .95);
     -webkit-backdrop-filter: blur(14px) saturate(1.15);
     backdrop-filter: blur(14px) saturate(1.15);
@@ -2041,6 +2207,19 @@
 
 .pfx-jump::-webkit-scrollbar {
     display: none;
+}
+
+/* The rail scrolls sideways with its scrollbar hidden, so without a cue the
+   last chip just stops mid-word and reads as broken layout rather than as
+   something you can drag. Fade the trailing edge — but only while the bar
+   really does overflow, otherwise the final chip is dimmed for no reason.
+   js/page-fx.js railSpy() sets .is-scrollable from the element's own
+   scrollWidth on load and on every resize; this used to be a `max-width:
+   860px` media query, which left chips cut off with no fade all the way up
+   to ~1010px, where the rail still overflows. */
+.pfx-jump.is-scrollable {
+    -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
+    mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
 }
 
 .pfx-jump__inner {
@@ -2121,6 +2300,54 @@
 .mrnp-section.mrn-dark .table-responsive {
     border: var(--pfx-ring-dark);
     background: var(--pfx-plate-dark);
+}
+
+/* --- the table scrolls sideways, and it has to LOOK like it does --------
+   The table holds five columns and carries min-width:620px, so on a phone
+   roughly half of it is off-box: measured at 375px the plate is 325px wide
+   against 620px of content, and "Motor Tanker" / "Research Vessel" /
+   "Container Ship" are all cut mid-word at the right edge. The wrapper does
+   scroll, but the only thing saying so is an overlay scrollbar that is 2px
+   of gutter and paints solely while a scroll is in flight — so at rest the
+   fleet list reads as truncated data, not as a scrollable table.
+
+   Two shadow layers pinned to the box (`scroll`) sit under two cover layers
+   pinned to the CONTENT (`local`). At the left end the left cover rides over
+   the left shadow and hides it; scroll right and the cover travels away,
+   uncovering the shadow that says "there is more back there". The right pair
+   does the mirror image. Because the covers are content-anchored, a table
+   that already fits keeps both shadows covered and shows nothing at all —
+   the cue appears exactly when it is true and needs no JS and no breakpoint.
+   (Roman Komarov's scrolling-shadows technique; `local` is the whole trick.)
+
+   The covers must be opaque colours rather than var(--pfx-plate): a gradient
+   cannot be the fade target, and these sit ON the plate, so they use its two
+   stops directly — #ffffff at the top of the plate, #fbfdff at the bottom. */
+.mrnp-section .table-responsive {
+    background:
+        linear-gradient(to right, #ffffff 55%, rgba(255, 255, 255, 0) 100%)
+            0 0 / 56px 100% no-repeat local,
+        linear-gradient(to left, #fbfdff 55%, rgba(251, 253, 255, 0) 100%)
+            100% 0 / 56px 100% no-repeat local,
+        linear-gradient(to right, rgba(7, 26, 46, .42), rgba(7, 26, 46, 0))
+            0 0 / 40px 100% no-repeat scroll,
+        linear-gradient(to left, rgba(7, 26, 46, .42), rgba(7, 26, 46, 0))
+            100% 0 / 40px 100% no-repeat scroll,
+        var(--pfx-plate);
+}
+
+.mrn-dark .mrnp-section .table-responsive,
+.mrnp-section.mrn-dark .table-responsive {
+    background:
+        linear-gradient(to right, #0a2340 42%, rgba(10, 35, 64, 0) 100%)
+            0 0 / 46px 100% no-repeat local,
+        linear-gradient(to left, #04121f 42%, rgba(4, 18, 31, 0) 100%)
+            100% 0 / 46px 100% no-repeat local,
+        linear-gradient(to right, rgba(0, 0, 0, .42), rgba(0, 0, 0, 0))
+            0 0 / 26px 100% no-repeat scroll,
+        linear-gradient(to left, rgba(0, 0, 0, .42), rgba(0, 0, 0, 0))
+            100% 0 / 26px 100% no-repeat scroll,
+        var(--pfx-plate-dark);
 }
 
 .mrnp-section table {
@@ -2244,73 +2471,208 @@
    each row: one shared vanishing point means the rows tilt as a stack rather
    than each one having its own private camera. */
 
+/* --- 6.8 the fact file — a bed of plates, not a stack of rules ----------
+   WAS seven full-bleed bars split 230px label / 1fr value. At container
+   width that put "1983" alone against ~900px of empty plate, and seven
+   identical bars in a column gave the eye no place to land: every fact
+   looked exactly as important as every other one.
+
+   It is now a six-column bed, and each fact takes the width its own answer
+   needs — 2 for the one-liners, 3 for the addresses, 4 for the two that
+   carry a list, 6 for the media line that closes the section. Same seven
+   facts, same order, four rows instead of seven. The label moves above the
+   value with a pictogram beside it, which is the .mrnp-icard idiom this
+   page already uses everywhere else. */
+
 .pfx-facts {
     margin: 46px 0 0;
     padding: 0;
     display: grid;
-    gap: 12px;
+    grid-template-columns: repeat(6, 1fr);
+    gap: 14px;
     perspective: 1500px;
 }
 
 .pfx-fact {
     position: relative;
+    grid-column: span 3;
     display: grid;
-    grid-template-columns: 230px 1fr;
-    gap: 26px;
-    align-items: baseline;
-    padding: 22px 30px;
+    align-content: start;
+    gap: 16px;
+    padding: 26px 28px 28px;
     background: var(--pfx-plate);
     border: var(--pfx-ring);
+    border-radius: var(--pfx-radius);
     box-shadow: var(--lift-1, 0 10px 28px -18px rgba(4, 18, 31, .55));
+    /* NOT overflow:hidden — card-fx.css:183 records that .mrnp-icard's own
+       clip is what killed its declared depth set. The wash below is inset:0
+       on the same box, so there is nothing to clip anyway. */
     transform-style: preserve-3d;
     transition: transform .5s var(--e-out), box-shadow .5s var(--e-out),
         border-color .5s var(--e-out), background .5s var(--e-out);
 }
 
+.pfx-fact--sm {
+    grid-column: span 2;
+}
+
+.pfx-fact--lg {
+    grid-column: span 4;
+}
+
+.pfx-fact--full {
+    grid-column: span 6;
+}
+
+/* the tick, promoted from a centred 18px mark to a rail that runs down the
+   ring beside the pictogram and doubles on hover. Origin is the top edge so
+   it grows into the card rather than out of both ends. */
 .pfx-fact::before {
     content: "";
     position: absolute;
-    left: 0;
-    top: 50%;
+    left: -1px;
+    top: 26px;
+    z-index: 1;
     width: 3px;
-    height: 18px;
+    height: 34px;
     background: var(--cyan, #22b3e6);
-    transform: translateY(-50%) scaleY(.5);
-    transition: transform .5s var(--e-out), background .5s var(--e-out);
+    transform-origin: 50% 0;
+    transform: scaleY(1);
+    transition: transform .55s var(--e-out), background .55s var(--e-out);
 }
 
-.pfx-fact:hover {
-    transform: translate3d(0, -4px, 34px);
-    border-color: rgba(34, 179, 230, .4);
+/* the same cyan pool .mrnp-icard fades up, anchored to the pictogram corner */
+.pfx-fact::after {
+    content: "";
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    border-radius: inherit;
+    background: var(--pfx-hover-wash);
+    opacity: 0;
+    transition: opacity .42s var(--e-out);
+    pointer-events: none;
+}
+
+/* js/marine-pages.js initTilt3d overwrites `transform` inline and !important
+   while the pointer is inside, so this lift is what shows on a keyboard
+   focus or a coarse pointer, where the tilt never runs. */
+.pfx-fact:hover,
+.pfx-fact:focus-within {
+    transform: translate3d(0, -6px, 34px);
+    border-color: rgba(34, 179, 230, .40);
     box-shadow: var(--lift-3, 0 34px 70px -30px rgba(4, 18, 31, .78));
     background: linear-gradient(180deg, #ffffff 0%, #f4fbff 100%);
     z-index: 2;
 }
 
-.pfx-fact:hover::before {
-    transform: translateY(-50%) scaleY(2.5);
+.pfx-fact:hover::before,
+.pfx-fact:focus-within::before {
+    transform: scaleY(2.15);
     background: var(--gold, #ffad18);
 }
 
+.pfx-fact:hover::after,
+.pfx-fact:focus-within::after {
+    opacity: 1;
+}
+
+/* --- the label row: pictogram + caption --------------------------------- */
+
 .pfx-fact dt {
+    position: relative;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    transition: transform .5s var(--e-out);
+}
+
+.pfx-fact:hover dt,
+.pfx-fact:focus-within dt {
+    transform: translateZ(22px);
+}
+
+.pfx-fact__ico {
+    flex: 0 0 auto;
+    width: 40px;
+    height: 40px;
+    display: grid;
+    place-items: center;
+    border-radius: 2px;
+    background: linear-gradient(150deg, rgba(34, 179, 230, .16), rgba(34, 179, 230, .04));
+    border: 1px solid rgba(34, 179, 230, .28);
+    color: var(--cyan-deep, #1195cf);
+    transition: transform .5s var(--e-out), background .5s var(--e-out),
+        border-color .5s var(--e-out), color .5s var(--e-out),
+        box-shadow .5s var(--e-out);
+}
+
+.pfx-fact__ico svg {
+    width: 21px;
+    height: 21px;
+    display: block;
+}
+
+.pfx-fact:hover .pfx-fact__ico,
+.pfx-fact:focus-within .pfx-fact__ico {
+    transform: translateZ(30px);
+    background: linear-gradient(150deg, var(--cyan, #22b3e6), var(--cyan-deep, #1195cf));
+    border-color: transparent;
+    color: #fff;
+    box-shadow: var(--glow-cyan, 0 22px 50px -26px rgba(34, 179, 230, .85));
+}
+
+.pfx-fact__label {
     font-family: var(--font-display, "Oswald", sans-serif);
     font-size: 11.5px;
     font-weight: 500;
     letter-spacing: 2.4px;
     text-transform: uppercase;
     color: var(--cyan-deep, #1195cf);
+}
+
+/* --- the value ---------------------------------------------------------- */
+
+.pfx-fact dd {
+    position: relative;
+    z-index: 1;
+    margin: 0;
+    font-size: 16px;
+    line-height: 1.7;
+    color: var(--heading-on-light, #071a2e);
     transition: transform .5s var(--e-out);
 }
 
-.pfx-fact:hover dt {
-    transform: translateZ(22px);
+.pfx-fact:hover dd,
+.pfx-fact:focus-within dd {
+    transform: translateZ(12px);
 }
 
-.pfx-fact dd {
-    margin: 0;
-    font-size: 15.5px;
-    line-height: 1.72;
-    color: var(--heading-on-light, #071a2e);
+/* a pair of links reading as one line, with a middot holding them apart.
+   Only the link lists get this — the certifications value is chips, which
+   want ordinary inline flow so they wrap as a block of tags. */
+.pfx-fact__links {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+/* the closing row is six columns wide for two short links, which stacked
+   under the label leaves most of the plate empty. It splits instead —
+   label held left, the contact details run out to the right edge — so the
+   width is doing something and the row reads as the signature line it is. */
+.pfx-fact--full {
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 0 40px;
+    padding-top: 22px;
+    padding-bottom: 22px;
+}
+
+.pfx-fact--full .pfx-fact__links {
+    justify-content: flex-end;
+    font-size: 17px;
 }
 
 .pfx-fact dd a {
@@ -2319,14 +2681,15 @@
     transition: color .35s var(--e-out), border-color .35s var(--e-out);
 }
 
-.pfx-fact dd a:hover {
+.pfx-fact dd a:hover,
+.pfx-fact dd a:focus-visible {
     color: var(--cyan-deep, #1195cf);
     border-color: var(--cyan, #22b3e6);
 }
 
 .pfx-fact__sep {
     color: rgba(7, 26, 46, .28);
-    padding: 0 9px;
+    padding: 0 11px;
 }
 
 .pfx-fact__chip {
@@ -2344,7 +2707,8 @@
         border-color .45s var(--e-out);
 }
 
-.pfx-fact:hover .pfx-fact__chip {
+.pfx-fact:hover .pfx-fact__chip,
+.pfx-fact:focus-within .pfx-fact__chip {
     transform: translateZ(16px);
     border-color: rgba(34, 179, 230, .5);
     background: rgba(34, 179, 230, .12);
@@ -2611,6 +2975,19 @@
     color: var(--heading-on-light, #071a2e);
 }
 
+/* the "+" on the ships figure. Gold is the hover accent here and only clears
+   3:1 on this near-white plate, so the mark takes the AA-safe cyan the tick
+   uses at rest instead. */
+.pfx-figure > strong i {
+    font-style: normal;
+    font-weight: inherit;
+    font-size: .55em;
+    line-height: 1;
+    letter-spacing: 0;
+    vertical-align: super;
+    color: #0b6d97;
+}
+
 .pfx-figure > span {
     display: block;
     margin-top: 10px;
@@ -2776,6 +3153,14 @@ html.sg-motion [data-sg-delay="10"] {
         padding: 96px 0;
     }
 
+    /* a 2-of-6 plate is ~300px here and the addresses beside it are already
+       running to four lines — the bed drops to a plain 3+3, and the two wide
+       facts each take a row of their own */
+    .pfx-fact--sm,
+    .pfx-fact--lg {
+        grid-column: span 3;
+    }
+
     .mrnp-hero__inner {
         padding-top: 168px;
         padding-bottom: 118px;
@@ -2824,11 +3209,6 @@ html.sg-motion [data-sg-delay="10"] {
         margin: 0 auto;
     }
 
-    /* the mobile bar is the slicknav strip, which stands taller than the
-       desktop sticky header */
-    .pfx-jump {
-        --pfx-jump-top: 64px;
-    }
 
     .pfx-jump a {
         padding: 16px 15px;
@@ -2839,14 +3219,6 @@ html.sg-motion [data-sg-delay="10"] {
     .pfx-jump a::after {
         left: 15px;
         right: 15px;
-    }
-
-    /* the rail is wider than the viewport here (measured 801px in 375px), so
-       fade the trailing edge — otherwise a chip is simply cut off and nothing
-       says the bar scrolls */
-    .pfx-jump {
-        -webkit-mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
-        mask-image: linear-gradient(90deg, #000 86%, transparent 100%);
     }
 
     .pfx-wave svg {
@@ -2878,16 +3250,59 @@ html.sg-motion [data-sg-delay="10"] {
         padding: 32px 24px 28px;
     }
 
-    /* the label column is 230px against a 1fr value; below this the value has
-       nowhere left to wrap to, so the row becomes two stacked lines */
-    .pfx-fact {
+    /* two plates across is ~330px each and the addresses stop fitting, so the
+       bed becomes one column. The spans have to be reset rather than left to
+       collapse: `span 3` against a single-column template opens three
+       implicit columns and drops each fact into a third of the row. */
+    .pfx-facts {
         grid-template-columns: 1fr;
-        gap: 8px;
-        padding: 20px 22px;
+        gap: 12px;
+    }
+
+    .pfx-fact,
+    .pfx-fact--sm,
+    .pfx-fact--lg,
+    .pfx-fact--full {
+        grid-column: 1 / -1;
+    }
+
+    .pfx-fact {
+        gap: 13px;
+        padding: 22px 22px 24px;
+    }
+
+    /* the media row's label/details split needs the full width it had; at one
+       column it goes back to stacking like every other fact */
+    .pfx-fact--full {
+        grid-template-columns: 1fr;
+        align-items: start;
+        gap: 13px;
+    }
+
+    .pfx-fact--full .pfx-fact__links {
+        justify-content: flex-start;
+        font-size: 15.5px;
+    }
+
+    /* one plate is now too narrow to hold either pair on a single line, and a
+       wrapped middot lands at the head of the second line reading as a bullet.
+       The pairs stack and the separator goes. */
+    .pfx-fact__links {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 7px;
+    }
+
+    .pfx-fact__links .pfx-fact__sep {
+        display: none;
+    }
+
+    .pfx-fact::before {
+        top: 22px;
     }
 
     .pfx-fact dd {
-        font-size: 15px;
+        font-size: 15.5px;
     }
 
     /* 4 counters across 375px is 80px a cell — the figures collide with their
@@ -3045,6 +3460,13 @@ html.sg-motion [data-sg-delay="10"] {
         animation: none !important;
     }
 
+    /* the rail still has to disappear on the way out — railSpy() cuts its
+       opacity outright under reduced motion, so the transition that would
+       smooth that step is what goes, not the step itself */
+    .pfx-jump {
+        transition: none !important;
+    }
+
     .pfx-jump a::after {
         transition: none !important;
     }
@@ -3070,6 +3492,8 @@ html.sg-motion [data-sg-delay="10"] {
     .pfx-step,
     .pfx-fact,
     .pfx-fact dt,
+    .pfx-fact dd,
+    .pfx-fact__ico,
     .pfx-fact__chip,
     .pfx-go,
     .pfx-go .sg-ico,
@@ -3083,11 +3507,16 @@ html.sg-motion [data-sg-delay="10"] {
         transform: none !important;
     }
 
-    /* the tick is a transform, and `transform: none` above would drop the
-       translateY that centres it — restate the resting state rather than
-       letting the row lose its mark */
+    /* the tick now rests at its own height and is only scaled on hover, so
+       the blanket `transform: none` costs it nothing — it just stops growing */
     .pfx-fact::before {
-        transform: translateY(-50%) scaleY(.5) !important;
+        transform: none !important;
+        transition: none !important;
+    }
+
+    /* the wash is opacity, which is not motion, so it still arrives — only
+       the fade is dropped */
+    .pfx-fact::after {
         transition: none !important;
     }
 

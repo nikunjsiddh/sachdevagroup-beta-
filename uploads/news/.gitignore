@@ -1,0 +1,4 @@
+# Files added through /admin belong to the site that is running, not to the
+# repository. The folder and its .htaccess are tracked; the pictures are not.
+*
+!.gitignore

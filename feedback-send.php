@@ -55,32 +55,45 @@ $devHost = in_array($_SERVER['REMOTE_ADDR'] ?? '', array('127.0.0.1', '::1'), tr
 
 $configFile = __DIR__ . '/mail-config.php';
 
+/* A missing or unfinished mail config is NOT reported here any more.
+   It used to be, and that meant an unconfigured server threw the visitor's
+   note away: this ran before the validation and before the note was recorded,
+   so a site whose mail was not set up yet lost every message sent to it
+   instead of at least keeping one for the admin panel to show.
+
+   The failure is deferred to section 4c instead — after the note has been
+   written to the database — so the office still has it either way. Everything
+   about what the visitor is told, and what only a local setup is told, is
+   unchanged; it just happens a few lines later. */
+$mailFail = '';
+$cfg = array();
+
 if (!is_file($configFile)) {
     /* This is the one setup step that cannot be shipped, and it catches
        everyone who deploys with git: mail-config.php is in .gitignore because
        it holds a live password, so a pull brings feedback-send.php and the
-       sample but never the real file. The error used to say only "not
-       configured", which is true and useless. */
+       sample but never the real file. */
     error_log('feedback: mail-config.php is missing — copy mail-config.sample.php to '
         . 'mail-config.php in ' . __DIR__ . ' and fill in the Gmail address and app password');
 
-    fail('Mail is not configured on this server.' . ($devHost
+    $mailFail = 'Mail is not configured on this server.' . ($devHost
         ? ' Copy mail-config.sample.php to mail-config.php in the site folder and'
           . ' fill in the Gmail address and app password — .gitignore keeps that'
           . ' file out of the repository, so git never delivers it.'
-        : ''), 500);
-}
+        : '');
+} else {
+    $cfg = require $configFile;
 
-$cfg = require $configFile;
-
-/* A config that is present but still holds the sample values fails at AUTH
-   with nothing to explain it. Say so here instead. */
-if (!is_array($cfg) || empty($cfg['user']) || empty($cfg['pass'])
-        || strpos((string) $cfg['user'], 'you@') === 0
-        || strpos((string) $cfg['pass'], 'xxxx') === 0) {
-    error_log('feedback: mail-config.php still holds the sample values');
-    fail('Mail is not configured on this server.' . ($devHost
-        ? ' mail-config.php is still filled with the sample placeholders.' : ''), 500);
+    /* A config that is present but still holds the sample values fails at AUTH
+       with nothing to explain it. Say so here instead. */
+    if (!is_array($cfg) || empty($cfg['user']) || empty($cfg['pass'])
+            || strpos((string) $cfg['user'], 'you@') === 0
+            || strpos((string) $cfg['pass'], 'xxxx') === 0) {
+        error_log('feedback: mail-config.php still holds the sample values');
+        $mailFail = 'Mail is not configured on this server.' . ($devHost
+            ? ' mail-config.php is still filled with the sample placeholders.' : '');
+        $cfg = is_array($cfg) ? $cfg : array();
+    }
 }
 
 /* --- 3. the fields, re-checked ------------------------------------------ */
@@ -166,6 +179,86 @@ if ($dir === '') {
     if (@file_put_contents($store, json_encode($all), LOCK_EX) === false) {
         error_log('feedback: could not write ' . $store . ' — rate limiting is OFF');
     }
+}
+
+/* --- 4b. write it into the complaints book -------------------------------
+   Recorded BEFORE the mail is attempted, deliberately. Sending is the step
+   that fails — a wrong app password, a host blocking outbound SMTP, Gmail
+   throttling — and until this existed a failure there meant the note was gone
+   with nothing but a line in the error log to say it had ever arrived.
+
+   It lands in sg_complaints, which is correspondence and is never published.
+   A note somebody decides is worth printing is copied across to the
+   testimonials by hand in /admin; nothing a stranger types reaches the About
+   page on its own.
+
+   Wrapped, and deliberately non-fatal: this is an addition to a form that
+   worked before there was a database, and a locked SQLite file or a MySQL
+   that is down must not stop a visitor's message reaching the office. What it
+   sets is $stored, which is what section 4c then depends on.
+   ---------------------------------------------------------------------- */
+
+$stored = false;
+
+try {
+    require_once __DIR__ . '/includes/db.php';
+    require_once __DIR__ . '/includes/helpers.php';
+
+    sg_run('INSERT INTO sg_complaints
+            (feedback_type, name, designation, mobile, note, status, source, ip,
+             submitted_at, handled_at, handled_by)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        array($type, $name, $role, '+91 ' . $digits, $note,
+              'new', 'website', $ip, date('Y-m-d H:i:s'), '', ''));
+
+    $stored = true;
+
+} catch (Throwable $ex) {
+    error_log('feedback: could not record the note for the admin panel — '
+        . $ex->getMessage() . ' (the email is still being sent)');
+}
+
+/* --- 4c. mail is a second copy now, not the only one ---------------------
+   THE VISITOR IS NOT TOLD A MESSAGE FAILED THAT DID NOT FAIL.
+
+   This used to fail() the moment the mail config was missing, and it did so
+   AFTER the note had already been written to the database. The office had the
+   message, the panel was showing it, and the person who sent it was reading a
+   red box telling them to copy mail-config.sample.php — the site's internal
+   setup, in front of a visitor, about a delivery that had actually happened.
+
+   There are two destinations and the send succeeds if either one does. Where
+   the note is stored, mail is a convenience: log the problem for whoever runs
+   the server and tell the visitor the truth, which is that their feedback has
+   reached the office. Only a note that reached NEITHER is a failure, and that
+   one still says so.
+   ---------------------------------------------------------------------- */
+
+/* Said instead of "sent" whenever the mail did not go out. Kept in one place
+   because both the config failure below and the SMTP failure at the end of
+   this file need exactly the same sentence. */
+function delivered_to_panel_only($devHost, $why) {
+    error_log('feedback: ' . $why . ' — the note is in the admin panel, so the '
+        . 'visitor was told it arrived rather than that it failed');
+
+    echo json_encode(array(
+        'ok'      => true,
+        'message' => 'Your feedback has reached the Sachdeva Group office and is '
+                   . 'waiting there to be read. We will be in touch if a reply is needed.'
+                   /* Only on the machine running the server: the visitor has no
+                      use for it and it describes the mail setup. */
+                   . ($devHost ? ' (Mail is not configured on this server, so no email '
+                               . 'was sent — the note was recorded in /admin instead.)' : ''),
+    ));
+    exit;
+}
+
+if ($mailFail !== '') {
+    if ($stored) {
+        delivered_to_panel_only($devHost, 'mail is not configured');
+    }
+    /* Nowhere to put it and no way to send it. Now it is a failure. */
+    fail($mailFail, 500);
 }
 
 /* --- 5. the message ------------------------------------------------------ */
@@ -279,9 +372,14 @@ $subject = 'Website feedback — ' . $type . ' — ' . $name;
 $result  = smtp_send($cfg, $subject, $html, $text);
 
 if ($result !== true) {
-    /* The visitor is told it did not send and nothing more. Which SMTP step
-       failed, and whether the password was rejected, belongs in the server
-       log — it is a map of the mail setup to anybody probing this endpoint. */
+    /* Same rule as section 4c: the note is already in the panel, so a mail
+       that would not go out is the office's problem and not the visitor's.
+       Which SMTP step failed, and whether the password was rejected, belongs
+       in the server log — it is a map of the mail setup to anybody probing
+       this endpoint, and it is nothing a visitor can act on. */
+    if ($stored) {
+        delivered_to_panel_only($devHost, 'SMTP failed at step "' . $result . '"');
+    }
     fail('Could not send just now. Please call or email us instead.', 502);
 }
 

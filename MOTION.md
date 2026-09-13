@@ -5,7 +5,9 @@ One engine: **GSAP 3.12.5 + ScrollTrigger**, driven by the single Lenis instance
 `js/motion.js`, with its base states and tokens in `css/motion.css`.
 
 > **Scope.** This applies to `index.html` only. The 12 inner pages still run
-> `js/marine.js` + `js/index-motion.js` + `js/page-fx.js` and are untouched.
+> `js/marine.js` + `js/index-motion.js` + `js/page-fx.js` for their reveals,
+> plus `js/scroll-drift.js` with `css/scroll-fx.css` for scrubbed depth — see
+> [The inner pages](#the-inner-pages--jsscroll-driftjs--cssscroll-fxcss).
 > Read [Why nothing was deleted](#why-nothing-was-deleted) before changing
 > either of the shared files.
 
@@ -242,6 +244,161 @@ is added by `js/marine.js` for `[data-mrn-reveal]` elements — and `index.html`
 has none, so it never arrived. **Every visitor not running reduce-motion saw
 four empty cards.** `js/motion.js` adds the class the CSS was already waiting
 for. If you ever remove that, put the reveal back some other way first.
+
+## The inner pages — `js/scroll-drift.js` + `css/scroll-fx.css`
+
+The 12 inner pages keep their reveal engines (`marine.js` + `index-motion.js`
++ `page-fx.js`) and add one scrubbed layer on top: GSAP + ScrollTrigger loaded
+at the foot of the page for `js/scroll-drift.js` **only**. That file never sets
+`SG_MOTION_ENGINE`, so nothing stands down. `css/scroll-fx.css` is its CSS half
+and is loaded last on those pages; `index.html` does not load it.
+
+Every section gets three layers scrubbed over one travel
+(`top bottom` → `bottom top`):
+
+| Layer | Driven by | Moves |
+|---|---|---|
+| ground — the blueprint grid / bloom the section already paints | `--sfx-gy` on the `[data-drift]` section, ±34px, linear | down, with the page |
+| `[data-drift-bg]` | `yPercent` ±8 | down |
+| content — `.mrn-container` or `[data-drift-content]` | `y` ±26 (or `data-drift="N"`), power1.inOut | up, against |
+
+Photographs get their own layer: `[data-drift-img]` on a clipped box drives
+`--sfx-iy` from −1 to 1 across the box's own travel, and the stylesheet turns
+that into `translate3d(0, calc(var(--sfx-iy) * 7%), 0) scale(1.18)` on the
+`<img>`. The hover zoom survives because it rides a registered property
+(`--sfx-iz`) that transitions on its own, while the translate reads live.
+
+Where it is in the markup: every `.mrnp-section` and `.sgf-yard` carries
+`data-drift`; every `.mrnp-split__frame`, `.mrnp-gal__item`, `.abt-frame` and
+`.abt-unit__media` carries `data-drift-img`. Section drift is desktop-only
+(≥861px); the image slide runs at every width at 4% under 861px.
+
+`scroll-fx.css` also refines two entrances: `clip` and `zoom` (the media
+entrances) resolve from a 12px blur, and the eyebrow's rule draws itself
+260ms after the label lands. Both match only while the `data-sg-*` attribute
+is still on the element, which `index-motion.js` strips when the entrance
+settles.
+
+## Motion policy — `js/motion-policy.js`
+
+Loaded **first** in `<head>` on all 13 pages. Every engine on the site stands
+down when the browser reports `prefers-reduced-motion: reduce`, and on Windows
+that flag is set by one switch (Settings › Accessibility › Visual effects ›
+Animation effects) that people turn off for performance far more often than
+for vestibular reasons. On such a machine the whole site arrived static. The
+reference sites the client compares against ignore the flag.
+
+| Mode | Set with | Behaviour |
+|---|---|---|
+| `on` (default) | `?motion=on` | motion runs. If the OS asks for reduced motion the request is overridden: `window.matchMedia` is shimmed, the reduced-motion blocks in every same-origin stylesheet are rewritten at `DOMContentLoaded`, and `<html>` gets `sg-forced`, which `js/scroll-drift.js` and `css/scroll-fx.css` read to run at 60% travel. Reduced, not removed. |
+| `auto` | `?motion=auto` | the OS setting is honoured exactly as before this file existed |
+| `off` | `?motion=off` | everything held in its reduced state whatever the OS says |
+
+The choice is remembered per browser in `localStorage['sg-motion']`. The file
+also arms `html.sfx-arm` on pages whose `<html>` carries `data-sfx-intro`, so
+the load curtain paints from the first frame, with a 2.5s failsafe that pulls
+`sfx-arm` and `sfx-lines` unless `js/scroll-fx.js` stamps `data-sfx-ready`.
+
+## The load mark — the logo loader
+
+Every one of the 13 pages carries the mark inline: a `<style id="sgl-css">`
+in `<head>` and a `.sgl` block as the first child of `<body>`, so the sheet
+paints on the very first frame and only the logo file is fetched. It is
+`display:none` unless `js/motion-policy.js` sets `html.sgl-on`, so **with no JS
+nothing is ever hidden** — the same contract as the other gates.
+
+**When it draws.** On arrivals only (a fresh load, a reload, a visit from
+another site — the curtain's own rule, now computed once and exported as
+`SG_MOTION_POLICY.arrival`), and only while motion is wanted. A click between
+our own pages never shows it.
+
+**What it does.** The mark is `images/logo.png` itself — the real artwork, not
+a redraw — on a sheet painted in the curtain's navy. Five copies of the file
+are stacked, each clipped to one horizontal band by its wrapper's `overflow`,
+so the logo can animate in its own parts:
+
+| Band | Rows (of 99) | Move |
+|---|---|---|
+| wheel | 0–42 | turns a quarter-turn to starboard, scaling 0.82 → 1 |
+| rule | 43–47 | the orange bar extends from the centre |
+| SACHDEVA | 48–62 | rises one band height inside its mask |
+| GROUP | 63–67 | fades up |
+| anchor | 68–98 | lowers into place from behind the line above it |
+
+Every cut falls on a row that is fully transparent in the PNG (rows 0, 47, 48,
+63, 68 and 98 are empty — measured, not guessed), so no glyph is ever sliced.
+The wheel band rotates **as a unit, clip and all**, about the wheel's own
+centre — 49.5% 50% of that band — which is why the turn is never clipped by
+the band edges. Then the mark fades up and the sheet lifts with the site's
+`expo.inOut` clip-path gesture.
+
+The logo is `<link rel="preload" as="image">`d in the same `<head>`, so the one
+thing the mark has to fetch is in flight before the stylesheet is parsed. At
+15 KB, and needed by the header regardless, it costs nothing extra. If it never
+arrives the sheet simply lifts on schedule over an empty navy field.
+
+**Who owns the clock.** The stylesheet. Every timing is a CSS keyframe delay
+from first paint: the sheet lifts at **1.55s** and is gone at **2.65s**
+whatever happens in JavaScript. `motion-policy.js` only listens for the
+lift's `animationstart` / `animationend`, publishes `window.SG_LOADER`
+(`active`, `lifted`, `done`, `onLift(fn)`, `onDone(fn)`) and the events
+`sg:loader:lift` / `sg:loader:done`, holds the scroll (`html.sgl-lock`,
+plus `lenis.stop()`) until the lift, and removes the element when it is gone.
+A 3.5s failsafe does all of that anyway if the events never come.
+
+| Class | Set | Cleared | Keyed on it |
+|---|---|---|---|
+| `sgl-on` | head, on an arrival | when the sheet is gone | the mark's `display` |
+| `sgl-lock` | head, on an arrival | at the lift | `html, body { overflow: hidden }` |
+| `sgl-drawn` | head, on an arrival | never | `css/scroll-fx.css` delays the crumb and rule past the lift |
+
+**How the engines wait for it.** Nothing plays under the sheet. On the inner
+pages `scroll-fx.js` reads `SG_LOADER` at boot: when it is active the mark's
+sheet *is* the curtain, so `sfx-arm` is dropped there and then, and the hero
+photograph settle and the hero line tweens are built paused and released on
+`onLift` — keeping the curtain's own beats (title +0.75s, copy +1.0s) after
+the lift. On `index.html`, `motion.js` builds the title timeline paused and
+releases it the same way, and `revealBatch()` holds back any `[data-anim]`
+inside `#home` until the lift while the rest of the batch runs. A page the
+mark did not draw on takes exactly the paths it took before.
+
+**A hidden tab.** Chrome freezes CSS and rAF clocks while a tab is hidden. A
+page opened in a background tab therefore reaches the 3.5s failsafe first:
+the mark is removed unseen and the hero is released, so the visitor who
+switches to it gets the page, not a stale loader. Deliberate.
+
+## The cinematic layer — `js/scroll-fx.js`
+
+Loaded last on all 13 pages, after GSAP 3.13 + ScrollTrigger + SplitText
+(all free since 3.13; pinned with SRI). Modelled on the measured vocabulary
+of studiodado.com's bundle. `index.html` takes only the footer and header
+parts because `js/motion.js` owns its sections.
+
+| Move | Markup | What happens |
+|---|---|---|
+| lines | `[data-sg-split]`, `.mrnp-hero__title`, `.mrn-eyebrow`, `.mrn-lead` — claimed by the pre-pass, which strips the other engines' attributes and adds `data-sfx-lines` | SplitText `type:'lines', mask:'lines'`; each line rises from 110% inside its clip mask, stagger .09, once, at `top 88%`. A title that follows an eyebrow waits .14s for it. Hero copy plays on load, after the curtain when there is one. A re-split (font load, resize) never replays a finished entrance. |
+| open | `[data-sfx-open]` on `.mrnp-split__frame`, `.mrnp-gal__item`, `.mrnp-certcard`, `.abt-frame`, `.abt-unit__media` | scrubbed `clip-path` from `inset(14% 10%)` to `inset(0)` while `--sfx-io` settles 1.14 → 1 and multiplies into the image scale; at progress 1 the inline clip is removed so the box-shadow returns. The pre-pass also releases `data-mrn-reveal` / `data-mrn-stagger` on the box's ancestors up to the section, so a photograph never slides in AND opens. |
+| intro | `<html data-sfx-intro>` | `body::before` curtain lifts via `--sfx-curtain` (1.1s expo.inOut) — on arrivals only (fresh load, reload, external referrer; a click between our own pages skips it); `.mrnp-hero__bg` settles from scale 1.28 / y 54 to its resting `scale(1.06)`, then `clearProps` hands it back to `page-fx.js` heroScrub. Hero lines play after the curtain, or straight away without one. When the load mark was drawn its sheet is the curtain: `sfx-arm` is dropped at boot and the settle and the hero lines wait for `SG_LOADER.onLift`. |
+| footer | `.sgf-footer` | slides from −30% of its height to 0 as it enters; `css/scroll-fx.css` drops it to z-index 1 under the white yard band |
+| header | `.header` | `.sfx-head-hide` while scrolling down past 80px (= `main.js` stickyThreshold). The first hide drops animate.css's `animated fadeInDown` (its fill-mode would pin the transform) and marks the bar `.sfx-head`; from then on hide and show are one .55s transition on transform. Desktop only, and not on `index.html`, whose bar `js/motion.js` already hides with `.is-hidden`. |
+
+`css/scroll-fx.css` also folds the seven `page-fx.js` entrance directions
+(left, right, rise, tilt, sink, zoom, up) into one 28px rise for everything
+that is not a title or a photograph — the reference reads as calm because it
+has two moves in total. The image slide inside a frame is ±10% on a 1.24
+bleed (±5% on 1.14 under `sg-forced` and below 861px). `motion-policy.js`
+leaves `html.sfx-curtain` on for the whole page view whenever it drew the
+curtain, and the stylesheet keys the crumb and rule delays on that, so a
+plain click between our own pages keeps `marine-pages.css`'s own timing.
+
+**The pre-pass is the ownership boundary.** It runs synchronously at parse
+time, after `js/page-fx.js` has stamped its choreography and before
+`marine.js` / `marine-pages.js` / `index-motion.js` boot on `DOMContentLoaded`.
+An element it claims loses `data-sg-split`, `data-sg-in`, `data-sg-delay`,
+`data-mrn-reveal`, `data-mrnp-split-words` and `data-anim` in the same task
+that arms it, so nothing is animated twice and nothing flashes. Hand-marked
+hero type (`.mrn-word`) and the drop-cap lead (`.mrnp-prose--lead`) are left
+alone.
 
 ## Known gaps
 

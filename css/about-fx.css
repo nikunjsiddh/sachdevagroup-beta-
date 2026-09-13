@@ -242,9 +242,11 @@
    for itself. None of this is a nudge of the shared rule; it is a different
    intent, which is why it re-states rather than adjusts.
 
-   Only About moves. our_credentials.html, testimonials.html and
-   vision_mission.html still run about-head-bg1.png through the shared grade,
-   and it still suits them.
+   Only About moves. vision_mission.html and sspsb.html now carry this same
+   photograph, and testimonials.html a yard frame of its own, but all of them
+   run through the shared page-fx grade — which is the point: the shared rule
+   is built to rescue an arbitrary yard photograph, and this one does not need
+   rescuing.
 
    WHAT IS DELIBERATELY LEFT ALONE
      transform          js/page-fx.js heroScrub() writes it inline every frame
@@ -428,7 +430,7 @@
     border: 0;
     color: #fff;
     box-shadow: var(--ab-lift);
-    transition: transform .45s var(--ab-ease), box-shadow .45s var(--ab-ease);
+    transition: transform .2s var(--ab-ease), box-shadow .2s var(--ab-ease);
 }
 
 #profile .abt-split__body .mrn-btn:hover {
@@ -1469,6 +1471,18 @@
     text-transform: none;
 }
 
+/* the "+" suffix, matching #profile .mrnp-strip strong i above. index-theme
+   sizes this band at 34px, so the mark is set in em and follows the figure
+   through the 29px mobile step at the bottom of this file. */
+#units .abt-unit__meta strong i {
+    font-style: normal;
+    font-weight: inherit;
+    font-size: .55em;
+    line-height: 1;
+    letter-spacing: 0;
+    vertical-align: super;
+}
+
 /* the count is the figure that moves; the year is a constant. Colouring them
    apart is what makes the pair read as two kinds of fact rather than two
    numbers. */
@@ -1563,6 +1577,23 @@
     text-transform: uppercase;
     line-height: 1.35;
     color: var(--ab-ink);
+}
+
+/* The designation, when the panel has one for this person: "NYK Ship
+   Management · Superintendent". Written inside .tst__who rather than beside it
+   so it wraps with the name instead of pushing the number off the row, and
+   dropped to sentence case because a designation in the uppercase display face
+   competes with the name it belongs to. Emitted only when there is one —
+   includes/publisher.php leaves the span out entirely otherwise, so nothing
+   here has to hide an empty element. */
+#testimonials .tst__role {
+    display: inline;
+    font-family: inherit;
+    font-weight: 400;
+    font-size: 12.5px;
+    letter-spacing: .6px;
+    text-transform: none;
+    color: rgba(11, 31, 51, .58);
 }
 
 #testimonials .tst__no {
@@ -1758,6 +1789,22 @@
    14. RESPONSIVE
    ========================================================================== */
 
+/* css/index-theme.css:7931 already steps .abt-comply down to three columns at
+   1200px, but it selects on the class alone (0,1,0) and the rule at the top
+   of this file qualifies with the #compliance id (1,1,0), so index-theme's
+   step never applied. This file's own chain then started at 1100px — leaving
+   1101-1200px as a band where five compliance plates were still being asked
+   to share the width, at about 197px each. Measured, not inferred.
+
+   This closes that band. The 1100px block below keeps its own restatement,
+   which is what the rest of that section's step-downs are keyed to. */
+@media (max-width: 1200px) {
+
+    #compliance .abt-comply {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
 @media (max-width: 1100px) {
 
     #heritage .abt-time {
@@ -1781,6 +1828,22 @@
 
     #profile .mrnp-strip strong {
         font-size: clamp(32px, 4.4vw, 42px);
+    }
+}
+
+/* Same shadowing story as .abt-comply above, one band lower.
+   css/index-theme.css:7953 brings the unit photo down to 190px at 991px on
+   the class; section 11 of this file sets it with the #units id, so that step
+   never lands, and this file's own restatement does not arrive until 860px.
+   In between, at tablet width where the cards have already gone one-up, the
+   photo was still a 250px band pushing the yard name toward the fold.
+
+   Placed above the 860px block deliberately: that block restates 200px, and
+   a narrower query later in the file is what should win below 860. */
+@media (max-width: 991px) {
+
+    #units .abt-unit__media {
+        height: 200px;
     }
 }
 
@@ -1967,6 +2030,29 @@
     #vision .viz-card__lead,
     #vision .viz-card__body {
         transform: none;
+    }
+}
+
+/* The last of the shadowed step-downs on this page.
+
+   css/marine-pages.css:1954 takes .mrnp-strip to a single column at 620px,
+   and is outranked by the #profile-qualified rule in the 860px block above,
+   which stops at two. So on a 375px phone the four-figure profile strip was
+   still being asked to fit two columns of about 142px each — the numbers and
+   their labels both wrapping.
+
+   Below the 860px block so it wins there, and narrow enough that the two-up
+   layout keeps the widths it was designed for on everything above it. */
+@media (max-width: 620px) {
+
+    #profile .mrnp-strip {
+        grid-template-columns: 1fr;
+        gap: 4px;
+    }
+
+    #profile .mrnp-strip > div,
+    #profile .mrnp-strip > div:nth-child(2n) {
+        border-right: 0;
     }
 }
 

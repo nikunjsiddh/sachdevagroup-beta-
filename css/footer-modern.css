@@ -189,7 +189,7 @@
     text-decoration: none;
     white-space: nowrap;
     box-shadow: 0 18px 36px -16px rgba(34, 179, 230, .95);
-    transition: transform .45s var(--sgf-ease), box-shadow .45s var(--sgf-ease);
+    transition: transform .2s var(--sgf-ease), box-shadow .2s var(--sgf-ease);
 }
 
 .sgf-yard__btn:hover,
@@ -202,7 +202,7 @@
 
 .sgf-yard__btn i {
     font-style: normal;
-    transition: transform .35s var(--sgf-ease);
+    transition: transform .24s var(--sgf-ease);
 }
 
 .sgf-yard__btn:hover i {
@@ -217,12 +217,14 @@
     position: relative;
     background: var(--sgf-ink);
     color: var(--sgf-body);
-    overflow: hidden;
+    /* overflow removed — it was clipping .sgf-footer__wave's negative top
+       and preventing the wave from overlapping the section above. */
 }
 
 .sgf-footer__wave {
     position: absolute;
-    top: -1px;
+    top: -20px;
+    /* push up enough to overlap the section above and kill the gap */
     left: 0;
     width: 100%;
     line-height: 0;
@@ -233,7 +235,8 @@
 .sgf-footer__wave svg {
     display: block;
     width: 100%;
-    height: 92px;
+    height: 122px;
+    /* increased to compensate for the extra -30px top offset */
 }
 
 .sgf-footer__wave path {
@@ -247,6 +250,8 @@
     max-width: 1240px;
     margin: 0 auto;
     padding: 0 24px;
+    overflow: hidden;
+    /* moved here from .sgf-footer to contain internal content */
 }
 
 .sgf-footer__grid {
@@ -277,7 +282,7 @@
    (The logo renders 82x74 from a 110x99 file — it is scaling DOWN, so
    sharpness was never the problem here.) */
 
-.sgf-col--brand > a {
+.sgf-col--brand>a {
     display: inline-flex;
     align-items: center;
     justify-content: center;
@@ -294,7 +299,7 @@
         border-color .45s cubic-bezier(.16, 1, .3, 1);
 }
 
-.sgf-col--brand > a:hover {
+.sgf-col--brand>a:hover {
     transform: translateY(-3px);
     border-color: rgba(240, 165, 0, .55);
     box-shadow:
@@ -356,8 +361,8 @@
     background: rgba(255, 255, 255, .06);
     border: 1px solid var(--sgf-line);
     color: #cfe0ef;
-    transition: background .35s var(--sgf-ease), color .35s var(--sgf-ease),
-        border-color .35s var(--sgf-ease), transform .35s var(--sgf-ease);
+    transition: background .2s var(--sgf-ease), color .2s var(--sgf-ease),
+        border-color .2s var(--sgf-ease), transform .2s var(--sgf-ease);
 }
 
 .sgf-social a:hover,
@@ -406,14 +411,26 @@
     padding: 0;
 }
 
+/* Touch targets, at every width — SC 2.5.8's 24px floor is not a phone-only
+   rule. At 15px/1.5 the anchor box is 22.5px tall and the 13px gap under it
+   is dead space no pointer can use, so the gap moves INSIDE the anchor: the
+   pitch between two links is unchanged (23+13=36 -> 33+4=37) and the hit
+   area grows by half. It has to be padding on the element rather than a
+   min-height because .sgf-links a is inline-FLEX, where vertical padding is
+   in the line box — which is also why `li` gives back what `a` takes.
+
+   The `.sgf-yard__meta` links are deliberately left alone: they sit inline
+   in a sentence, which SC 2.5.8 exempts, and padding there would not enlarge
+   the line box anyway. */
 .sgf-links li {
-    margin-bottom: 13px;
+    margin-bottom: 4px;
 }
 
 .sgf-links a {
     display: inline-flex;
     align-items: flex-start;
     gap: 9px;
+    padding: 5px 0;
     font-size: 15px;
     line-height: 1.5;
     color: var(--sgf-body);
@@ -557,6 +574,37 @@ a.sgf-contact__value:focus {
     box-shadow: 0 14px 30px -12px rgba(34, 179, 230, .95) !important;
 }
 
+/* Show/hide, moved off jQuery.
+   css/style.css:326 parks the button at `display: none`, and js/main.js used
+   to bring it back with .fadeIn(200)/.fadeOut(200) — a main-thread animation
+   queue kicked on every scroll event, writing inline display and opacity
+   frame by frame. main.js now toggles .is-visible once per state change and
+   the transition below carries it, on opacity and transform only, both of
+   which the compositor can run without the main thread.
+
+   `display` stays block throughout because it cannot be transitioned;
+   visibility can, and it is what keeps the hidden button out of the tab
+   order and off the hit-test. The transition on style.css:346 already lists
+   opacity and transform, so this inherits the right timing. */
+#toTopBtn {
+    display: block !important;
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(12px);
+    transition: background-color .25s ease, opacity .25s ease,
+                transform .25s ease, visibility 0s linear .25s;
+}
+
+#toTopBtn.is-visible {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: none;
+    transition: background-color .25s ease, opacity .25s ease,
+                transform .25s ease, visibility 0s linear 0s;
+}
+
 #toTopBtn:hover {
     background: linear-gradient(135deg, var(--sgf-cyan-deep) 0%, var(--sgf-cyan-bright) 100%) !important;
 }
@@ -672,7 +720,8 @@ a.sgf-contact__value:focus {
     }
 
     .sgf-footer__wave svg {
-        height: 52px;
+        height: 82px;
+        /* 52px base + 30px to compensate for top: -30px offset */
     }
 
     .sgf-footer__grid {
@@ -743,8 +792,26 @@ a.sgf-contact__value:focus {
    with ink line-work — and stacks above it. Two identical discs would read
    as a pair of buttons doing the same job.
 
-   It is a pill that carries its label on desktop and collapses to the disc
-   on touch, where a 150px pill parked over the content is in the way.
+   It is a labelled pill on desktop and collapses to the disc on touch, where
+   a 150px pill parked over the content is in the way.
+
+   WHY THE LABEL IS NO LONGER A HOVER REVEAL
+   It used to sit at max-width:0 and open only on hover, so at rest the whole
+   control was a 46px gold dot with a speech bubble in it — indistinguishable
+   at a glance from the cyan back-to-top disc 32px below it, and on a phone,
+   where there is no hover at all, it never said the word "feedback" once. A
+   control nobody can identify without pointing at it is a control nobody
+   clicks. The pill now reads FEEDBACK at rest and hover only lifts it.
+
+   THE HALO
+   ::before carries a spread-only box-shadow that expands and fades on a loop.
+   It is deliberately drawn on a pseudo-element and not on the button: the
+   button's own box-shadow is its depth, and hover rewrites that shadow, so
+   an animation sharing the property would fight the transition. Spread rather
+   than transform:scale because scaling a 150x48 pill stretches the ring into
+   an ellipse, while spread grows evenly on all four sides and keeps the pill
+   silhouette. It pauses on hover and while the dialog is open — by then it
+   has done its job and is just noise.
 
    FRONT END ONLY. js/feedback.js sends nothing; read its header before this
    ships. */
@@ -758,66 +825,84 @@ a.sgf-contact__value:focus {
     display: inline-flex;
     align-items: center;
     gap: 0;
-    height: 46px;
+    height: 48px;
     padding: 0;
-    border: 2px solid rgba(255, 255, 255, .28);
+    border: 2px solid #fff;
     border-radius: 999px;
-    background: linear-gradient(135deg, var(--gold-light, #ffcc29) 0%, var(--gold, #ffad18) 100%);
+    background: linear-gradient(135deg, var(--gold-light, #ffc247) 0%, var(--gold, #ffad18) 100%);
     color: var(--ink, #071a2e);
     font-family: var(--font-display, "Oswald", sans-serif);
-    font-size: 12px;
-    font-weight: 500;
+    font-size: 12.5px;
+    font-weight: 600;
     letter-spacing: 2px;
     text-transform: uppercase;
     cursor: pointer;
-    overflow: hidden;
-    box-shadow: 0 14px 30px -12px rgba(255, 173, 24, .95);
+    /* Three layers, and each one is load-bearing. The 1px ink ring is what
+       separates a white-bordered gold pill from the pale page sections it
+       floats over — without it the border dissolves into #eef3f8 and the
+       button loses its edge. Then the gold throw for depth, and a short
+       neutral drop so the pill still reads against the navy footer, where a
+       gold glow on gold-adjacent ink disappears. */
+    box-shadow:
+        0 0 0 1px rgba(7, 26, 46, .18),
+        0 16px 34px -12px rgba(255, 173, 24, .95),
+        0 6px 16px -8px rgba(4, 18, 31, .45);
     transition: transform .45s var(--e-out), box-shadow .45s var(--e-out),
-        border-color .45s var(--e-out);
+        background .45s var(--e-out);
+}
+
+.sgfb-launch::before {
+    content: "";
+    position: absolute;
+    inset: -2px;
+    border-radius: inherit;
+    pointer-events: none;
+    animation: sgfb-halo 2.9s ease-out infinite;
+}
+
+@keyframes sgfb-halo {
+    0%   { box-shadow: 0 0 0 0 rgba(255, 173, 24, .55); }
+    70%  { box-shadow: 0 0 0 15px rgba(255, 173, 24, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(255, 173, 24, 0); }
+}
+
+.sgfb-launch:hover::before,
+.sgfb-launch:focus-visible::before,
+.sgfb-launch[aria-expanded="true"]::before {
+    animation: none;
 }
 
 .sgfb-launch__ico {
     display: grid;
     place-items: center;
-    width: 42px;
-    height: 42px;
+    width: 44px;
+    height: 44px;
     flex: 0 0 auto;
 }
 
 .sgfb-launch__ico svg {
-    width: 21px;
-    height: 21px;
+    width: 22px;
+    height: 22px;
     transition: transform .5s var(--e-out);
 }
 
-/* The label is revealed by width, not by display: a display switch cannot be
-   transitioned and the pill would snap open. max-width is the only property
-   that animates cleanly here, because the text is a single unwrapped line. */
 .sgfb-launch__txt {
-    max-width: 0;
-    padding-right: 0;
+    padding: 0 20px 0 2px;
     white-space: nowrap;
-    opacity: 0;
-    transition: max-width .5s var(--e-out), opacity .35s var(--e-out),
-        padding-right .5s var(--e-out);
 }
 
 .sgfb-launch:hover,
 .sgfb-launch:focus-visible {
     transform: translateY(-3px);
-    border-color: #fff;
-    box-shadow: 0 22px 44px -14px rgba(255, 173, 24, .95);
-}
-
-.sgfb-launch:hover .sgfb-launch__txt,
-.sgfb-launch:focus-visible .sgfb-launch__txt {
-    max-width: 130px;
-    padding-right: 20px;
-    opacity: 1;
+    background: linear-gradient(135deg, #fff 0%, var(--gold-light, #ffc247) 55%, var(--gold, #ffad18) 100%);
+    box-shadow:
+        0 0 0 1px rgba(7, 26, 46, .22),
+        0 26px 48px -14px rgba(255, 173, 24, 1),
+        0 8px 20px -8px rgba(4, 18, 31, .5);
 }
 
 .sgfb-launch:hover .sgfb-launch__ico svg {
-    transform: rotate(-8deg) scale(1.06);
+    transform: rotate(-8deg) scale(1.08);
 }
 
 .sgfb-launch:focus-visible {
@@ -908,7 +993,7 @@ a.sgf-contact__value:focus {
     pointer-events: none;
 }
 
-.sgfb__panel > * {
+.sgfb__panel>* {
     position: relative;
     z-index: 1;
 }
@@ -1100,14 +1185,14 @@ a.sgf-contact__value:focus {
     background: rgba(8, 32, 58, .8);
 }
 
-.sgfb-type input:checked + .sgfb-type__box {
+.sgfb-type input:checked+.sgfb-type__box {
     border-color: var(--cyan-bright, #35c6f4);
     background: linear-gradient(165deg, rgba(53, 198, 244, .18), rgba(53, 198, 244, .04));
     box-shadow: 0 0 0 1px rgba(53, 198, 244, .35) inset,
         var(--glow-cyan, 0 22px 50px -26px rgba(34, 179, 230, .85));
 }
 
-.sgfb-type input:checked + .sgfb-type__box .sgfb-type__ico {
+.sgfb-type input:checked+.sgfb-type__box .sgfb-type__ico {
     background: linear-gradient(150deg, var(--cyan-bright, #35c6f4), var(--cyan-deep, #1195cf));
     border-color: transparent;
     color: #041724;
@@ -1115,14 +1200,14 @@ a.sgf-contact__value:focus {
         var(--glow-cyan, 0 22px 50px -26px rgba(34, 179, 230, .85));
 }
 
-.sgfb-type input:checked + .sgfb-type__box .sgfb-type__tick {
+.sgfb-type input:checked+.sgfb-type__box .sgfb-type__tick {
     opacity: 1;
     transform: none;
 }
 
 /* the ring goes on the BOX — the input it belongs to is 1px and clipped, so
    its own focus ring would be invisible */
-.sgfb-type input:focus-visible + .sgfb-type__box {
+.sgfb-type input:focus-visible+.sgfb-type__box {
     outline: 2px solid var(--cyan-bright, #35c6f4);
     outline-offset: 3px;
 }
@@ -1205,10 +1290,10 @@ a.sgf-contact__value:focus {
 /* placeholder=" " — a single space — is what makes :not(:placeholder-shown)
    mean "this field has a value". js/feedback.js writes it on every input and
    textarea; without it the label never lifts. */
-.sgfb-field input:focus + label,
-.sgfb-field textarea:focus + label,
-.sgfb-field input:not(:placeholder-shown) + label,
-.sgfb-field textarea:not(:placeholder-shown) + label {
+.sgfb-field input:focus+label,
+.sgfb-field textarea:focus+label,
+.sgfb-field input:not(:placeholder-shown)+label,
+.sgfb-field textarea:not(:placeholder-shown)+label {
     transform: translateY(-18px) scale(.76);
     color: var(--cyan-bright, #35c6f4);
     letter-spacing: 2.2px;
@@ -1227,8 +1312,8 @@ a.sgf-contact__value:focus {
     transition: transform .45s var(--e-out);
 }
 
-.sgfb-field input:focus ~ .sgfb-field__line,
-.sgfb-field textarea:focus ~ .sgfb-field__line {
+.sgfb-field input:focus~.sgfb-field__line,
+.sgfb-field textarea:focus~.sgfb-field__line {
     transform: scaleX(1);
 }
 
@@ -1443,15 +1528,67 @@ html.sgfb-locked body {
         margin-top: -10px;
     }
 
-    /* a 150px pill parked over the content is in the way on a phone, and
-       there is no hover to open it with anyway */
+    /* a 150px pill parked over the content is in the way on a phone, so the
+       label goes and the control returns to a disc — but a bigger one than
+       the 46px it used to be, and still wearing the halo, because on touch
+       that ring is the only thing left doing the work the label does on
+       desktop */
     .sgfb-launch {
         right: 20px;
         bottom: 74px;
+        height: 54px;
     }
 
+    .sgfb-launch__ico {
+        width: 50px;
+        height: 50px;
+    }
+
+    .sgfb-launch__ico svg {
+        width: 25px;
+        height: 25px;
+    }
+
+    /* clipped, not display:none — display:none would also strip the word
+       from the button's accessible name and leave a screen reader on a
+       phone announcing an unlabelled button */
     .sgfb-launch__txt {
-        display: none;
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        overflow: hidden;
+        clip: rect(0 0 0 0);
+        clip-path: inset(50%);
+        white-space: nowrap;
+    }
+
+    /* PARKED OVER THE HERO.
+       `.mrn-hero__rail` is `position:absolute; bottom:0` inside a hero whose
+       min-height fills the viewport, so on a phone the stat panel IS the
+       bottom 176px of the first screen — and any bottom-anchored floating
+       control lands on top of it. Measured at 375x812: the launcher covered
+       "Years of Operation" before the visitor had scrolled a pixel.
+
+       Padding the rail cannot fix this (it would leave a dead band across
+       the bottom of the hero) and neither can moving the button (every
+       bottom corner is rail). So the launcher does what #toTopBtn at line
+       577 already does on this site — it stays out of the first screen and
+       fades in once the reader has left the hero behind. Same 250px
+       threshold, so the two controls arrive together instead of one
+       appearing under the other.
+
+       Scoped to the media query rather than left global: if the class were
+       ever stale after a resize to desktop, the desktop launcher — which
+       floats over empty margin and covers nothing — must still be visible.
+       js/feedback.js only sets it below this same 860px width. */
+    .sgfb-launch.is-parked {
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        transform: translateY(10px);
+        transition: opacity .3s var(--sgf-ease), transform .3s var(--sgf-ease),
+            visibility 0s linear .3s;
     }
 }
 
@@ -1493,9 +1630,13 @@ html.sgfb-locked body {
         transform: none !important;
     }
 
-    /* the label reveal is a width, not a travel, but with no transition it
-       would snap — hold it open on hover with nothing animating */
-    .sgfb-launch__txt {
-        transition: none !important;
+    /* The halo stops looping, but it does NOT disappear. It is the launcher's
+       emphasis, and on a phone it is the only emphasis there is — dropping it
+       under this preference would quietly hand reduced-motion visitors the
+       unfindable button the redesign set out to fix. Freeze it at the ring it
+       starts from and let it hold there. */
+    .sgfb-launch::before {
+        animation: none !important;
+        box-shadow: 0 0 0 4px rgba(255, 173, 24, .34) !important;
     }
 }

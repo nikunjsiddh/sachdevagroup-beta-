@@ -1,0 +1,12 @@
+# The CMS source. Nothing in here is ever a page: db.php and config.php only
+# define functions and return an array, so a direct request already prints
+# nothing — but that depends on PHP being alive to run them. If the handler is
+# ever disabled, Apache falls back to serving these as plain text and hands out
+# the database credentials. This makes the answer 403 either way.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
