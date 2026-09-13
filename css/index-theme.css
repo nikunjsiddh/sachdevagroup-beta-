@@ -281,9 +281,26 @@
     backdrop-filter: blur(6px);
 }
 
-.mrn-btn--ghost:hover {
+/* marine.css:242 slides a GOLD fill up over this button on hover, and the
+   rule below used to leave that alone and turn the label cyan — cyan type on
+   amber, so the label all but vanished at the one moment the pointer was on
+   it. Both scoped copies of this button had already been corrected the same
+   way and for the same reason: the hero at line 777 and .mrn-cta at 6837 each
+   re-declare the fill cyan and take the ink dark. This is that fix at the
+   base, so the correction is not something the next ghost button has to be
+   given again — it reaches the two that never had it, the closing CTA on
+   news.html (whose section is .mrnp-section, not .mrn-cta) and the
+   Cancel/Close pair js/feedback.js builds inside the feedback dialog. */
+.mrn-btn--ghost::before {
+    background: linear-gradient(135deg, var(--cyan-bright) 0%, var(--cyan-deep) 100%);
+}
+
+/* :focus as well as :hover — marine.css:246 pairs the two, and a keyboard
+   user gets the same filled button a mouse does. */
+.mrn-btn--ghost:hover,
+.mrn-btn--ghost:focus {
     border-color: var(--cyan-bright);
-    color: var(--cyan-bright);
+    color: #04263f;
     background: rgba(34, 179, 230, .10);
 }
 
