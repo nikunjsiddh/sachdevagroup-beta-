@@ -282,7 +282,7 @@ sg_admin_head('Certificates', 'certificates.php');
 <div class="pagehead">
     <p>
         The certificate scans on
-        <a href="../our_credentials.html#certificates" target="_blank" rel="noopener">our_credentials.html</a>,
+        <a href="../our_credentials#certificates" target="_blank" rel="noopener">our_credentials.html</a>,
         in the order they appear. Each one opens full size in the lightbox.
     </p>
 </div>

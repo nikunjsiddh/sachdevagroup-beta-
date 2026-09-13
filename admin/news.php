@@ -296,7 +296,7 @@ sg_admin_head('News', 'news.php');
 
 <div class="pagehead">
     <p>
-        These become the cards on <a href="../news.html" target="_blank" rel="noopener">news.html</a>.
+        These become the cards on <a href="../news" target="_blank" rel="noopener">news.html</a>.
         With none of them live, that page keeps its &ldquo;nothing published yet&rdquo; note.
     </p>
     <a class="btn btn--primary" href="news.php?action=new">Add an article</a>

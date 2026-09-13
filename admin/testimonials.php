@@ -256,7 +256,7 @@ sg_admin_head('Testimonials', 'testimonials.php');
 <div class="pagehead">
     <p>
         The cards in the
-        <a href="../about_us.html#testimonials" target="_blank" rel="noopener">In Their Words</a>
+        <a href="../about_us#testimonials" target="_blank" rel="noopener">In Their Words</a>
         section of the About page, in this order.
         <?php echo (int) $live; ?> of <?php echo count($rows); ?>
         <?php echo count($rows) === 1 ? 'is' : 'are'; ?> published.

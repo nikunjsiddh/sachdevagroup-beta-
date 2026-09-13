@@ -522,15 +522,46 @@
     /* ------------------------------------------------------------------
        11. Highlight the current page in the shared nav
     ------------------------------------------------------------------ */
+    /* One page, one name, however the URL is spelled.
+
+       The site serves /news now rather than /news.html, and the home page is
+       the directory rather than index.html — but an old bookmark still
+       arrives as /news.html and is 301'd, and a hand-written link may still
+       carry the extension. Comparing raw last-path-segments broke on all of
+       that: "" from /sachdevagroup/ never equalled "./" from the Home link,
+       so the current page simply stopped being marked in the nav.
+
+       Reduce both sides to the same token instead. */
+    function pageKey(url) {
+        var path = String(url || '').split('#')[0].split('?')[0];
+
+        /* A path that ENDS in a slash is a directory, and the directory is the
+           home page — test that before touching the segments. Trimming the
+           slash first and then taking the last segment is what it looks like
+           this should do, and it is wrong: "/sachdevagroup/" becomes
+           "sachdevagroup", the name of the folder the site sits in, and the
+           home page stops matching its own nav link. */
+        if (path === '' || path === '.' || /\/$/.test(path)) return 'index';
+
+        var last = path.split('/').pop().replace(/\.html$/i, '');
+        return (last === '' || last === 'index') ? 'index' : last.toLowerCase();
+    }
+
     function initNavActive() {
         var links = document.querySelectorAll('#main-menu > li > a[href], #main-menu .dropdown-menu > li > a[href]');
         if (!links.length) return;
 
-        var current = location.pathname.split('/').pop() || 'index.html';
+        var current = pageKey(location.pathname);
 
         Array.prototype.forEach.call(links, function (a) {
-            var href = a.getAttribute('href').split('/').pop();
-            if (!href || href !== current) return;
+            var raw = a.getAttribute('href');
+
+            /* "#" is the dropdown toggle and "#section" is a jump within this
+               page. Neither names a page, and both would reduce to the home
+               token and light up the wrong item on the home page. */
+            if (!raw || raw.charAt(0) === '#') return;
+
+            if (pageKey(raw) !== current) return;
 
             var li = a.parentElement;
             if (li) li.classList.add('mrn-nav-active');

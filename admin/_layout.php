@@ -82,7 +82,7 @@ function sg_admin_head($title, $active = '') {
             </nav>
 
             <div class="side__foot">
-                <a class="side__site" href="../index.html" target="_blank" rel="noopener">
+                <a class="side__site" href="../" target="_blank" rel="noopener">
                     View website
                     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7"
                          stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">

@@ -112,11 +112,21 @@ function sg_img_src($path) {
     return ltrim($path, '/');
 }
 
-/* Links may be external, so http(s) is allowed here — but only that. */
+/* Links may be external, so http(s) is allowed here — but only that.
+
+   The bare-name branch used to insist on a .html suffix, which stopped being
+   the shape of an address on this site when the server started serving /news
+   in place of /news.html. It accepts either now: "contact_us" is what the
+   pages themselves are linked with, and "contact_us.html" still resolves
+   because the server 301s it — refusing what somebody reasonably types is
+   worse than allowing a link that redirects once.
+
+   ~ as the delimiter, not # — the pattern has to contain a literal # for the
+   fragment branch, and that would close a #-delimited one. */
 function sg_link_href($url) {
     $url = trim((string) $url);
     if ($url === '') return '';
-    if (preg_match('#^(https?://|/|[\w.\-]+\.html)#i', $url)) return $url;
+    if (preg_match('~^(https?://|/|[\w\-]+(\.html)?([#?].*)?$)~i', $url)) return $url;
     return '';
 }
 
@@ -160,7 +170,7 @@ function sg_render_news($rows) {
             </p>
         </div>
 
-        <a href="contact_us.html" class="mrn-btn mrn-btn--navy" data-mrn-magnetic>
+        <a href="contact_us" class="mrn-btn mrn-btn--navy" data-mrn-magnetic>
             Contact Us
             <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
                 stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">

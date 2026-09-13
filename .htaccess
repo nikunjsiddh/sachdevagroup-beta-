@@ -141,7 +141,63 @@
 
 
 # ---------------------------------------------------------------------------
-# 4. SECRETS — carried over unchanged
+# 4. CLEAN URLS
+# ---------------------------------------------------------------------------
+# /news instead of /news.html, and / instead of /index.html.
+#
+# Two halves that have to agree, or the site loops:
+#
+#   (a) and (b) are the OUTWARD half. Anything that still asks for the .html
+#       name — an old bookmark, a search result indexed before this change, a
+#       link on somebody else's site — is answered with a 301 to the clean
+#       address. One canonical URL per page, and the extension stops being
+#       something a visitor ever sees.
+#
+#   (c) is the INWARD half. The clean address has no file behind it, so this
+#       maps it back to the .html on disk. It is an internal rewrite, not a
+#       redirect: the browser keeps the clean URL.
+#
+# WHY THE PREFIX IS READ OUT OF THE REQUEST RATHER THAN HARD-CODED
+# The obvious spelling of (b) is `RewriteRule ^(.+)\.html$ /$1 [R=301]`, and
+# it is wrong here: the leading slash makes the target absolute from the
+# SERVER root, so on this XAMPP — where the site lives at /sachdevagroup/ —
+# /sachdevagroup/news.html would redirect to /news and 404. Capturing the
+# directory out of %{THE_REQUEST} instead means the same file works unchanged
+# whether the site is served from a subfolder or from a domain root, with no
+# RewriteBase to remember to edit at deploy time.
+#
+# NE (noescape) keeps a # or a & in the captured path from being turned into
+# %23 / %26 on the way back out. The query string rides along on its own —
+# mod_rewrite appends it whenever the substitution does not contain a "?".
+#
+# There is no loop: (a) and (b) test %{THE_REQUEST}, which is the ORIGINAL
+# request line and never changes when (c) rewrites internally, so the .html
+# that (c) produces is not seen as a new .html request to redirect.
+#
+# A path with no matching .html file falls through untouched, so /admin/,
+# uploads/, images/ and every .php are unaffected.
+# ---------------------------------------------------------------------------
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+
+    # (a) the home page is the directory, not a file inside it
+    RewriteCond %{THE_REQUEST} \s(/[^?\s]*/)index\.html([?\s]) [NC]
+    RewriteRule ^ %1 [R=301,L,NE]
+
+    # (b) every other .html asked for by name
+    RewriteCond %{THE_REQUEST} \s(/[^?\s]*/)([^/?\s]+)\.html([?\s]) [NC]
+    RewriteRule ^ %1%2 [R=301,L,NE]
+
+    # (c) serve the page that sits behind the clean address
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    RewriteCond %{REQUEST_FILENAME}.html -f
+    RewriteRule ^(.+)$ $1.html [L]
+</IfModule>
+
+
+# ---------------------------------------------------------------------------
+# 5. SECRETS — carried over unchanged
 # ---------------------------------------------------------------------------
 # The mail credentials are never served, whatever happens to PHP.
 # mail-config.php only returns an array, so a normal request for it already

@@ -277,7 +277,7 @@ sg_admin_head('Gallery', 'gallery.php');
 
 <div class="pagehead">
     <p>
-        The tiles on <a href="../gallery.html" target="_blank" rel="noopener">gallery.html</a>,
+        The tiles on <a href="../gallery" target="_blank" rel="noopener">gallery.html</a>,
         in the order they appear. Each one opens full size in the lightbox.
     </p>
 </div>

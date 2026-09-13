@@ -171,7 +171,7 @@ $flash    = sg_take_flash();
             </button>
         </form>
 
-        <p class="gate__foot"><a href="../index.html">&larr; Back to the website</a></p>
+        <p class="gate__foot"><a href="../">&larr; Back to the website</a></p>
 
     </main>
 
