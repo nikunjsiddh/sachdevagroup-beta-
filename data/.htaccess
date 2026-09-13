@@ -1,0 +1,11 @@
+# Written automatically by includes/db.php. Do not delete.
+# This folder holds the SQLite database: every admin password hash and
+# every note a visitor has sent. Apache serves .sqlite as a plain file,
+# so without this a GET for data/content.sqlite downloads the lot.
+<IfModule mod_authz_core.c>
+    Require all denied
+</IfModule>
+<IfModule !mod_authz_core.c>
+    Order allow,deny
+    Deny from all
+</IfModule>
