@@ -163,6 +163,25 @@
             }
         },
         {
+            /* The one optional field on this form, and the only reason it is
+               here: without an address there is nobody to send the
+               acknowledgement to, so a visitor who leaves feedback gets no
+               confirmation that anyone received it. Left empty the note is
+               accepted exactly as it always was — feedback-send.php only
+               acknowledges when there is somewhere to acknowledge to. */
+            id: 'sgfbMail', name: 'email', label: 'Email (optional)', type: 'email',
+            autocomplete: 'email', inputmode: 'email', max: 120, wide: true,
+            optional: true,
+            check: function (v) {
+                if (!v) return '';
+                /* Deliberately loose: the only authority on whether an address
+                   works is the mail server, and a clever pattern here just
+                   rejects the valid ones that happen to be unusual. */
+                return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(v)
+                    ? '' : 'That address does not look right. Leave it empty if you would rather not give one.';
+            }
+        },
+        {
             id: 'sgfbNote', name: 'note', label: 'Note', area: true, max: 500,
             check: function (v) {
                 if (!v) return 'Please write your feedback.';
@@ -256,7 +275,8 @@
                 '<div class="sgfb__head">' +
                     '<span class="mrn-eyebrow">Feedback</span>' +
                     '<h3 id="sgfbTitle">Tell us how we <em>did</em></h3>' +
-                    '<p>Your name and number stay with the Sachdeva Group office. Every field is required.</p>' +
+                    '<p>Your name and number stay with the Sachdeva Group office. Leave an email and '
+                    + 'we will send you a copy; every other field is required.</p>' +
                 '</div>' +
 
                 '<form class="sgfb__form" novalidate>' +

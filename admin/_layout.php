@@ -58,7 +58,7 @@ function sg_admin_head($title, $active = '') {
 
         <aside class="side" id="side">
             <div class="side__brand">
-                <img src="../images/logo.png" alt="" width="34" height="31">
+                <span class="brand-plate"><img src="../images/logo.png" alt="" width="34" height="31"></span>
                 <span>
                     <strong>Sachdeva Group</strong>
                     <em>Website admin</em>

@@ -368,15 +368,42 @@
         max-height: 42px;
     }
 
+    /* The burger was a 48x20 hit box drawing a 20px-tall glyph that started
+       8px BELOW the box: slicknav.min.css floats .slicknav_icon and hard-codes
+       it to height:4px, so the three bars overflow and contribute no height to
+       the button. Measured at 390px: button y=27..47, bars painted y=35..55.
+       The bottom bar sat outside its own target, and 20px is under the 24px
+       WCAG 2.5.8 minimum for the site's primary navigation control.
+
+       Fix: un-float the icon and let it be a real flex column, then centre it
+       in a 44x44 button. The glyph is unchanged -- still three 28x4 bars with
+       4px gaps -- only the box around it is now the size it draws. */
     .sgh-header .slicknav_btn {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 44px;
+        min-height: 44px;
         margin: 0;
         padding: 8px 10px;
         background-color: transparent;
     }
 
+    .sgh-header .slicknav_menu .slicknav_icon {
+        float: none;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        gap: 4px;
+        width: 28px;
+        height: auto;
+        margin: 0;
+    }
+
     .sgh-header .slicknav_menu .slicknav_icon-bar {
         background-color: var(--sgh-ink);
         box-shadow: none;
+        margin: 0;             /* gap owns the spacing now */
     }
 
     .sgh-header .slicknav_nav {
@@ -388,6 +415,18 @@
         border: 1px solid rgba(7, 26, 46, .10);
         border-radius: 12px;
         box-shadow: 0 20px 40px -26px rgba(7, 26, 46, .5);
+
+        /* style.css:4776 caps the panel at a flat 350px. That fitted while
+           rows were 31px tall; at 43px the seven items total 458px and the
+           last one drops into an internal scroll on a phone with 400px of
+           unused screen below it. Cap it against the viewport instead.
+           dvh follows the browser chrome as it collapses; the vh line above
+           is the fallback for engines that do not know dvh. overflow:auto is
+           inherited from style.css, so a short landscape phone still scrolls
+           instead of running the panel off-screen. */
+        max-height: calc(100vh - 96px);
+        max-height: calc(100dvh - 96px);
+        overscroll-behavior: contain;
     }
 
     .sgh-header .slicknav_nav a {
@@ -396,6 +435,30 @@
         text-transform: none;
         color: #33506b;
         border-radius: 8px;
+    }
+
+    /* slicknav ships padding:5px 10px, which at 15px/1.4 makes every menu row
+       31px tall -- fine for a mouse, tight for a thumb. 11px top and bottom
+       takes the row to 43px without touching display, so the chevron still
+       sits inline after the label exactly as before. */
+    .sgh-header .slicknav_nav a,
+    .sgh-header .slicknav_nav .slicknav_row {
+        padding-top: 11px;
+        padding-bottom: 11px;
+    }
+
+    /* A parent row holds its own <a> (go to the section) inside the row that
+       toggles the submenu. Zero it out so the two do not stack into a 65px
+       row, then give it inline padding -- on an inline box that grows the hit
+       area without adding to the line box, so the layout is untouched. */
+    .sgh-header .slicknav_nav .slicknav_item a,
+    .sgh-header .slicknav_nav .slicknav_parent-link a {
+        padding-top: 0;
+        padding-bottom: 0;
+    }
+
+    .sgh-header .slicknav_nav .slicknav_parent-link a {
+        padding-block: 11px;
     }
 
     .sgh-header .slicknav_nav .slicknav_row:hover,

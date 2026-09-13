@@ -522,7 +522,8 @@
                     </div>
 
                     <!-- Enquiry form -->
-                    <form class="mrnp-form" id="enquiry" action="" data-mrn-reveal="right">
+                    <form class="mrnp-form" id="enquiry" action="contact-send.php" method="post" novalidate
+                        data-mrn-reveal="right">
                         <h3>Send Message</h3>
 
                         <div class="mrnp-field">
@@ -728,7 +729,7 @@
                             <span class="mrnp-field__line"></span>
                         </div>
 
-                        <button type="button" class="mrn-btn mrn-btn--gold" data-mrn-magnetic>
+                        <button type="submit" class="mrn-btn mrn-btn--gold" data-mrn-magnetic>
                             Submit <svg class="sg-ico" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                                 stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"
                                 focusable="false">
@@ -981,6 +982,7 @@
     <script defer src="js/page-fx.js"></script>
     <script defer src="js/card-fx.js"></script>
     <script defer src="js/feedback.js"></script>
+    <script defer src="js/contact.js"></script>
     <script defer src="js/index-motion.js"></script>
     <!-- GSAP is loaded here for js/scroll-drift.js ONLY. js/motion.js is
          deliberately absent: it sets SG_MOTION_ENGINE='gsap', which stands

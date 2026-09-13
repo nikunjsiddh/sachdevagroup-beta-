@@ -228,6 +228,7 @@ function sg_schema_sql() {
             feedback_type {STR} NOT NULL DEFAULT 'Visitors',
             name          {STR} NOT NULL,
             designation   {STR} NOT NULL DEFAULT '',
+            email         {STR} NOT NULL DEFAULT '',
             mobile        {STR} NOT NULL DEFAULT '',
             note          {TXT},
             status        {STR} NOT NULL DEFAULT 'new',
@@ -281,6 +282,44 @@ function sg_schema_sql() {
     );
 }
 
+/* --------------------------------------------------------------------------
+   Adding a column to a table that is already there
+   --------------------------------------------------------------------------
+   CREATE TABLE IF NOT EXISTS is the whole migration story in this project and
+   it has one gap: it does nothing at all to a table that exists. A column
+   added to the schema above therefore appears on new installations and never
+   on the one that is running.
+
+   ALTER TABLE ... ADD COLUMN is the fix, and it has to be guarded because
+   neither SQLite nor MySQL before 8.0 supports IF NOT EXISTS on it — running
+   it twice is an error, and every request after the first is the second time.
+   Asking what columns exist is the portable guard; the two drivers just
+   disagree about how to ask.
+   -------------------------------------------------------------------------- */
+
+function sg_columns(PDO $pdo, $table) {
+    $out = array();
+    try {
+        if (sg_driver() === 'mysql') {
+            foreach ($pdo->query('SHOW COLUMNS FROM ' . $table) as $r) $out[] = $r['Field'];
+        } else {
+            foreach ($pdo->query('PRAGMA table_info(' . $table . ')') as $r) $out[] = $r['name'];
+        }
+    } catch (PDOException $e) { /* no such table yet — the CREATE above owns it */ }
+    return $out;
+}
+
+function sg_add_column(PDO $pdo, $table, $column, $definition) {
+    $have = sg_columns($pdo, $table);
+    if (!$have || in_array($column, $have, true)) return;
+
+    try {
+        $pdo->exec('ALTER TABLE ' . $table . ' ADD COLUMN ' . $column . ' ' . $definition);
+    } catch (PDOException $e) {
+        error_log('sg: could not add ' . $table . '.' . $column . ' — ' . $e->getMessage());
+    }
+}
+
 function sg_migrate(PDO $pdo) {
     static $done = false;
     if ($done) return;
@@ -316,6 +355,12 @@ function sg_migrate(PDO $pdo) {
     foreach ($idx as $sql) {
         try { $pdo->exec($sql); } catch (PDOException $e) { /* already there */ }
     }
+
+    /* Columns added after a table shipped. The email address the contact form
+       collects has nowhere else to go: 'designation' is a job title and
+       putting an address in it would be a field meaning two things. */
+    $str = sg_driver() === 'mysql' ? 'VARCHAR(191)' : 'TEXT';
+    sg_add_column($pdo, 'sg_complaints', 'email', $str . " NOT NULL DEFAULT ''");
 
     sg_split_feedback($pdo);
     sg_seed($pdo);

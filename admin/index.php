@@ -100,7 +100,7 @@ $flash    = sg_take_flash();
     <main class="gate__card">
 
         <div class="gate__brand">
-            <img src="../images/logo.png" alt="Sachdeva Group of Industries" width="52" height="47">
+            <span class="brand-plate"><img src="../images/logo.png" alt="Sachdeva Group of Industries" width="52" height="47"></span>
             <span>Sachdeva Group of Industries</span>
         </div>
 

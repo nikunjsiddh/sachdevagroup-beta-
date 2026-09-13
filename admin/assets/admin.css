@@ -90,6 +90,32 @@ code {
     height: 100vh;
 }
 
+/* --------------------------------------------------------------------------
+   The logo plate
+   --------------------------------------------------------------------------
+   images/logo.png is navy lettering and a navy anchor beside an orange ship's
+   wheel, on transparency. That is drawn for the website header, which is a
+   near-white gradient — and it means the mark cannot be dropped onto anything
+   dark: on the sidebar's ink gradient the wheel showed and the wordmark
+   underneath it simply vanished.
+
+   So the logo carries its own piece of that header with it. Same gradient,
+   same hairline, wherever it lands.
+   -------------------------------------------------------------------------- */
+
+.brand-plate {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex: none;
+    background: linear-gradient(150deg, #ffffff 0%, #e9f1f8 100%);
+    border: 1px solid rgba(7, 26, 46, .10);
+    border-radius: 9px;
+    padding: 7px 9px;
+}
+
+.brand-plate img { display: block; }
+
 .side__brand {
     display: flex;
     align-items: center;

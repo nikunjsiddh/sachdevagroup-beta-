@@ -1341,6 +1341,97 @@
     pointer-events: none;
 }
 
+/* --------------------------------------------------------------------------
+   Enquiry form — the states it never had
+   --------------------------------------------------------------------------
+   The form shipped with no error state and no success state, because it never
+   submitted: action="" and a type="button". js/contact.js gives it both, and
+   these are what they look like on the dark panel.
+
+   Red on navy is close to unreadable, so a bad field is marked with the
+   underline it already has plus a warm amber note — the same amber the rest of
+   the page uses for attention — rather than with a colour that vanishes into
+   the plate.
+   -------------------------------------------------------------------------- */
+
+.mrnp-field__err {
+    display: block;
+    margin-top: 7px;
+    font-size: 12.5px;
+    line-height: 1.5;
+    color: #ffc247;
+    letter-spacing: .2px;
+}
+
+.mrnp-field.is-bad input,
+.mrnp-field.is-bad textarea,
+.mrnp-field.is-bad select {
+    border-bottom-color: #ffad18;
+}
+
+.mrnp-field.is-bad .mrnp-field__line {
+    background: #ffad18;
+    transform: scaleX(1);
+}
+
+.mrnp-form__alert {
+    position: relative;
+    z-index: 1;
+    margin: 0 0 22px;
+    padding: 12px 16px;
+    border-left: 3px solid #ffad18;
+    background: rgba(255, 173, 24, .10);
+    font-size: 14px;
+    line-height: 1.6;
+    color: #ffd68a;
+}
+
+.mrnp-form__alert[hidden] { display: none; }
+
+/* The panel that replaces the form once it has gone. Same plate, so the
+   column does not jump when one swaps for the other. */
+.mrnp-form__done {
+    position: relative;
+    background: var(--pfx-plate-dark);
+    border: var(--pfx-ring-dark);
+    box-shadow: var(--lift-3, 0 34px 70px -30px rgba(4, 18, 31, .78));
+    padding: 46px 38px 42px;
+    text-align: center;
+    outline: none;
+}
+
+.mrnp-form__tick {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 62px;
+    height: 62px;
+    margin-bottom: 20px;
+    border-radius: 50%;
+    background: linear-gradient(135deg, #35c6f4 0%, #1195cf 100%);
+    color: #04263f;
+    box-shadow: 0 18px 40px -18px rgba(34, 179, 230, .9);
+}
+
+.mrnp-form__tick svg { width: 30px; height: 30px; }
+
+.mrnp-form__done h3 {
+    font-family: var(--font-display, "Oswald", sans-serif);
+    color: #fff;
+    font-size: 21px;
+    line-height: 1.35;
+    margin: 0 0 10px;
+    letter-spacing: .4px;
+}
+
+.mrnp-form__done p {
+    margin: 0 auto 24px;
+    max-width: 42ch;
+    font-size: 14.5px;
+    line-height: 1.7;
+    color: var(--body-on-dark, #a7bbcf);
+}
+
 .mrnp-form h3 {
     font-family: var(--font-display, "Oswald", sans-serif);
     color: #fff;
