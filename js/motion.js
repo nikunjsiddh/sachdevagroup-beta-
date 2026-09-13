@@ -328,6 +328,43 @@
         return Math.min(want, maxPct);
     }
 
+    /* The same discipline as safeYPercent, for the other shape of layer.
+
+       safeYPercent measures an element that is PHYSICALLY BIGGER than its
+       container. A framed photograph is the opposite: the <img> is inset:0,
+       exactly the frame's size, and the spare is INSIDE it — object-fit:cover
+       draws the picture larger than the element box and the frame clips it.
+
+       Whether there is any spare depends entirely on the two aspect ratios.
+       An image WIDER than its frame is scaled by cover to the frame's HEIGHT,
+       which leaves the vertical spare at exactly zero, and then every pixel of
+       counter-move cuts the top or the bottom off instead of parallaxing.
+
+       That is what happened to the About plate: a panorama in a 5:4 frame,
+       moved 6% of its height, lost the top of the yard crane. It was not a
+       fixed crop either — it changed as you scrolled.
+       -------------------------------------------------------------------- */
+    function safeCoverYPercent(media, want) {
+        var nw = media.naturalWidth || media.videoWidth || 0;
+        var nh = media.naturalHeight || media.videoHeight || 0;
+        var r = media.getBoundingClientRect();
+        if (!nw || !nh || !r.width || !r.height) return 0;
+
+        /* what object-fit:cover actually paints */
+        var scale = Math.max(r.width / nw, r.height / nh);
+        var spare = (nh * scale) - r.height;        /* total, top plus bottom */
+        if (!(spare > 1)) return 0;                 /* nothing to move into */
+
+        /* object-position splits that spare unevenly (the plate sits at 46%),
+           so the SMALLER side is what the travel has to fit inside. */
+        var posY = 50;
+        var op = win.getComputedStyle(media).objectPosition.split(' ');
+        if (op.length > 1 && op[1].indexOf('%') > -1) posY = parseFloat(op[1]) || 0;
+        var edge = spare * Math.min(posY, 100 - posY) / 100;
+
+        return Math.min(want, (edge * 0.9 / r.height) * 100);   /* 10% guard */
+    }
+
     function initParallax(scale) {
         qsa('[data-sg-parallax]').forEach(function (el) {
             var tier = TIER[el.getAttribute('data-sg-parallax')] || TIER.far;
@@ -397,12 +434,38 @@
                     });
             }
 
-            /* the media inside ALWAYS counter-moves — this is what sells it */
+            /* The media inside counter-moves — this is what sells it — but
+               only as far as the picture can actually give. It used to be an
+               unconditional +/-6%, and on a photograph with no vertical spare
+               that is not a parallax at all: it is a crop that changes as you
+               scroll. Measured, clamped, and re-measured on every refresh, so
+               a lazy image that has not decoded yet (naturalWidth 0, so no
+               travel) picks the move up the moment it lands. */
             if (media) {
-                gsap.fromTo(media, { yPercent: -6 }, {
-                    yPercent: 6, ease: EASE_SCRUB,
-                    scrollTrigger: { trigger: el, start: 'top bottom', end: 'bottom top', scrub: true }
+                var WANT = 6;
+
+                gsap.fromTo(media, { yPercent: -safeCoverYPercent(media, WANT) }, {
+                    yPercent: safeCoverYPercent(media, WANT),
+                    ease: EASE_SCRUB,
+                    scrollTrigger: {
+                        trigger: el, start: 'top bottom', end: 'bottom top', scrub: true,
+                        onRefresh: function (self) {
+                            var safe = safeCoverYPercent(media, WANT);
+                            self.animation.invalidate();
+                            gsap.set(media, { yPercent: -safe });
+                            self.animation.vars.yPercent = safe;
+                        }
+                    }
                 });
+
+                /* A lazy photograph is measured as 0x0 on the first pass. One
+                   refresh once it decodes is what turns the move back on for
+                   the frames that do have room. */
+                if (!media.complete) {
+                    media.addEventListener('load', function () {
+                        if (ST) ST.refresh();
+                    }, { once: true });
+                }
             }
         });
     }
