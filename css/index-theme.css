@@ -570,7 +570,20 @@
 
 .mrn-hero__inner {
     z-index: 5;
-    padding: clamp(72px, 9vh, 118px) 0 calc(var(--sg-rail-h) + clamp(48px, 7vh, 92px));
+    /* THE BAR IS ON TOP OF THIS, NOT ABOVE IT.
+       At >=992px the header is position:absolute at top:0 and the hero starts
+       at top:0 as well, so the hero's first --sg-head pixels sit behind an
+       opaque white gradient. (Below 992px the header is position:relative and
+       genuinely in flow, which is why the rules further down own this padding
+       and set their own smaller figure.)
+
+       The old `clamp(72px, 9vh, 118px)` was an independent guess at the bar's
+       height and lost: 9vh only reaches 104px at a 1155px-tall viewport, so
+       the eyebrow "Alang Ship Recycling Yard · Since 1983" was entirely
+       behind the bar at 1024x768 and 1280x800 and clipped at 1440x900 —
+       every common laptop. Rebase on the same --sg-head the min-height above
+       already uses, and let the clamp tune only the gap below the bar. */
+    padding: calc(var(--sg-head) + clamp(14px, 2vh, 40px)) 0 calc(var(--sg-rail-h) + clamp(48px, 7vh, 92px));
     perspective: 1200px;
 }
 
@@ -1052,6 +1065,37 @@
 
     .mrn-hero__title {
         max-width: 18ch;
+    }
+}
+
+/* SHORT AND WIDE — the 1366x768 case.
+   The fold has to hold bar + copy + stat rail. The copy block scales with
+   WIDTH (the title is a vw clamp) while the budget is set by HEIGHT, so the
+   squeeze is worst on a wide laptop with a short viewport: at 1366x768 the
+   composition wanted 799px of a 768px screen and the rail dropped below the
+   fold — the exact failure --sg-head was introduced to prevent.
+
+   What gives is whitespace, not content: the gap under the bar and the gap
+   above the rail both tighten, and nothing is clipped or scaled. 820px is the
+   cutoff because a 900-tall viewport already clears it with room to spare. */
+@media (min-width: 992px) and (max-height: 820px) {
+    .mrn-hero__inner {
+        padding-top: calc(var(--sg-head) + 12px);
+        padding-bottom: calc(var(--sg-rail-h) + 24px);
+    }
+
+    /* The padding alone is not enough at the widest short screens: at
+       1536x768 the copy block is 523px on its own and the fold has 549px to
+       give once the bar and the rail are paid for. The remaining 22px comes
+       out of the two largest gaps INSIDE the copy, not out of the type — the
+       title, the lead and the buttons keep their size, they just sit closer
+       together for the one screen shape that cannot afford the air. */
+    .mrn-hero__badge {
+        margin-bottom: 16px;
+    }
+
+    .mrn-hero__sub {
+        margin-bottom: 24px;
     }
 }
 
@@ -6167,6 +6211,27 @@ html.sg-anim #about .mrn-about__points:not(.in):not(.mrn-in) li::after {
    intrinsic image size, decides the tile height. Nothing can push the grid
    wider than its column.
    ========================================================================== */
+
+/* THE FRAME CLIP NEEDS A BOX OF ITS OWN.
+   js/motion.js initFrames() scrubs `data-sg-frame="close"` from inset(0%) to
+   inset(8% 12% round 14px) — the signature "full-bleed contracts into a
+   frame" move. It was set on the <a class="mrn-tile"> itself, and a clip-path
+   clips every descendant, so it took 12% off each side of the CAPTION too:
+   70px on a 587px tile, which ate "Primar" and left the label reading
+   "y Cutting Zone". Its other use on this page, .mrn-figure__frame in the
+   About block, is a media-only wrapper — that is the shape this effect wants.
+
+   So the photo gets its own box to be clipped inside, sitting exactly where
+   the image sat (absolute, inset 0, z-index 1, under the ::after scrim at 2
+   and the caption at 3). The tile keeps its full grid footprint and its
+   label; only the photograph contracts. */
+#yard .mrn-tile__media {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: block;
+    border-radius: inherit;
+}
 
 #yard .mrn-tile img {
     position: absolute;
