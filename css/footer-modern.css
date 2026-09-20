@@ -910,6 +910,34 @@ a.sgf-contact__value:focus {
     outline-offset: 3px;
 }
 
+/* PARKED OVER THE HERO.
+   `.mrn-hero__rail` is `position:absolute; bottom:0` inside a hero whose
+   min-height fills the viewport, so the stat panel IS the bottom band of the
+   first screen — and any bottom-anchored floating control lands on top of it.
+   Measured at 375x812 the launcher covered "Years of Operation"; on a laptop
+   (1024x768, 1280x800, 1366x768) it covered "HKC Aligned".
+
+   Padding the rail cannot fix this — it would leave a dead strip across the
+   bottom of the hero — and neither can moving the button, because every
+   bottom corner is rail. So the launcher does what #toTopBtn at line 577
+   already does on this site: it stays off the first screen and fades in once
+   the reader has left the hero behind. Same 250px threshold, so the two
+   controls arrive together rather than one appearing under the other.
+
+   Global, not scoped to a width. js/feedback.js sets the class on a phone as
+   it always did, and above that width only when it measures the hero's own
+   text and buttons into the launcher's band — so the rule is only ever live
+   when the two really do meet, and a resize that pulls them apart clears it
+   on the next frame. A tall desktop, where they never meet, never sees it. */
+.sgfb-launch.is-parked {
+    opacity: 0;
+    visibility: hidden;
+    pointer-events: none;
+    transform: translateY(10px);
+    transition: opacity .3s var(--sgf-ease), transform .3s var(--sgf-ease),
+        visibility 0s linear .3s;
+}
+
 /* --- the dialog --------------------------------------------------------- */
 
 .sgfb {
@@ -1561,34 +1589,6 @@ html.sgfb-locked body {
         clip: rect(0 0 0 0);
         clip-path: inset(50%);
         white-space: nowrap;
-    }
-
-    /* PARKED OVER THE HERO.
-       `.mrn-hero__rail` is `position:absolute; bottom:0` inside a hero whose
-       min-height fills the viewport, so on a phone the stat panel IS the
-       bottom 176px of the first screen — and any bottom-anchored floating
-       control lands on top of it. Measured at 375x812: the launcher covered
-       "Years of Operation" before the visitor had scrolled a pixel.
-
-       Padding the rail cannot fix this (it would leave a dead band across
-       the bottom of the hero) and neither can moving the button (every
-       bottom corner is rail). So the launcher does what #toTopBtn at line
-       577 already does on this site — it stays out of the first screen and
-       fades in once the reader has left the hero behind. Same 250px
-       threshold, so the two controls arrive together instead of one
-       appearing under the other.
-
-       Scoped to the media query rather than left global: if the class were
-       ever stale after a resize to desktop, the desktop launcher — which
-       floats over empty margin and covers nothing — must still be visible.
-       js/feedback.js only sets it below this same 860px width. */
-    .sgfb-launch.is-parked {
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        transform: translateY(10px);
-        transition: opacity .3s var(--sgf-ease), transform .3s var(--sgf-ease),
-            visibility 0s linear .3s;
     }
 }
 

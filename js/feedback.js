@@ -334,27 +334,130 @@
             return;
         }
 
-        /* ---- keep the launcher off the hero on small screens -------------
-           On a phone the hero's stat rail is pinned to the bottom of a
-           viewport-height hero, so the launcher's corner IS content: at
-           375x812 it sat on top of "Years of Operation" at first paint.
-           Below 860px the button therefore parks until the reader has left
-           the hero, mirroring #toTopBtn's existing 250px threshold. Above
-           that width it floats over empty margin and never parks.
+        /* ---- keep the launcher off the hero ------------------------------
+           Every page opens on a viewport-height hero, and the launcher sits
+           in the bottom-right corner of it, so the corner IS content: at
+           375x812 it sat on top of index.html's "Years of Operation" stat,
+           and on about_us.html it covered the "Group Profile" button. The
+           launcher therefore parks until the reader has left the hero,
+           mirroring #toTopBtn's 250px threshold, so the two controls arrive
+           together rather than one appearing under the other.
+
+           This used to be gated on width alone (<= 860px), on the reasoning
+           that a desktop launcher "floats over empty margin and covers
+           nothing". That holds at 1920x1080 and breaks on a laptop: the hero
+           rail is bottom-anchored, so the shorter the viewport the nearer it
+           sits to the launcher. Measured on index.html, the pill covered the
+           "HKC Aligned" stat outright at 1024x768, 1280x800 and 1366x768 —
+           the three commonest laptop sizes.
+
+           The width rule stays as it was, because on a phone the whole
+           first screen is content and a disc in the corner covers some of it
+           whatever the hero measures — on gallery.html at 375x812 the hero
+           ends above the fold and the launcher lands on the paragraph below
+           it instead. Above that width the geometry decides: does the
+           launcher's band meet anything in the hero worth reading or
+           pressing? Phones keep exactly the behaviour they had, laptops gain
+           the fix, and a tall desktop, where the two genuinely never meet,
+           keeps its launcher in view exactly as before. The stale-class worry
+           that kept the CSS inside the media query goes with it — resize
+           re-runs this and unparks.
 
            rAF-throttled and passive, so this adds no scroll-handler cost —
            the same shape js/main.js:64 uses for the back-to-top button. */
-        var PARK_BELOW = 860;       /* matches the launcher's media query */
+        var PARK_BELOW = 860;       /* the launcher's own media query */
         var PARK_UNTIL = 250;       /* matches #toTopBtn's TO_TOP_THRESHOLD */
+        var PARK_GAP = 12;          /* clearance, not merely non-overlap */
         var parked = null;          /* null = not yet applied */
         var parkTicking = false;
+
+        /* Measured against the hero, never against the button: a parked
+           button is visibility:hidden and reports an empty box, which would
+           unpark it, which would park it again. The launcher's resting band
+           is derived from the CSS instead, so it stays valid while parked.
+
+           What counts as "in the way" is the hero's CONTENT, not its box.
+           The hero fills the viewport on every page, so its box always meets
+           the launcher and testing that would park the button everywhere,
+           including a 1080-tall desktop where it covers nothing. So:
+
+             text   measured by Range, which gives the line boxes rather than
+                    the full column — index.html's rail cell is 470px wide at
+                    1920 with its label in the left third, and only the label
+                    is worth yielding to.
+             links  measured by their own border box, because the padding of
+                    a button is part of the thing you are trying to press.
+
+           The candidate walk only runs once the cheap band test has passed
+           and only inside the first screen, where parking is the question at
+           all, so it stays off the scroll path everywhere else. */
+        var HERO = '.mrn-hero, .mrnp-hero';
+        var HERO_CONTENT = 'h1,h2,h3,h4,p,li,a,button,.mrn-hero__rail-item';
+
+        function launcherBand() {
+            var cs = win.getComputedStyle(btn);
+            var h = btn.offsetHeight || parseFloat(cs.height) || 48;
+            var w = btn.offsetWidth || parseFloat(cs.width) || 48;
+            var gapB = parseFloat(cs.bottom) || 0;
+            var gapR = parseFloat(cs.right) || 0;
+            var vh = win.innerHeight || doc.documentElement.clientHeight || 0;
+            var vw = doc.documentElement.clientWidth || win.innerWidth || 0;
+            return {
+                top: vh - gapB - h - PARK_GAP, bottom: vh - gapB + PARK_GAP,
+                left: vw - gapR - w - PARK_GAP, right: vw - gapR + PARK_GAP
+            };
+        }
+
+        function meets(boxes, band) {
+            for (var i = 0; i < boxes.length; i++) {
+                var q = boxes[i];
+                if (q.width < 2 || q.height < 2) continue;
+                if (q.right > band.left && q.left < band.right &&
+                    q.bottom > band.top && q.top < band.bottom) return true;
+            }
+            return false;
+        }
+
+        function hitsHero() {
+            var hero = doc.querySelector(HERO);
+            if (!hero || !hero.getBoundingClientRect) return false;
+            var hr = hero.getBoundingClientRect();
+            if (hr.width < 1 || hr.height < 1) return false;
+
+            var band = launcherBand();
+            if (hr.bottom <= band.top || hr.top >= band.bottom) return false;
+
+            var nodes = hero.querySelectorAll(HERO_CONTENT);
+            for (var i = 0; i < nodes.length; i++) {
+                var el = nodes[i];
+                var cs = win.getComputedStyle(el);
+                if (cs.display === 'none' || cs.visibility === 'hidden' ||
+                    parseFloat(cs.opacity) < 0.05) continue;
+                if (el.getAttribute('aria-hidden') === 'true') continue;
+
+                var tag = el.tagName;
+                if (tag === 'A' || tag === 'BUTTON') {
+                    if (meets(el.getClientRects(), band)) return true;
+                    continue;
+                }
+                if (!el.textContent || !el.textContent.trim()) continue;
+                if (!doc.createRange) {
+                    if (meets(el.getClientRects(), band)) return true;
+                    continue;
+                }
+                var rng = doc.createRange();
+                rng.selectNodeContents(el);
+                if (meets(rng.getClientRects(), band)) return true;
+            }
+            return false;
+        }
 
         function syncPark() {
             parkTicking = false;
             /* an open dialog must never have its own trigger yanked away */
-            var want = win.innerWidth <= PARK_BELOW &&
-                (win.pageYOffset || doc.documentElement.scrollTop || 0) < PARK_UNTIL &&
-                wrap.className.indexOf('is-open') < 0;
+            var want = (win.pageYOffset || doc.documentElement.scrollTop || 0) < PARK_UNTIL &&
+                wrap.className.indexOf('is-open') < 0 &&
+                (win.innerWidth <= PARK_BELOW || hitsHero());
             if (want === parked) return;
             parked = want;
             if (want) {
