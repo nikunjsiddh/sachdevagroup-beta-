@@ -470,6 +470,16 @@
     filter: saturate(.60) contrast(1.08) brightness(.76);
 }
 
+/* Background footage, never a player. iOS in Low Power Mode refuses the
+   autoplay and paints its own start-playback button over the poster instead,
+   dead centre in the hero. Phones get the footage now (js/hero-video.js), so
+   they can meet this; with the button gone the poster simply stays. Kept as
+   its own rule so a browser that rejects the pseudo-element drops only this. */
+.mrn-hero__media video::-webkit-media-controls-start-playback-button {
+    display: none !important;
+    -webkit-appearance: none;
+}
+
 /* hue-only wash: keeps the luminance of the plate, steel and sea but drags
    every colour in the frame toward the panel navy */
 .mrn-hero__media::after {

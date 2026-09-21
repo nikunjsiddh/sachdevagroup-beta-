@@ -381,11 +381,14 @@
         <section class="mrn-hero" id="home">
             <div class="mrn-hero__media" data-sg-parallax="far">
                 <!-- src is deliberately data-src: js/hero-video.js attaches it
-                     after load, and only on a wide screen with a connection
-                     worth spending 9.3 MB on. Until then the poster is the
-                     hero. See the header of that file. -->
+                     after load. Below 992px it takes data-src-mobile, a
+                     720x1280 portrait cut of the same shot (4.4 MB), in
+                     place of the 9.3 MB 2730x1536 original. Until then, and
+                     on Save-Data or 2g, the poster is the hero. See the
+                     header of that file. -->
                 <video autoplay muted loop playsinline preload="none" poster="images/gallery/5.jpg">
-                    <source data-src="images/banner/banner.mp4" type="video/mp4">
+                    <source data-src="images/banner/banner.mp4"
+                        data-src-mobile="images/banner/banner-mobile.mp4" type="video/mp4">
                 </video>
             </div>
             <div class="mrn-hero__scrim"></div>
@@ -418,7 +421,7 @@
                             Sachdeva Group is your trusted partner for the safe and environmentally sound
                             recycling of end-of-life vessels — four decades of engineering discipline across
                             two fully-equipped yards on the Alang coastline.
-                    </p>b>
+                        </b>
                     </p>
 
                     <div class="mrn-hero__actions">
@@ -1330,8 +1333,9 @@
     <script defer src="js/scroll-drift.js"></script>
     <script defer src="js/scroll-fx.js"></script>
 
-    <!-- Attaches the 9.3 MB hero video after load, and only where it is worth
-         the bytes. Last, because it must not delay anything above it. -->
+    <!-- Attaches the hero video after load: the portrait cut on phones, the
+         9.3 MB original on wide screens, nothing on Save-Data or 2g. Last,
+         because it must not delay anything above it. -->
     <script defer src="js/hero-video.js"></script>
 </body>
 
