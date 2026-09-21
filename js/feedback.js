@@ -265,9 +265,20 @@
         var fields = '';
         for (i = 0; i < FIELDS.length; i++) fields += fieldHTML(FIELDS[i]);
 
+        /* data-lenis-prevent on the panel is what lets a finger scroll the
+           form. Lenis (js/main.js) listens for touch and wheel on window with
+           passive:false, and while it is stopped — which open() does — it
+           cancels every one of them whose path lacks this attribute
+           (main.js:607). The panel is the dialog's scrollport, so on a phone,
+           where the form is 400px taller than the panel, everything below the
+           first field sat under the Send bar out of reach. With it the
+           browser scrolls the panel natively, and overscroll-behavior keeps
+           the gesture from running on into the page. The scrim deliberately
+           stays without it: a drag there still reaches Lenis, which cancels
+           it, and that is half of what holds the page still. */
         wrap.innerHTML =
             '<div class="sgfb__scrim" data-sgfb-close></div>' +
-            '<div class="sgfb__panel" role="document">' +
+            '<div class="sgfb__panel" role="document" data-lenis-prevent>' +
                 '<span class="sgfb__glow" aria-hidden="true"></span>' +
                 '<button type="button" class="sgfb__close" data-sgfb-close aria-label="Close feedback form">' +
                     svg(ICON.close, '2') + '</button>' +
@@ -488,6 +499,8 @@
         var typeErr = wrap.querySelector('#sgfbTypeErr');
         var radios = wrap.querySelectorAll('input[name="feedbackType"]');
         var lastFocus = null;
+        var lockedY = 0;            /* page offset the dialog opened over */
+        var resized = false;        /* did the viewport change while it was up? */
         var tried = false;          /* has submit been attempted once? */
 
         function err(box, msg) {
@@ -664,10 +677,19 @@
                     if (c) c.textContent = '0';
                 }
             }
+            /* an emptied form starts at its own top, not scrolled down to
+               wherever the last one was closed */
+            panel.scrollTop = 0;
+        }
+
+        function pageY() {
+            return win.pageYOffset || doc.documentElement.scrollTop || 0;
         }
 
         function open() {
             lastFocus = doc.activeElement;
+            lockedY = pageY();
+            resized = false;
             wrap.className = 'sgfb is-open';
             wrap.setAttribute('aria-hidden', 'false');
             btn.setAttribute('aria-expanded', 'true');
@@ -687,6 +709,15 @@
             btn.setAttribute('aria-expanded', 'false');
             doc.documentElement.className =
                 doc.documentElement.className.replace(/\s*sgfb-locked/g, '');
+            /* The lock holds the page's offset (css/footer-modern.css says
+               how), so normally this does nothing. It is for what the lock
+               cannot stop: a mobile browser scrolling the document itself to
+               reach a focused field while the keyboard is up. The same guard
+               js/cert-viewer.js carries, except that it stands down after a
+               resize (see the handler below), when the page moved for a real
+               reason. Put back BEFORE Lenis restarts, since start() resumes
+               from whatever position it finds. */
+            if (!resized && Math.abs(pageY() - lockedY) > 2) win.scrollTo(0, lockedY);
             if (win.lenis && win.lenis.start) win.lenis.start();
             if (lastFocus && lastFocus.focus) lastFocus.focus();
             /* re-evaluate the hero park: closing the dialog without scrolling
@@ -695,6 +726,19 @@
             /* clear only once the panel is out of sight */
             win.setTimeout(reset, 420);
         }
+
+        /* A resize while the dialog is up moves the page for a real reason. A
+           rotation, or an Android keyboard that resizes the viewport, re-lays
+           the page out, and two things then move the offset to keep the
+           reader's place: the browser's scroll anchoring, and ScrollTrigger's
+           refresh after it. Measured at 375x812 -> 360x640: 3000, then 3107
+           from the anchoring, then 3054 when ScrollTrigger refreshed 400ms
+           later. Where that settles is right and the pre-resize offset is
+           not, and there is no single moment to re-read it — so after a
+           resize close() leaves the page where it is. */
+        win.addEventListener('resize', function () {
+            if (wrap.className.indexOf('is-open') > -1) resized = true;
+        });
 
         btn.addEventListener('click', open);
 

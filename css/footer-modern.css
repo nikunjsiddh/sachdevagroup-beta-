@@ -943,6 +943,14 @@ a.sgf-contact__value:focus {
 .sgfb {
     position: fixed;
     inset: 0;
+    /* The dynamic viewport where the engine knows the unit: the visible
+       area between a phone's toolbars as they stand right now. Mobile Safari
+       measures a fixed inset:0 box against the large viewport, which parks
+       the bottom of the dialog behind its toolbar — css/cert-viewer.css
+       records the same fault. With top, height and bottom all set, bottom is
+       the one that yields; an engine without dvh drops the line and inset:0
+       stands. */
+    height: 100dvh;
     z-index: 10001;
     display: flex;
     align-items: center;
@@ -980,7 +988,14 @@ a.sgf-contact__value:focus {
     position: relative;
     width: 100%;
     max-width: 640px;
-    max-height: calc(100vh - 64px);
+    /* 100% of the dialog's content box, never 100vh. On a phone 100vh is
+       the LARGE viewport — the screen with its toolbars retracted — so while
+       the address bar showed, a panel sized from it came out taller than the
+       space it opened into and the flex centring cut both ends off, the Send
+       bar at the bottom included. The dialog box above is the visible
+       viewport, so this always fits: here it is 100vh less the 64px of
+       padding, exactly what the old calc() gave a desktop. */
+    max-height: 100%;
     overflow-y: auto;
     overflow-x: hidden;
     padding: 36px 42px 32px;
@@ -991,6 +1006,14 @@ a.sgf-contact__value:focus {
     transition: transform .55s var(--e-out);
     /* the panel scrolls itself; Lenis must not take the wheel inside it */
     overscroll-behavior: contain;
+    /* Room for the sticky Send bar (.sgfb__actions, below). A browser only
+       makes sure a focused control is inside the scrollport, and the bar
+       covers the bottom of it — at 375x812 Mobile No. took focus at 717-770
+       with the bar's top at 635 and the panel never moved, so the keyboard's
+       Next key, or a failed submit, left the field being typed into out of
+       sight. This is the bar's measured cover, 106px here and 156px in the
+       small-screen block, plus 26px for the error line under a field. */
+    scroll-padding-bottom: 132px;
 }
 
 .sgfb.is-open .sgfb__panel {
@@ -1472,10 +1495,25 @@ a.sgf-contact__value:focus {
 /* The page behind the dialog must not scroll. overflow:hidden on <html> is
    what holds on iOS, where a body-only lock still lets the document rubber
    band; js/feedback.js also stops Lenis, which owns the wheel on this site
-   and would keep driving the page underneath regardless of overflow. */
-html.sgfb-locked,
-html.sgfb-locked body {
+   and would keep driving the page underneath regardless of overflow.
+
+   BODY STAYS VISIBLE, and that is what keeps the reader's place. It used to
+   be locked too, and every open threw the page back to the top: css/style.css
+   gives body height:100% and css/marine.css gives it overflow-x:hidden.
+   While <html> is visible that overflow is passed up to the viewport and
+   body clips nothing, but once <html> goes hidden it stops being passed up,
+   body becomes a scroll box one screen tall, and the document collapses to
+   that screen. Measured on about_us.html at 375x812: 3000px down when the
+   dialog opened, 0 while it was up, still 0 after it closed — and on a
+   phone that also re-parked the launcher, because the page was back on the
+   hero. Left visible, body is exactly as it is when nothing is open, and
+   <html> alone holds the lock with the offset intact. */
+html.sgfb-locked {
     overflow: hidden;
+}
+
+html.sgfb-locked body {
+    overflow: visible;
 }
 
 
@@ -1483,9 +1521,18 @@ html.sgfb-locked body {
 
 @media (max-width: 860px) {
 
+    /* 20px round the panel, and its max-height:100% takes the rest. The
+       panel used to claim 100vh - 40px while this box kept 32px top and
+       bottom, so it ran 12px into the padding at each end. */
+    .sgfb {
+        padding: 20px;
+    }
+
+    /* the actions stack below 860px, so the bar is taller — 156px of cover
+       plus the same 26px of error line */
     .sgfb__panel {
         padding: 34px 22px 28px;
-        max-height: calc(100vh - 40px);
+        scroll-padding-bottom: 182px;
     }
 
     .sgfb__form {
